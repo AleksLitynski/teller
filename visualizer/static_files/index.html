@@ -1,0 +1,31 @@
+
+<head>
+    <meta charset="utf-8" />
+    
+
+    <title>Teller Database Visualizer</title>
+            
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    
+	<script src="scripts/sigma.min.js"></script>
+	<script src="scripts/plugins/sigma.parsers.json.min.js"></script>
+
+	<script>
+		sigma.parsers.json('data.json', {
+			container: 'container',
+			settings: {
+				defaultNodeColor: '#ec5148'
+			}
+		});
+	</script>
+
+</head>
+
+<body>
+	<div id="container"></div>
+    
+   
+</body>
+
+
+

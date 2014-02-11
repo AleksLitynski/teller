@@ -1,0 +1,10 @@
+python
+pip
+pip install redis
+cint redis
+
+
+#import redis
+#r = redis.Redis(host='localhost')
+#r.set('foo', 'bar')
+#guy = r.get('foo')
