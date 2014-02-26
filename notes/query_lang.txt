@@ -1,0 +1,55 @@
+#query template. Any value can be left blank.
+{
+	type: "get", #get will return a filled out version of the form.
+	edge_depth: 0, #if you want all neighbor info, set to 1, nh of nh, 2, etc
+	search: {
+
+		id: "", #uuid of node
+		type: "",
+		value: "",
+
+		edges: [
+			{
+				direction: "inbound/outbound",
+				type: "",
+				weight-time: "",
+				weight-value: "",
+				terminal: same node description structure. Recursive, edge_depth - 1.
+			},
+			...
+		]
+	}
+}
+
+
+
+#an example. Will return all nodes named "fred":
+{
+	type: "get",
+	search: {
+		edges: [direction: "inbound",
+		type: "described_by",
+		weight-time:"GAMETIME",
+		terminal: {
+			type: "adjective", 
+			edges: [ {
+				terminal: {
+					type: "type",
+					value: "name"
+				},{
+				terminal: {
+					type: "value",
+					value: "fred"
+				}]
+		}]
+	}
+}
+
+
+
+
+
+#I know how verbose this is. I've got a few ideas how to cut it down. 
+
+#We will expand so you can do more than "get". 
+#There will be modifiying queries for both nodes and edges.

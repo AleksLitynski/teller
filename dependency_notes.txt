@@ -1,4 +1,4 @@
-python
+python (http://www.python.org/download/releases/2.7.6/)
 pip
 pip install redis
 cint redis
