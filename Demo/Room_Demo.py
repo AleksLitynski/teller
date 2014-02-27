@@ -42,14 +42,48 @@ def inspectObject(obj):
 		roomContents[2] = "a " + hardMats[random.randint(0,3) - 1] + " " + bedSizes[random.randint(0,4) - 1] + " bed covered with a " + colors[random.randint(0,14) - 1] + " blanket"
 #fill the room with stuff!
 def fillRoom():
-	roomContents.append[chair]
-	roomContents.append[table]
-	roomContents.append[bed]
-	print("You are in a room. Within the room, you can see: \n")
+	#This code isn't working
+	#roomContents.append[chair[0]]
+	#roomContents.append[table[0]]
+	#roomContents.append[bed[0]]
+	print("You are in a room. Within the room, you can see: ")
+	print("-- " + chair[0])
+	print("-- " + table[0])
+	print("-- " + bed[0])
 
 #Game Loop
-def gameLoop():
-	fillRoom()
-	action = input();
-	#close the program
-	#exit()
+def testLoop():
+	while(True):
+		#create some space between this and last input/output
+		print ("")
+		action = input()
+		
+		#inspect objects
+		if "chair" in action: 
+		
+			if(roomContents[0] == chair[0]):
+				inspectObject(chair)
+		
+			print(roomContents[0])
+		
+		if "table" in action:
+		
+			if(roomContents[1] == table[0]):
+				inspectObject(table)
+		
+			print(roomContents[1])
+		
+		if "bed" in action: 
+		
+			if(roomContents[2] == bed[0]):
+				inspectObject(bed)
+				
+			print(roomContents[2])
+		
+		#leave the game
+		if action == "exit":
+			break 
+		
+#Run the game!
+fillRoom()
+testLoop()
