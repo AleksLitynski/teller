@@ -11,7 +11,8 @@ class TCPHandler(SocketServer.BaseRequestHandler):
 
 
 
-game_ontology = ontology.sampleOntology()
+game_ontology = ontology.ontology()
+game_ontology.override_with_sample()
 print "starting TCP listener"
 server = SocketServer.TCPServer(("localhost", 5005), TCPHandler)
 server.serve_forever()
