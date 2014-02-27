@@ -18,9 +18,9 @@ colors=["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azur
 
 
 #Create some strings to act as nodes
-chair.append("a chair")
-table.append("a table")
-bed.append("a bed")
+chair.append("chair")
+table.append("table")
+bed.append("bed")
 
 #make potential chairs and tables
 for m in hardMats:
@@ -33,11 +33,11 @@ roomContents=[chair[0],table[0],bed[0]]
 #Note: Don't need to do anything to the first two randoms because they will pick a number from 1-3 in the chair and table arrays, respectively.
 #Since chair[0] and table[0] are the basic versions of these objects, we don't need to worry about the range not including them
 def inspectObject(obj):
-	if obj[0] == "a chair":
+	if obj[0] == "chair":
 		roomContents[0] = chair[random.randint(0,3)] #pick a random chair
-	elif obj[0] == "a table":
-		roomContents[1] = table[random.randint(0,3)]
-	elif obj[0] == "a bed":
+	elif obj[0] == "table":
+		roomContents[1] = table[random.randint(1,3)]
+	elif obj[0] == "bed":
 		#Frame, then type, then color. Reduce random number by 1 because arrays are 0-indexed
 		roomContents[2] = "a " + hardMats[random.randint(0,3) - 1] + " " + bedSizes[random.randint(0,4) - 1] + " bed covered with a " + colors[random.randint(0,14) - 1] + " blanket"
 #fill the room with stuff!
@@ -47,10 +47,51 @@ def fillRoom():
 	#roomContents.append[table[0]]
 	#roomContents.append[bed[0]]
 	print("You are in a room. Within the room, you can see: ")
-	print("-- " + chair[0])
-	print("-- " + table[0])
-	print("-- " + bed[0])
+	print("-- a " + chair[0])
+	print("-- a " + table[0])
+	print("-- a " + bed[0])
 
+#stuffInRoom[chair[0], table[0], bed[0]]
+	
+def sitOnIt(obj):
+	print("You sit on the " + obj);
+
+def chairNode(action):
+	if "chair" in action: 
+		
+			if(roomContents[0] == chair[0]):
+				inspectObject(chair)
+			
+			if "sit on chair" in action:
+				sitOnIt(chair[0])
+			
+			else:
+				print(roomContents[0])
+
+def tableNode(action):
+	if "table" in action:
+		
+			if(roomContents[1] == table[0]):
+				inspectObject(table)
+			
+			if "sit" in action:
+				sitOnIt(table[0])
+			
+			else:
+				print(roomContents[1])
+				
+def bedNode(action):
+	if "bed" in action: 
+		
+			if(roomContents[2] == bed[0]):
+				inspectObject(bed)
+			
+			if "sit" in action:
+				sitOnIt(bed[0])
+			
+			else:
+				print(roomContents[2])	
+		
 #Game Loop
 def testLoop():
 	while(True):
@@ -58,27 +99,10 @@ def testLoop():
 		print ("")
 		action = input()
 		
-		#inspect objects
-		if "chair" in action: 
-		
-			if(roomContents[0] == chair[0]):
-				inspectObject(chair)
-		
-			print(roomContents[0])
-		
-		if "table" in action:
-		
-			if(roomContents[1] == table[0]):
-				inspectObject(table)
-		
-			print(roomContents[1])
-		
-		if "bed" in action: 
-		
-			if(roomContents[2] == bed[0]):
-				inspectObject(bed)
-				
-			print(roomContents[2])
+		#do stuff with objects
+		chairNode(action)
+		tableNode(action)
+		bedNode(action)
 		
 		#leave the game
 		if action == "exit":
