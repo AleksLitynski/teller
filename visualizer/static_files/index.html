@@ -6,23 +6,122 @@
     <title>Teller Database Visualizer</title>
             
     <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
     
 	<script src="scripts/sigma.min.js"></script>
 	<script src="scripts/plugins/sigma.parsers.json.min.js"></script>
 
 	<script>
-		sigma.parsers.json('data.json', {
-			container: 'container',
-			settings: {
-				defaultNodeColor: '#ec5148'
-			}
-		});
-	</script>
+	var graph;
+	//https://github.com/jacomyal/sigma.js/wiki/Public-API
+	//https://github.com/jacomyal/sigma.js/wiki add node
+		//var s = sigma.parsers.json('data.json', {
+		//	container: 'container',
+		//	settings: {defaultNodeColor: '#ec5148'}
+		//});
+		
+		$(document).ready(function() {
+		url='data.json', sig ={container: 'container',settings: {defaultNodeColor: '#eb2148'} };
+		s = document.getElementById('container');
+		
+		//	var sigRoot = document.getElementById('sig');
+		//	var sigInst = sigma.init(sigRoot);
+		
+		
+		
+	var xhr = sigma.utils.xhr();
+
+    if (!xhr)
+      throw 'XMLHttpRequest not supported, cannot load the file.';
+
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        graph = JSON.parse(xhr.responseText);
+
+        // Update the instance's graph:
+        if (sig instanceof sigma) {
+          sig.graph.clear();
+          sig.graph.read(graph);
+
+        
+        } else if (typeof sig === 'object') {
+          sig.graph = graph;
+          sig = new sigma(sig);
+
+        // ...or it's finally the callback:
+        } else if (typeof sig === 'function') {
+          callback = sig;
+          sig = null;
+        }
+
+        // Call the callback if specified:
+        //if (callback) callback(sig || graph);
+      }
+    };
+    xhr.send();
+	
+    xhr.open('GET', url, true);
+	xhr.onreadystatechange = function() {
+	if (xhr.readyState === 4){
+        graph = JSON.parse(xhr.responseText);
+        //graph = JSON.parse(xhr.responseText);
+		if (sig instanceof sigma) {
+			console.log("update");
+			sig.graph.clear();
+			sig.graph.read(graph);
+		}//instanciate sigma if needed:
+		else if (typeof sig === 'object') {
+			console.log("instantiate");
+			sig.graph = graph;
+			sig = new sigma(sig);
+			
+			//sig.graph.clear();
+			
+					
+			sig.graph.addNode({
+						"id": "n3",
+						"label": "I Am the new one",
+						"x": 0,
+						"y": 0,
+						"size": 3
+						});
+			sig.refresh();
+		}
+		}
+		
+    };
+	xhr.send();
+	
+    });
+  </script>
+
+  <style type="text/css">
+    /* sigma.js context : */
+    .sigma {
+      margin-left:auto;
+      margin-right:auto;
+      position: relative;
+      border-radius: 4px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+      background: #222;
+      width: 80%;
+      height: 80%;
+      top: 0;
+      left: 0;
+    }
+  </style>
 
 </head>
 
 <body>
-	<div id="container" style = ""> </div>
+	<div class="sigma" id="sig"></div>
+	<div id="container" style = ""> 
+	
+	<button type ="button">Click Me</button>
+	</div>
     
    
 </body>
