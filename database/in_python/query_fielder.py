@@ -4,6 +4,9 @@ import random
 
 class query_fielder:
 
+
+
+    #node_prop &&
     def __init__(self):
         pass
 
@@ -21,11 +24,14 @@ class query_fielder:
             out = self.convert_to_json(out, target_graph)
             reply = json.dumps(["reply", out])
         else:
-            reply = "query type: " + query_parsed["type"] + " not implimented yet"
+            reply = "query type: " + query_parsed["type"] + " not implemented yet"
         return reply
 
 
     def convert_to_json(self, data_to_jsonify, graph):
+        for j in data_to_jsonify:
+            print "    "
+            print j.id + " => " + j.type + " => " + j.value
         return str(data_to_jsonify)
 
 
@@ -35,98 +41,71 @@ class query_fielder:
     def find_nodes(self, query, graph):
         valid_nodes = []
         for node in graph.nodes_iter():     #itterate every node in the graph to find the one we seek.
-                                            #Obviously, this has to get better.
-            (is_valid, valid_node, cause) = self.is_valid_node(query, node, graph)
-
-
+            #Obviously, this has to get better.
+            (is_valid, valid_node) = self.is_valid_node(query, node, graph)
             if is_valid:
-
-                for e in graph.edges_iter([valid_node]): #edges to noun
-                    for rel_edge in graph.edges_iter(e[1]): #relationship
-                        print rel_edge[1].type + " " + rel_edge[1].value
-                        pass
                 valid_nodes.append(valid_node)
-            else:
-                print "failed because: " + cause
-            print "-----------------------------------"
+
 
         return valid_nodes
 
 
 
+    def is_valid_node(self, query, node, graph):
+
+
+        all_good =  self.check_property("id", node.id, query) and \
+                    self.check_property("type", node.type, query) and \
+                    self.check_property("value", node.value, query)
+
+        if all_good: #check edges
+            query_edges = self.get_property_clean("edges", query, [])
+            for query_edge in query_edges:
+                all_good = self.is_valid_edge(query_edge, node, graph) #This tells us if the edge is good enough
+                if not all_good:
+                    break
+
+        return (all_good, node)
+
+
+    def is_valid_edge(self, query, node, graph):
+
+        for edge in graph.edges_iter([node]):
+            edge_obj = ontology.get_edge_val(edge, graph) #The object holding the edge's weight
+            other_end = edge[0]
+            if edge[0] == node: other_end = edge[1] #The end of th edge that is not the node
+
+            edge_ok = self.check_property("type", edge_obj.type, query) and \
+                        self.check_property("weight-value", self.get_property_clean(
+                                                                self.get_property_clean("weight-time", query),
+                                                                edge_obj.weights), query) and \
+                        (self.check_property("direction", "inbound", query) and node == edge[0])
+            if edge_ok:
+                terminal_recurse = self.is_valid_node( self.get_property_clean("terminal", query), other_end, graph)
+                edge_ok = edge_ok and terminal_recurse[0]
+
+            print str(self.get_property_clean("terminal", query)) + " -> " + str(edge_ok)
+
+            if edge_ok: return True
+
+        return False
+
+
+
     def check_property(self, prop_name, target_value, query):
-        prop_value = None
-        try:
-            prop_value = query["prop_name"]
-        except AttributeError: pass
-        except KeyError: pass
+        prop_value = self.get_property_clean(prop_name, query)
         if prop_value == None: #If the value wasn't given, we assume it "could" match.
             return True
+        #print str(prop_value) + " == " + str(target_value) + " ==>" + str(prop_value == target_value)
         return prop_value == target_value
+    def get_property_clean(self, prop_name, query, on_fail = None):
+        prop_value = on_fail
+        try:
+            prop_value = query[prop_name]
+        except AttributeError: pass
+        except KeyError: pass
+        return prop_value
 
-
-    #node_prop &&
-    def is_valid_node(self, query, node, graph):
-        name = ""
-        #print node.type + " <" + node.value + ">"
-        all_good =  self.check_property("id", node.id, query) and self.check_property("type", node.type, query) and self.check_property("value", node.value, query)
-
-        reason_for_failure = "passed"
-
-        if all_good:
-            query_edges = []
-            try: query_edges = query["edges"]
-            except AttributeError: pass
-            except KeyError: pass
-
-            all_edges_ok = True
-            for query_edge in query_edges:
-                query_edge_ok = True
-                for edge in graph.edges_iter([node]):
-                    edge_ok = True
-                    edge_obj = ontology.get_edge_val(edge, graph)
-
-                    if edge_ok:
-                        try:
-                            edge_ok = query_edge["type"] == edge_obj.type
-                            if not edge_ok: reason_for_failure = "edge type"
-                        except AttributeError: pass
-                        except KeyError: pass
-
-                    if edge_ok:
-                        try:
-                            edge_ok = query_edge["weight-value"] == edge_obj.weights[query_edge["weight-time"]]
-                            if not edge_ok: reason_for_failure = "edge weight"
-                        except AttributeError: pass
-                        except KeyError: pass
-
-                    if edge_ok:
-                        try:
-                            edge_ok = (query_edge["direction"] == "inbound" and node == edge[0])
-                            if not edge_ok: reason_for_failure = "edge cardinality"
-                        except AttributeError: pass
-                        except KeyError: pass
-
-                    if edge_ok:
-                        other_end = edge[0]
-                        if other_end == node: other_end = edge[1]
-                        #print str(edge[0].type) + ", " + str(edge[1].type) + ", " + str(other_end.type)
-                        try:
-                            (passed, node_checked, cause) = self.is_valid_node(query_edge["terminal"], other_end, graph) #we aren't doing both permutations of edges. IE: If we hit value first, we don't try type next
-                            edge_ok = passed
-                            if not edge_ok: reason_for_failure = "terminal recursion via: " + cause
-                        except AttributeError: pass
-                        except KeyError: pass
-                    query_edge_ok = query_edge_ok and edge_ok
-                    if not edge_ok: break
-                all_edges_ok = all_edges_ok and query_edge_ok
-
-
-            all_good = all_edges_ok
-
-
-        #if node.id == query.search.id
-        return (all_good, node, reason_for_failure)
 
 
 
@@ -231,7 +210,10 @@ def print_all(self):
     return printed
 
 
-
+for e in graph.edges_iter([valid_node]): #edges to noun
+                    for rel_edge in graph.edges_iter(e[1]): #relationship
+                        print rel_edge[1].type + " " + rel_edge[1].value
+                        pass
 
 
 
