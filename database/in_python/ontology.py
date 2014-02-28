@@ -24,6 +24,7 @@ class ontology:
         pass
 
     def add_node(self, type, value):
+        #print type + " " + value + "<----"
         valid_nodes = [ "noun",
                         "relationship",
                         "value",
@@ -98,7 +99,9 @@ class ontology:
         self.graph = nx.Graph()
         english = self.add_node("noun", "")
         self.add_relationship(english, english, "named", "english")
+        frank = self.new_noun_named("fred", english)
 
+        """
         "Chair, Table; Material: Plastic, wood, metal"
         chair = self.new_noun_named("chair", english)
         table = self.new_noun_named("table", english)
@@ -131,8 +134,7 @@ class ontology:
         bed_sizes = self.new_nouns_named(["twin", "double", "queen", "king"], english)
         for size in bed_sizes:
             self.add_relationship(bed, size, "size", "True")
-
-        frank = self.new_noun_named("fred", english)
+        """
 
 
 
@@ -150,11 +152,12 @@ class ontology:
             print n.id + " " + n.type + " " + n.value
 
         for e in self.graph.edges_iter():
-            print str(e[0].id) + " -" + str(get_edge_val(e).weights, self.graph) + "-> " + str(e[1].id)
+            print str(e[0].id) + " -" + str(get_edge_val(e, self.graph).weights) + "-> " + str(e[1].id)
 
 
     def new_nouns_named(self, names, lang):
         return map( lambda x: self.new_noun_named(x, lang) , names)
+
     def new_noun_named(self, name, lang):
         new_node = self.add_node("noun", "")
         self.add_relationship(new_node, lang, "named", name)

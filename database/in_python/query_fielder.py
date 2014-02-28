@@ -26,13 +26,6 @@ class query_fielder:
 
 
     def convert_to_json(self, data_to_jsonify, graph):
-        for d in data_to_jsonify: #noun
-            for e in graph.edges_iter([d]): #edges to noun
-                for rel_edge in graph.edges_iter(e[1]): #relationship
-                    print rel_edge[1].type + " " + rel_edge[1].value
-            print "-----------------------------------"
-            print d.value
-            print d.type
         return str(data_to_jsonify)
 
 
@@ -43,32 +36,42 @@ class query_fielder:
         valid_nodes = []
         for node in graph.nodes_iter():     #itterate every node in the graph to find the one we seek.
                                             #Obviously, this has to get better.
-            (is_valid, valid_node) = self.is_valid_node(query, node, graph)
+            (is_valid, valid_node, cause) = self.is_valid_node(query, node, graph)
+
+
             if is_valid:
+
+                for e in graph.edges_iter([valid_node]): #edges to noun
+                    for rel_edge in graph.edges_iter(e[1]): #relationship
+                        print rel_edge[1].type + " " + rel_edge[1].value
+                        pass
                 valid_nodes.append(valid_node)
+            else:
+                print "failed because: " + cause
+            print "-----------------------------------"
 
         return valid_nodes
 
 
+
+    def check_property(self, prop_name, target_value, query):
+        prop_value = None
+        try:
+            prop_value = query["prop_name"]
+        except AttributeError: pass
+        except KeyError: pass
+        if prop_value == None: #If the value wasn't given, we assume it "could" match.
+            return True
+        return prop_value == target_value
+
+
+    #node_prop &&
     def is_valid_node(self, query, node, graph):
         name = ""
         #print node.type + " <" + node.value + ">"
-        all_good = True
-        if all_good:
-            try:
-                name += query["id"]
-                all_good = query["id"] == node.id
-            except AttributeError: pass
-            except KeyError: pass
-        if all_good:
-            try:  all_good = query["type"] == node.type
-            except AttributeError: pass
-            except KeyError: pass
-        if all_good:
-            try:
-                all_good = query["value"] == node.value
-            except AttributeError: pass
-            except KeyError: pass
+        all_good =  self.check_property("id", node.id, query) and self.check_property("type", node.type, query) and self.check_property("value", node.value, query)
+
+        reason_for_failure = "passed"
 
         if all_good:
             query_edges = []
@@ -76,37 +79,54 @@ class query_fielder:
             except AttributeError: pass
             except KeyError: pass
 
+            all_edges_ok = True
             for query_edge in query_edges:
-
+                query_edge_ok = True
                 for edge in graph.edges_iter([node]):
+                    edge_ok = True
                     edge_obj = ontology.get_edge_val(edge, graph)
 
-                    if all_good:
-                        try: all_good = query_edge["type"] == edge_obj.type
+                    if edge_ok:
+                        try:
+                            edge_ok = query_edge["type"] == edge_obj.type
+                            if not edge_ok: reason_for_failure = "edge type"
                         except AttributeError: pass
                         except KeyError: pass
 
-                    if all_good:
-                        try: all_good = query_edge["weight-value"] == edge_obj.weights[query_edge["weight-time"]]
+                    if edge_ok:
+                        try:
+                            edge_ok = query_edge["weight-value"] == edge_obj.weights[query_edge["weight-time"]]
+                            if not edge_ok: reason_for_failure = "edge weight"
                         except AttributeError: pass
                         except KeyError: pass
 
-                    if all_good:
-                        try: all_good = (query_edge["direction"] == "inbound" and node == edge[0])
+                    if edge_ok:
+                        try:
+                            edge_ok = (query_edge["direction"] == "inbound" and node == edge[0])
+                            if not edge_ok: reason_for_failure = "edge cardinality"
                         except AttributeError: pass
                         except KeyError: pass
 
-                    if all_good:
+                    if edge_ok:
                         other_end = edge[0]
                         if other_end == node: other_end = edge[1]
-                        try: all_good = self.is_valid_node(query_edge["terminal"], other_end, graph)
+                        #print str(edge[0].type) + ", " + str(edge[1].type) + ", " + str(other_end.type)
+                        try:
+                            (passed, node_checked, cause) = self.is_valid_node(query_edge["terminal"], other_end, graph) #we aren't doing both permutations of edges. IE: If we hit value first, we don't try type next
+                            edge_ok = passed
+                            if not edge_ok: reason_for_failure = "terminal recursion via: " + cause
                         except AttributeError: pass
                         except KeyError: pass
+                    query_edge_ok = query_edge_ok and edge_ok
+                    if not edge_ok: break
+                all_edges_ok = all_edges_ok and query_edge_ok
 
-                    if not all_good: break
+
+            all_good = all_edges_ok
+
 
         #if node.id == query.search.id
-        return (all_good, node)
+        return (all_good, node, reason_for_failure)
 
 
 
@@ -114,7 +134,7 @@ qf = query_fielder()
 ont = ontology.ontology()
 ont.override_with_sample()
 
-test_query = '{"type": "get","search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "adjective","edges": [{"terminal": {"type": "type","value": "name"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
+test_query = '{"type": "get","search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
 
 print qf.field_query(test_query, ont)
 
@@ -157,12 +177,12 @@ print qf.field_query(test_query, ont)
                 "type": "describes",
                 "weight-time": "1",
                 "terminal": {
-                    "type": "adjective",
+                    "type": "relationship",
                     "edges": [
                         {
                             "terminal": {
                                 "type": "type",
-                                "value": "name"
+                                "value": "named"
                             }
                         },
                         {
