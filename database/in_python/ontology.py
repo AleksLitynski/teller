@@ -102,7 +102,7 @@ class ontology:
         self.add_relationship(english, english, "named", "english")
         frank = self.new_noun_named("fred", english)
 
-        """
+
         "Chair, Table; Material: Plastic, wood, metal"
         chair = self.new_noun_named("chair", english)
         table = self.new_noun_named("table", english)
@@ -135,7 +135,7 @@ class ontology:
         bed_sizes = self.new_nouns_named(["twin", "double", "queen", "king"], english)
         for size in bed_sizes:
             self.add_relationship(bed, size, "size", "True")
-        """
+
 
 
 

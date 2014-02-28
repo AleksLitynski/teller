@@ -19,10 +19,14 @@ class query_fielder:
 
         reply = "no data"
 
-        if query_parsed["type"] == "get":
+        if query_parsed["type"] == "get": #fills takes your search and sends out a list of fully classified responses
             out = self.find_nodes(query_parsed["search"], target_graph)
             out = self.convert_to_json(out, target_graph)
             reply = json.dumps(["reply", out])
+        if query_parsed["type"] == "pinch": #Takes a node (later, group of nodes, hence "pinch") and create an "is" of it
+            pass
+        if query_parsed["type"] == "refine": #given a certain part of the graph, refine the relationships on it. Possably same of different from other types of updates
+            pass
         else:
             reply = "query type: " + query_parsed["type"] + " not implemented yet"
         return reply
