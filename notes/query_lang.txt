@@ -26,12 +26,47 @@
 #an example. Will return all nodes named "fred":
 {
 	type: "get",
+	params : {
+	    depth:2
+
+	},
 	search: {
 		edges: [direction: "inbound",
 		type: "described_by",
-		weight-time:"GAMETIME",
+		weight-time:"1",
 		terminal: {
 			type: "adjective", 
+			edges: [ {
+				terminal: {
+					type: "type",
+					value: "name"
+				},{
+				terminal: {
+					type: "value",
+					value: "fred"
+				}]
+		}]
+	}
+}
+
+
+
+
+
+#an example of pinch. Will return a node that is an instance of "fred"
+#Fails if from describes multiple nodes
+#returns the new node
+{
+	type: "pinch",
+	params : {
+	    depth:2
+	},
+	search: {
+		edges: [direction: "inbound",
+		type: "described_by",
+		weight-time:"1",
+		terminal: {
+			type: "adjective",
 			edges: [ {
 				terminal: {
 					type: "type",
@@ -100,8 +135,8 @@ Node sharing:
 - share value. Over time, let it change to target new/specific values
 -
 
-1) Support deep query for "get" / respond with proper format
-2) Allow single pinch to make perfect "is a"
+1) Support deep query for "get" / respond with proper format < done
+2) Allow single pinch to make perfect "is a" <-
 3) Allow ranges of (value/target)
 4) Allow DECIDE to pull down certain features
 

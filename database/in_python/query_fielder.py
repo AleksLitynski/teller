@@ -13,6 +13,7 @@ class query_fielder:
     #just a stub. Eventually, it could parse a query and do better than a fat dump.
     def field_query(self, query, ontology):
 
+
         query_parsed = json.loads(query)
         target_graph = ontology.graph
 
@@ -23,9 +24,17 @@ class query_fielder:
             out = self.find_nodes(query_parsed["search"], target_graph)
             out = self.convert_to_valid_json(out, target_graph, query_parsed["params"])
 
-            reply = json.dumps({"type":"get-reply","reply": out})
+            reply = json.dumps({"type":"get-success","reply": out})
         elif query_parsed["type"] == "pinch": #Takes a node (later, group of nodes, hence "pinch") and create an "is" of it
-            pass
+            out = self.find_nodes(query_parsed["search"], target_graph)
+
+            if len(out) == 1:
+                new_node = [ontology.pinch(out[0], self.get_property_clean("time", query_parsed["params"], 1) )]
+                new_node_as_json = self.convert_to_valid_json(new_node, target_graph, query_parsed["params"])
+                reply = json.dumps({"type":"pinch-success","reply": new_node_as_json})
+            else:
+                reply = json.dumps({"type":"pinch-failure","reply": "wrong number of pinch targets"})
+
         elif query_parsed["type"] == "decide": #given a certain part of the graph, refine the relationships on it. Possably same of different from other types of updates
             pass
         elif query_parsed["type"] == "create": #given a certain part of the graph, refine the relationships on it. Possably same of different from other types of updates
@@ -148,9 +157,9 @@ qf = query_fielder()
 ont = ontology.ontology()
 ont.override_with_sample()
 
-test_query = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
-
-print qf.field_query(test_query, ont)
+get_test_query = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
+pinch_test_query = '{"type": "pinch", "params": {"depth":2, "time":1}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
+print qf.field_query(pinch_test_query, ont)
 
 
 

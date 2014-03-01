@@ -47,7 +47,7 @@ class ontology:
         st = start.type
         et = end.type
         if type == "knows_of"  and st == "noun": valid = True
-        #elif type == "is_a"      and st == "noun" and et == "noun": valid = True
+        elif type == "is_a"    and st == "noun" and et == "noun": valid = True
 
         elif type == "describes" and st == "relationship": valid = True
         elif type == "has_value" and st == "relationship" and et == "value": valid = True
@@ -163,6 +163,11 @@ class ontology:
         new_node = self.add_node("noun", "")
         self.add_relationship(new_node, lang, "named", name)
         return new_node
+
+    def pinch(self, pinch_from, time):
+        new_noun = self.add_node("noun", "")
+        self.add_edge("is_a", new_noun, pinch_from, time, 100)
+        return new_noun
 
 
     def add_relationship(self, src, target, type, value, weight=100, time=1):
