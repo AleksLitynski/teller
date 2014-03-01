@@ -21,19 +21,21 @@ class query_fielder:
 
         if query_parsed["type"] == "get": #fills takes your search and sends out a list of fully classified responses
             out = self.find_nodes(query_parsed["search"], target_graph)
-            out = self.convert_to_json(out, target_graph, query_parsed["params"])
-            print out
+            out = self.convert_to_valid_json(out, target_graph, query_parsed["params"])
+
             reply = json.dumps({"type":"get-reply","reply": out})
         elif query_parsed["type"] == "pinch": #Takes a node (later, group of nodes, hence "pinch") and create an "is" of it
             pass
-        elif query_parsed["type"] == "refine": #given a certain part of the graph, refine the relationships on it. Possably same of different from other types of updates
+        elif query_parsed["type"] == "decide": #given a certain part of the graph, refine the relationships on it. Possably same of different from other types of updates
+            pass
+        elif query_parsed["type"] == "create": #given a certain part of the graph, refine the relationships on it. Possably same of different from other types of updates
             pass
         else:
             reply = "query type: " + query_parsed["type"] + " not implemented yet"
         return reply
 
 
-    def convert_to_json(self, data_to_jsonify, graph, params):
+    def convert_to_valid_json(self, data_to_jsonify, graph, params):
         depth = self.get_property_clean("depth", params, 2)
 
         nodes_to_write = data_to_jsonify
@@ -43,7 +45,7 @@ class query_fielder:
         for node in nodes_to_write:
             as_json.append(self.print_node_as_json(node, graph, depth))
 
-        return json.dumps(as_json)
+        return as_json
 
     def print_node_as_json(self, node, graph, depth):
         as_json = {}

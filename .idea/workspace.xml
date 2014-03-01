@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="689fe3b1-8e84-4bb7-bbcc-05e41501aeea" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/in_python/ontology.py" afterPath="$PROJECT_DIR$/database/in_python/ontology.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/in_python/query_fielder.py" afterPath="$PROJECT_DIR$/database/in_python/query_fielder.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notes/query_lang.txt" afterPath="$PROJECT_DIR$/notes/query_lang.txt" />
     </list>
     <ignored path="teller.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -80,7 +78,7 @@
       <file leaf-file-name="query_fielder.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database/in_python/query_fielder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="23" selection-start="108" selection-end="108" vertical-scroll-proportion="0.18057664" vertical-offset="0" max-vertical-offset="4403">
+            <state line="24" column="0" selection-start="638" selection-end="638" vertical-scroll-proportion="0.54172987" vertical-offset="17" max-vertical-offset="4437">
               <folding />
             </state>
           </provider>
@@ -89,7 +87,7 @@
       <file leaf-file-name="query_lang.txt" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/notes/query_lang.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="113" column="1" selection-start="2952" selection-end="2952" vertical-scroll-proportion="0.0" vertical-offset="1232" max-vertical-offset="2023">
+            <state line="113" column="1" selection-start="2952" selection-end="2952" vertical-scroll-proportion="0.0" vertical-offset="1300" max-vertical-offset="2023">
               <folding />
             </state>
           </provider>
@@ -696,7 +694,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="22" width="1936" height="1066" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -714,7 +712,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1078125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2877551" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2877551" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1047,13 +1045,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/notes/query_lang.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="113" column="1" selection-start="2952" selection-end="2952" vertical-scroll-proportion="0.0" vertical-offset="1232" max-vertical-offset="2023">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/database/in_python/ontology.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="161" column="41" selection-start="5411" selection-end="5411" vertical-scroll-proportion="0.0" vertical-offset="2411" max-vertical-offset="3587">
@@ -1061,9 +1052,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/notes/query_lang.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="113" column="1" selection-start="2952" selection-end="2952" vertical-scroll-proportion="0.0" vertical-offset="1232" max-vertical-offset="2023">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/database/in_python/query_fielder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="23" selection-start="108" selection-end="108" vertical-scroll-proportion="0.18057664" vertical-offset="0" max-vertical-offset="4403">
+        <state line="24" column="0" selection-start="638" selection-end="638" vertical-scroll-proportion="0.54172987" vertical-offset="17" max-vertical-offset="4437">
           <folding />
         </state>
       </provider>
