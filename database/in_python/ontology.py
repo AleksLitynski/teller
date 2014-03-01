@@ -4,7 +4,7 @@ import uuid
 
 class node:
     def __init__(self, id, node_type, value):
-        print id + " => " + node_type + " => " + value
+        #print id + " => " + node_type + " => " + value
         self.id = id
         self.type = node_type
         self.value = value
@@ -160,10 +160,8 @@ class ontology:
         return map( lambda x: self.new_noun_named(x, lang) , names)
 
     def new_noun_named(self, name, lang):
-        print "<-------->"
         new_node = self.add_node("noun", "")
         self.add_relationship(new_node, lang, "named", name)
-        print "<-------->"
         return new_node
 
 

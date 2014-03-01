@@ -21,22 +21,51 @@ class query_fielder:
 
         if query_parsed["type"] == "get": #fills takes your search and sends out a list of fully classified responses
             out = self.find_nodes(query_parsed["search"], target_graph)
-            out = self.convert_to_json(out, target_graph)
-            reply = json.dumps(["reply", out])
-        if query_parsed["type"] == "pinch": #Takes a node (later, group of nodes, hence "pinch") and create an "is" of it
+            out = self.convert_to_json(out, target_graph, query_parsed["params"])
+            print out
+            reply = json.dumps({"type":"get-reply","reply": out})
+        elif query_parsed["type"] == "pinch": #Takes a node (later, group of nodes, hence "pinch") and create an "is" of it
             pass
-        if query_parsed["type"] == "refine": #given a certain part of the graph, refine the relationships on it. Possably same of different from other types of updates
+        elif query_parsed["type"] == "refine": #given a certain part of the graph, refine the relationships on it. Possably same of different from other types of updates
             pass
         else:
             reply = "query type: " + query_parsed["type"] + " not implemented yet"
         return reply
 
 
-    def convert_to_json(self, data_to_jsonify, graph):
-        for j in data_to_jsonify:
-            print "    "
-            print j.id + " => " + j.type + " => " + j.value
-        return str(data_to_jsonify)
+    def convert_to_json(self, data_to_jsonify, graph, params):
+        depth = self.get_property_clean("depth", params, 2)
+
+        nodes_to_write = data_to_jsonify
+
+        as_json = []
+
+        for node in nodes_to_write:
+            as_json.append(self.print_node_as_json(node, graph, depth))
+
+        return json.dumps(as_json)
+
+    def print_node_as_json(self, node, graph, depth):
+        as_json = {}
+        as_json["id"] = node.id
+        as_json["type"] = node.type
+        as_json["value"] = node.value
+        as_json["edges"] = []
+
+        if depth > 0:
+
+            for edge in graph.edges_iter([node]):
+                edge_obj = ontology.get_edge_val(edge, graph) #The object holding the edge's weight
+                edge_json = {}
+                edge_json["direction"] = "inbound" if edge[0] == node else "outbound"
+                edge_json["type"] = edge_obj.type
+                edge_json["weight-at-times"] = edge_obj.weights
+
+                edge_json["terminal"] = self.print_node_as_json(edge[1] if edge[0] is node else edge[0], graph, depth-1)
+
+                as_json["edges"].append(edge_json)
+
+        return as_json
 
 
 
@@ -88,7 +117,7 @@ class query_fielder:
                 terminal_recurse = self.is_valid_node( self.get_property_clean("terminal", query), other_end, graph)
                 edge_ok = edge_ok and terminal_recurse[0]
 
-            print str(self.get_property_clean("terminal", query)) + " -> " + str(edge_ok)
+            #print str(self.get_property_clean("terminal", query)) + " -> " + str(edge_ok)
 
             if edge_ok: return True
 
@@ -117,7 +146,7 @@ qf = query_fielder()
 ont = ontology.ontology()
 ont.override_with_sample()
 
-test_query = '{"type": "get","search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
+test_query = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
 
 print qf.field_query(test_query, ont)
 
@@ -153,6 +182,9 @@ print qf.field_query(test_query, ont)
 
 {
     "type": "get",
+    "params": {
+        "depth": 2
+    },
     "search": {
         "edges": [
             {
