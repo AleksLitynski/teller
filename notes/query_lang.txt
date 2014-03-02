@@ -136,7 +136,7 @@ Node sharing:
 -
 
 1) Support deep query for "get" / respond with proper format < done
-2) Allow single pinch to make perfect "is a" <-
+2) Allow single pinch to make perfect "is a" < done
 3) Allow ranges of (value/target)
 4) Allow DECIDE to pull down certain features
 

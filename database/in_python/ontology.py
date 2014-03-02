@@ -2,13 +2,18 @@ import networkx as nx
 import pickle
 import uuid
 
+#A node has an uuid, a type, and a value. Types may be used by the DB, values never will be.
 class node:
     def __init__(self, id, node_type, value):
-        #print id + " => " + node_type + " => " + value
         self.id = id
         self.type = node_type
         self.value = value
 
+#Edge src and dest are stored by networkX. I store edge weights here.
+#Weights vary over time. Only part of the graph that varies over time.
+#Weights are a % chances that the edge "really exists" at a given time.
+#This will be optimized into a list of ranges later.
+#By making edges exist over time, the graph doesn't NEED to be mutable (although I bet some people would like it if it were)
 class edge:
     def __init__(self, edge_type):
         self.type = edge_type
@@ -19,11 +24,19 @@ class edge:
     def add_weight(self, time, weight):
         self.weights[time] = weight
 
+#An ontology has:
+#Add node
+#Add edge
+#Graph
+#save
+#load
+#debug helper functions
 class ontology:
     def __init__(self):
         self.graph = nx.Graph()
         pass
 
+    #confirms the node if of a valid type and adds it to the graph with a UUID
     def add_node(self, type, value):
         #print type + " " + value + "<----"
         valid_nodes = [ "noun",
@@ -42,10 +55,12 @@ class ontology:
             new_node = type + " is invalid node type"
         return new_node
 
+    #confirms edge type and adds it to the graph.
     def add_edge(self, type, start, end, time, weight):
         valid = False
         st = start.type
         et = end.type
+        #confirms the edge is a valid type with valid start and end points
         if type == "knows_of"  and st == "noun": valid = True
         elif type == "is_a"    and st == "noun" and et == "noun": valid = True
 
@@ -62,24 +77,24 @@ class ontology:
         #find existing edge else, add new edge
         #add weight to edge
         new_edge = "not a valid edge"
-        if valid:
+        if valid: #look and see if the edge already exists
             is_new_edge = True
             new_edge = edge(type)
-            for edge_off_start in self.graph.edges([start]): #itterating bad. Fix, fix, fix
+            for edge_off_start in self.graph.edges_iter([start]): #itterating bad. Fix, fix, fix
                 if edge_off_start[0] == start and edge_off_start[1] == end:
                     new_edge = get_edge_val(edge_off_start, self.graph)
                     is_new_edge = False
                     break
-            if is_new_edge:
+            if is_new_edge: #If it doesn't exist, add the edge
                 self.graph.add_edge(start, end, {"edge": new_edge})
 
-            new_edge.add_weight(time, weight)
+            new_edge.add_weight(time, weight) # update the edge's weight with this new weight
 
         return new_edge
 
 
 
-    #prints out the whole graph.
+    #prints out the whole graph as text
     def print_all(self):
         return self.show_locally()
 
@@ -94,7 +109,7 @@ class ontology:
 
 
 
-
+    #fills the graph with a simple sampling
     def override_with_sample(self):
         #createes an ontology and adds some fakie nodes.
         self.graph = nx.Graph()
@@ -104,7 +119,7 @@ class ontology:
 
 
         "Chair, Table; Material: Plastic, wood, metal"
-        chair = self.new_noun_named("chair", english)
+        chair = self.new_noun_named("chair", english) #lots of helper functions for more sprawling graph structures
         table = self.new_noun_named("table", english)
         plastic = self.new_noun_named("plastic", english)
         wood = self.new_noun_named("wood", english)
@@ -124,11 +139,13 @@ class ontology:
         self.add_relationship(bed, bed_frame, "has_a", "True")
         self.add_relationship(bed, blanket, "has_a", "True")
 
+        #Adds a noun for each color
         colors = self.new_nouns_named(["burgundy", "violet", "goldenrod",
                         "fuchsia", "lavender", "beige", "azure",
                         "chartreuse", "celadon", "sage", "paisley",
-                        "plaid", "tartan", "scarlet"], english)
+                        "plaid", "tartan", "scarlet"], english) # <_________THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
 
+        #adds a relationship to each color
         for color in colors:
             self.add_relationship(blanket, color, "colored", "True")
 
@@ -169,7 +186,7 @@ class ontology:
         self.add_edge("is_a", new_noun, pinch_from, time, 100)
         return new_noun
 
-
+    #wraps the process of adding a relationship. Nice.
     def add_relationship(self, src, target, type, value, weight=100, time=1):
 
         re = self.add_node("relationship", "")
@@ -187,6 +204,7 @@ def get_edge_val(edge_tuple, graph):
 
 ont = ontology()
 ont.override_with_sample()
+#nx.draw(ont.graph)
 #onr.save()
 #ont.load()
 #ont.show_locally()
