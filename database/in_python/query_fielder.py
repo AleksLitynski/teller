@@ -153,20 +153,21 @@ class query_fielder:
         return prop_value
 
 
+if __name__ == '__main__':
 
-#Creates the fielder
-qf = query_fielder()
-#Creates ontology
-ont = ontology.ontology()
-#Fills ontology with simple sample
-#ont.override_with_sample()
-ont.override_with_random_room()
+    #Creates the fielder
+    qf = query_fielder()
+    #Creates ontology
+    ont = ontology.ontology()
+    #Fills ontology with simple sample
+    #ont.override_with_sample()
+    ont.override_with_random_room()
 
-#A test get and test pinch query
-get_test_query = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
-room_test = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "room"}}]}}]}}'
-pinch_test_query = '{"type": "pinch", "params": {"depth":2, "time":1}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
-print qf.field_query(room_test, ont)
+    #A test get and test pinch query
+    get_test_query = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
+    room_test = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "room"}}]}}]}}'
+    pinch_test_query = '{"type": "pinch", "params": {"depth":2, "time":1}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
+    print qf.field_query(room_test, ont)
 
 
 

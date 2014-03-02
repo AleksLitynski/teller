@@ -231,11 +231,12 @@ class ontology:
 def get_edge_val(edge_tuple, graph):
     return graph[edge_tuple[0]][edge_tuple[1]]["edge"]
 
+if __name__ == '__main__':
 
-ont = ontology()
-ont.override_with_sample()
-#nx.draw(ont.graph)
-#onr.save()
-#ont.load()
-#ont.show_locally()
+    ont = ontology()
+    ont.override_with_sample()
+    #nx.draw(ont.graph)
+    #onr.save()
+    #ont.load()
+    #ont.show_locally()
 

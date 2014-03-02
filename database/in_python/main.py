@@ -10,12 +10,13 @@ class TCPHandler(SocketServer.BaseRequestHandler):
         self.request.sendall( fielder.field_query(self.data, game_ontology) )
 
 
-
-game_ontology = ontology.ontology()
-game_ontology.override_with_sample()
-print "starting TCP listener"
-server = SocketServer.TCPServer(("localhost", 5005), TCPHandler)
-server.serve_forever()
+if __name__ == '__main__':
+    game_ontology = ontology.ontology()
+    #game_ontology.override_with_sample()
+    game_ontology.override_with_random_room()
+    print "starting TCP listener"
+    server = SocketServer.TCPServer(("localhost", 5005), TCPHandler)
+    server.serve_forever()
 
 
 
