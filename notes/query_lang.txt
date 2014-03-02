@@ -26,12 +26,47 @@
 #an example. Will return all nodes named "fred":
 {
 	type: "get",
+	params : {
+	    depth:2
+
+	},
 	search: {
 		edges: [direction: "inbound",
 		type: "described_by",
-		weight-time:"GAMETIME",
+		weight-time:"1",
 		terminal: {
 			type: "adjective", 
+			edges: [ {
+				terminal: {
+					type: "type",
+					value: "name"
+				},{
+				terminal: {
+					type: "value",
+					value: "fred"
+				}]
+		}]
+	}
+}
+
+
+
+
+
+#an example of pinch. Will return a node that is an instance of "fred"
+#Fails if from describes multiple nodes
+#returns the new node
+{
+	type: "pinch",
+	params : {
+	    depth:2
+	},
+	search: {
+		edges: [direction: "inbound",
+		type: "described_by",
+		weight-time:"1",
+		terminal: {
+			type: "adjective",
 			edges: [ {
 				terminal: {
 					type: "type",
@@ -53,3 +88,62 @@
 
 #We will expand so you can do more than "get". 
 #There will be modifiying queries for both nodes and edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Standing questions:
+has a is a relationship.
+Relationship Untions (options/ranges/w/ever) need to include applicable targets as well.
+
+
+noun  -> rel <- type
+       ^     <- value
+        \______ target
+
+Union needs to be of (values and targets)
+
+Is A is still valid.
+
+
+
+GET just analyses.
+DECIDE uses ranges/is a to choose a valid value, or accept suggestions for values.
+PINCH pull a node from one or more nodes
+CREATE add nodes/edges a-fresh.
+
+
+
+
+Node sharing:
+- type is always shared.
+- share value. Over time, let it change to target new/specific values
+-
+
+1) Support deep query for "get" / respond with proper format < done
+2) Allow single pinch to make perfect "is a" < done
+3) Allow ranges of (value/target)
+4) Allow DECIDE to pull down certain features
+
+
+
+
+{
+   "reply":"[{\"edges\": [{\"weight-at-times\": {\"1\": 100}, \"terminal\": {\"edges\": [{\"weight-at-times\": {\"1\": 100}, \"terminal\": {\"edges\": [], \"type\": \"noun\", \"id\": \"a6589ce1-a18e-11e3-8c9f-0c8bfd663964\", \"value\": \"\"}, \"direction\": \"inbound\", \"type\": \"regarding\"}, {\"weight-at-times\": {\"1\": 100}, \"terminal\": {\"edges\": [], \"type\": \"noun\", \"id\": \"a658c3f3-a18e-11e3-89e5-0c8bfd663964\", \"value\": \"\"}, \"direction\": \"inbound\", \"type\": \"describes\"}, {\"weight-at-times\": {\"1\": 100}, \"terminal\": {\"edges\": [], \"type\": \"value\", \"id\": \"a658c3f6-a18e-11e3-a5b5-0c8bfd663964\", \"value\": \"fred\"}, \"direction\": \"inbound\", \"type\": \"has_value\"}, {\"weight-at-times\": {\"1\": 100}, \"terminal\": {\"edges\": [], \"type\": \"type\", \"id\": \"a658c3f5-a18e-11e3-8db1-0c8bfd663964\", \"value\": \"named\"}, \"direction\": \"inbound\", \"type\": \"has_type\"}], \"type\": \"relationship\", \"id\": \"a658c3f4-a18e-11e3-8f8f-0c8bfd663964\", \"value\": \"\"}, \"direction\": \"inbound\", \"type\": \"describes\"}], \"type\": \"noun\", \"id\": \"a658c3f3-a18e-11e3-89e5-0c8bfd663964\", \"value\": \"\"}]",
+   "type":"get-reply"
+}

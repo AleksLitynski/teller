@@ -26,12 +26,12 @@ def printFunc(say):
  
 def receiveData():
 	printFunc("RECEIVE DATA")
-	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	s.connect(("127.0.0.1", 5005))
-	s.send("give me the booty")
-	data = s.recv(1024)
-	s.close()
-	return data
+	#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	#s.connect(("127.0.0.1", 5005))
+	#s.send("give me the booty")
+	#data = s.recv(1024)
+	#s.close()
+	return open("dataDummy.txt").read()
 
 def sendJson(handler):
 	printFunc("SendJson")
@@ -76,7 +76,9 @@ class web_handler(BaseHTTPRequestHandler):
 			'/data.json': sendJson
 		}
 		try : response[self.path](self)
-		except : sendRequested(self)
+		except :
+			printAlert("EXCEPTION RAISED");
+			sendRequested(self)
 
 #start the web server.
 web_server = HTTPServer(('', 8080), web_handler)
