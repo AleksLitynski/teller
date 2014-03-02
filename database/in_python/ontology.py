@@ -1,6 +1,7 @@
 import networkx as nx
 import pickle
 import uuid
+from random import choice
 
 #A node has an uuid, a type, and a value. Types may be used by the DB, values never will be.
 class node:
@@ -117,41 +118,70 @@ class ontology:
         self.add_relationship(english, english, "named", "english")
         frank = self.new_noun_named("fred", english)
 
+    def override_with_random_room(self):
+        self.graph = nx.Graph()
+        english = self.add_node("noun", "")
+        self.add_relationship(english, english, "named", "english")
 
-        "Chair, Table; Material: Plastic, wood, metal"
+        room = self.new_noun_named("room", english)
+        objects_in_room = []
+
         chair = self.new_noun_named("chair", english) #lots of helper functions for more sprawling graph structures
+        objects_in_room.append(chair)
+
         table = self.new_noun_named("table", english)
-        plastic = self.new_noun_named("plastic", english)
-        wood = self.new_noun_named("wood", english)
-        metal = self.new_noun_named("metal", english)
-        self.add_relationship(chair, plastic, "is_made_of", "True")
-        self.add_relationship(chair, wood, "is_made_of", "True")
-        self.add_relationship(chair, metal, "is_made_of", "True")
-        self.add_relationship(table, plastic, "is_made_of", "True")
-        self.add_relationship(table, wood, "is_made_of", "True")
-        self.add_relationship(table, metal, "is_made_of", "True")
+        objects_in_room.append(table)
+
+
+        materials = self.new_nouns_named(["plastic", "wood", "aluminum", "duct tape"], english) #make a node for each material
+        self.add_relationship(chair, choice(materials), "is_made_of", "True") #declare we are made of ONE material
+        self.add_relationship(table, choice(materials), "is_made_of", "True")
 
 
 
         bed = self.new_noun_named("bed", english)
-        bed_frame = self.new_noun_named("bed frame", english)
+        objects_in_room.append(bed)
         blanket = self.new_noun_named("blanket", english)
-        self.add_relationship(bed, bed_frame, "has_a", "True")
         self.add_relationship(bed, blanket, "has_a", "True")
 
         #Adds a noun for each color
-        colors = self.new_nouns_named(["burgundy", "violet", "goldenrod",
-                        "fuchsia", "lavender", "beige", "azure",
-                        "chartreuse", "celadon", "sage", "paisley",
-                        "plaid", "tartan", "scarlet"], english) # <_________THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
-
-        #adds a relationship to each color
-        for color in colors:
-            self.add_relationship(blanket, color, "colored", "True")
+        colors = self.new_nouns_named(["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"], english) # <_________THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
+        self.add_relationship(blanket, choice(colors), "colored", "True")
 
         bed_sizes = self.new_nouns_named(["twin", "double", "queen", "king"], english)
-        for size in bed_sizes:
-            self.add_relationship(bed, size, "size", "True")
+        self.add_relationship(bed, choice(bed_sizes), "size", "True")
+
+        floor = self.new_noun_named("floor", english)
+        objects_in_room.append(floor)
+
+
+
+        cup = self.new_noun_named("cup", english)
+        self.add_relationship(choice(objects_in_room), cup, "has_a", "True")
+        self.add_relationship(cup, choice(materials), "is_made_of", "True")
+
+        liquids = self.new_nouns_named(["water", "juice", "wine", "soda", "nothing"], english)
+        self.add_relationship(cup, choice(liquids), "contains", "True")
+
+
+        lamp = self.new_noun_named("lamp", english)
+        self.add_relationship(choice(objects_in_room), lamp, "has_a", "True")
+        power_state = self.new_nouns_named(["on", "off"], english)
+        self.add_relationship(lamp, choice(power_state), "is_currently_turned", "True")
+
+
+        book = self.new_noun_named("book", english)
+        self.add_relationship(choice(objects_in_room), book, "has_a", "True")
+        book_titles = self.new_nouns_named(["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force", "The Vengeful Penguin", "Ninjas Guide to Ornamental Horticulture", "Neko-nomicon; This is Not a Book"], english)
+        self.add_relationship(book, choice(book_titles), "titled", "True")
+
+
+
+
+        for object_in_room in objects_in_room:
+            self.add_relationship(room, object_in_room,"has_a", "True")
+
+
 
 
 
@@ -209,23 +239,3 @@ ont.override_with_sample()
 #ont.load()
 #ont.show_locally()
 
-"""
-
-
-
-
-Cup
-is on: (bed, chair, table, floor)
-Material: Plastic, wood, metal, glass, ceramic
-Contains: Water, juice, wine, soda, nothing
-
-Lamp
-is on: (bed, chair, table, floor)
-On/off
-
-Book
-is on: (bed, chair, table, floor)
-Title:
-(Dreams of Potatoes; Tequila Sunrise; The Kraken; 40 Cakes; Spectral Robot Task Force; The Vengeful Penguin; Ninjas Guide to Ornamental Horticulture; Neko-nomicon; This is Not a Book)
-
-"""
