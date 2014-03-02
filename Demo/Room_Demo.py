@@ -34,12 +34,17 @@ roomContents=[chair[0],table[0],bed[0]]
 #Since chair[0] and table[0] are the basic versions of these objects, we don't need to worry about the range not including them
 def inspectObject(obj):
 	if obj[0] == "chair":
-		roomContents[0] = chair[random.randint(0,3)] #pick a random chair
+		if roomContents[0] == "chair":
+			roomContents[0] = chair[random.randint(0,3)] #pick a random chair
+			
 	elif obj[0] == "table":
 		roomContents[1] = table[random.randint(1,3)]
+		
 	elif obj[0] == "bed":
 		#Frame, then type, then color. Reduce random number by 1 because arrays are 0-indexed
 		roomContents[2] = "a " + hardMats[random.randint(0,3) - 1] + " " + bedSizes[random.randint(0,4) - 1] + " bed covered with a " + colors[random.randint(0,14) - 1] + " blanket"
+	
+	
 #fill the room with stuff!
 def fillRoom():
 	#This code isn't working
@@ -56,15 +61,50 @@ def fillRoom():
 def sitOnIt(obj):
 	print("You sit on the " + obj);
 
+def jumpOnIt(obj):
+	print("You jump on the " + obj);
+
+
+#Not work it. This is breaking too many things
+# def UserAction(action):
+	
+	#object represents something you want to do stuff to
+	# object = []
+	
+	
+	
+	# if "chair" in action:
+		# object = chair
+	# elif "table" in action:
+		# object = table
+	# elif "bed" in action:
+		# object = bed
+	
+	# if ("look at " + object[0]) in action:
+		# for cont in roomContents:
+			# if object[0] == cont:
+				# inspectObject(object) #look for the object
+			# else:
+				# print (object[0])
+				
+	# if ("sit on " + object[0]) in action:
+		# sitOnIt(obj[0])
+	
+	
+		
+	
 def chairNode(action):
 	if "chair" in action: 
 		
 			if(roomContents[0] == chair[0]):
 				inspectObject(chair)
 			
-			if "sit on chair" in action:
+			if "sit" in action:
 				sitOnIt(chair[0])
 			
+			if "jump" in action:
+				jumponit(chair[0])
+				
 			else:
 				print(roomContents[0])
 
@@ -76,6 +116,9 @@ def tableNode(action):
 			
 			if "sit" in action:
 				sitOnIt(table[0])
+				
+			if "jump" in action:
+				jumponit(table[0])
 			
 			else:
 				print(roomContents[1])
@@ -88,6 +131,9 @@ def bedNode(action):
 			
 			if "sit" in action:
 				sitOnIt(bed[0])
+				
+			if "jump" in action:
+				jumponit(bed[0])
 			
 			else:
 				print(roomContents[2])	
@@ -99,6 +145,9 @@ def testLoop():
 		print ("")
 		action = input()
 		
+		#Fuck it. This was a bad idea.
+		#UserAction(action)
+		
 		#do stuff with objects
 		chairNode(action)
 		tableNode(action)
@@ -108,6 +157,8 @@ def testLoop():
 		if action == "exit":
 			break 
 		
+#This code runs as soon as the game starts...	
 #Run the game!
 fillRoom()
 testLoop()
+
