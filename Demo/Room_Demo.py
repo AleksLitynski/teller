@@ -56,6 +56,30 @@ def fillRoom():
 def sitOnIt(obj):
 	print("You sit on the " + obj);
 
+def UserAction(action):
+	
+	#object represents something you want to do stuff to
+	object = ""
+	
+	obj[roomContents[0], roomContents[1], roomContents[2]]
+	inspected[roomContents[0], roomContents[1], roomContents[2]]
+	
+	if "chair" in action:
+		object = roomContents[0]
+	elif "table" in action:
+		object = roomContents[1]
+	elif "bed" in action:
+		object = roomContents[2]
+	
+	if ("sit on " + object) in action:
+		sitOnIt(obj)
+		
+	if ("look at " + object) in action:
+		if inspected[0] == object:
+			inspectObject(inspected[0])
+			inspectObject = roomContents
+		
+	
 def chairNode(action):
 	if "chair" in action: 
 		
@@ -99,6 +123,8 @@ def testLoop():
 		print ("")
 		action = input()
 		
+		#UserAction(action)
+		
 		#do stuff with objects
 		chairNode(action)
 		tableNode(action)
@@ -108,6 +134,7 @@ def testLoop():
 		if action == "exit":
 			break 
 		
+#This code runs as soon as the game starts...	
 #Run the game!
 fillRoom()
 testLoop()
