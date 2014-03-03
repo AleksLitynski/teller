@@ -41,6 +41,18 @@
 		sig.refresh();
 		sig.render();
 	}
+	function addSearchResult(){
+		var xhr = sigma.utils.xhr();
+		xhr.open('GET', 'search', true);
+		
+		xhr.onreadystatechange  = function(){
+			if (xhr.readyState === 4) {
+					graph = JSON.parse(xhr.responseText);
+					patchNewData(graph.nodes,graph.edges);
+				}
+		};
+		xhr.send();
+	}
 	function addInstancesSeparated(){
 		var xhr = sigma.utils.xhr();
 		xhr.open('GET', 'dataDummy00', true);
@@ -83,8 +95,7 @@
 	
 		$(document).ready(function() {
 			url='data.json';
-			s = document.getElementById('container')
-			sig ={container: document.getElementById('container'),settings: {defaultNodeColor: '#eb2148'} };
+			sig ={container: document.getElementById('graph-container'),settings: {defaultNodeColor: '#eb2148'} };
 			//document.getElementById('container') = sig;
 			var xhr = sigma.utils.xhr();
 
@@ -108,29 +119,25 @@
     }); //end of init
 	</script>
 
-  <style type="text/css">
-    /* sigma.js context : */
-    .sigma {
-      margin-left:auto;
-      margin-right:auto;
-      position: relative;
-      border-radius: 4px;
-      -moz-border-radius: 4px;
-      -webkit-border-radius: 4px;
-      background: #222;
-      width: 80%;
-      height: 80%;
-      top: 0;
-      left: 0;
-    }
-  </style>
 
 </head>
 
 <body>
-	<div id="container" style = ""> 
+	<div id="container" style = "position: absolute, left : 0; "> 
+	 <style>
+    #graph-container {
+      top: 100;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+    }
+  </style>
+  <div id="graph-container"></div>
+  
 	<button onClick = "addInstancesSeparated()" type ="button">Separated</button>
 	<button onClick = "addInstancesOverlapping()" type ="button">Overlapping</button>
+	<button onClick = "addSearchResult()" type ="button">FakeSarch</button>
 	<button onClick = "addInstance_Dot()" type ="button">add Dot</button>
 	</div>
     

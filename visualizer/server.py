@@ -1,6 +1,7 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import socket
-
+import json
+import SearchInterpreter
 
 #Hey you cannot have global variable. unless you do,
 #global nameOfVariableHere
@@ -40,6 +41,12 @@ def sendDummy00(handler):
 	handler.wfile.write(open("dataDummy00.txt").read())
 def sendDummy01(handler):
 	handler.wfile.write(open("dataDummy01.txt").read())
+def sendSearch(handler):
+	printFunc("SEARCH")
+	searchResult = open("dataSearch.txt").read()
+	read = SearchInterpreter.read(searchResult);
+	handler.wfile.write(json.dumps(read))
+
 	
 #send them whatever file they asked for.
 def sendRequested(handler):
@@ -56,7 +63,7 @@ def ERROR_NO_INDEX(handler):
 	printFunc("ERROR_NO_INDEX")
 	handler.path = "/index.html"
 	sendRequested(handler);
-	
+
 #used by HTTPServer to field all queries.	
 class web_handler(BaseHTTPRequestHandler):
 #I decided to just leave this one function here
@@ -79,7 +86,8 @@ class web_handler(BaseHTTPRequestHandler):
 			'' :	ERROR_NO_INDEX,
 			'/data.json': sendJson,
 			'/dataDummy00' : sendDummy00,
-			'/dataDummy01' : sendDummy01
+			'/dataDummy01' : sendDummy01,
+			'/search' : sendSearch
 		}
 		try : response[self.path](self)
 		except :
@@ -87,5 +95,7 @@ class web_handler(BaseHTTPRequestHandler):
 			sendRequested(self)
 
 #start the web server.
+
+	
 web_server = HTTPServer(('', 8080), web_handler)
 web_server.serve_forever()
