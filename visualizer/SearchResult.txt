@@ -1,0 +1,73 @@
+{
+            "edges": [
+                {
+                    "weight-at-times": {
+                        "1": 100
+                    },
+                    "terminal": {
+                        "edges": [
+                            {
+                                "weight-at-times": {
+                                    "1": 100
+                                },
+                                "terminal": {
+                                    "edges": [],
+                                    "type": "noun",
+                                    "id": "83ebded3-a191-11e3-8d60-0c8bfd663964",
+                                    "value": ""
+                                },
+                                "direction": "inbound",
+                                "type": "describes"
+                            },
+                            {
+                                "weight-at-times": {
+                                    "1": 100
+                                },
+                                "terminal": {
+                                    "edges": [],
+                                    "type": "noun",
+                                    "id": "83ebdecf-a191-11e3-b32e-0c8bfd663964",
+                                    "value": ""
+                                },
+                                "direction": "inbound",
+                                "type": "regarding"
+                            },
+                            {
+                                "weight-at-times": {
+                                    "1": 100
+                                },
+                                "terminal": {
+                                    "edges": [],
+                                    "type": "type",
+                                    "id": "83ebded5-a191-11e3-a683-0c8bfd663964",
+                                    "value": "named"
+                                },
+                                "direction": "inbound",
+                                "type": "has_type"
+                            },
+                            {
+                                "weight-at-times": {
+                                    "1": 100
+                                },
+                                "terminal": {
+                                    "edges": [],
+                                    "type": "value",
+                                    "id": "83ebded6-a191-11e3-89b0-0c8bfd663964",
+                                    "value": "fred"
+                                },
+                                "direction": "inbound",
+                                "type": "has_value"
+                            }
+                        ],
+                        "type": "relationship",
+                        "id": "83ebded4-a191-11e3-b95b-0c8bfd663964",
+                        "value": ""
+                    },
+                    "direction": "inbound",
+                    "type": "describes"
+                }
+            ],
+            "type": "noun",
+            "id": "83ebded3-a191-11e3-8d60-0c8bfd663964",
+            "value": ""
+        }

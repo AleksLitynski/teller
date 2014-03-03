@@ -25,7 +25,7 @@ def printFunc(say):
 #if you do so then maybe feedback?
  
 def receiveData():
-	printFunc("RECEIVE DATA")
+	#printFunc("RECEIVE DATA")
 	#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	#s.connect(("127.0.0.1", 5005))
 	#s.send("give me the booty")
@@ -36,7 +36,11 @@ def receiveData():
 def sendJson(handler):
 	printFunc("SendJson")
 	handler.wfile.write(receiveData())
-
+def sendDummy00(handler):
+	handler.wfile.write(open("dataDummy00.txt").read())
+def sendDummy01(handler):
+	handler.wfile.write(open("dataDummy01.txt").read())
+	
 #send them whatever file they asked for.
 def sendRequested(handler):
 	printFunc("SendingRequested")
@@ -73,7 +77,9 @@ class web_handler(BaseHTTPRequestHandler):
 		response = {
 			'/' :	ERROR_NO_INDEX,
 			'' :	ERROR_NO_INDEX,
-			'/data.json': sendJson
+			'/data.json': sendJson,
+			'/dataDummy00' : sendDummy00,
+			'/dataDummy01' : sendDummy01
 		}
 		try : response[self.path](self)
 		except :
