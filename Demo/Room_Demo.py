@@ -64,7 +64,7 @@ def jumpOnIt(obj):
 	print("You jump on the " + obj + ".")
 
 def duckAndCover(obj):
-	print("You climb under the " + obj + ".")
+	print("You crawl under the " + obj + ".")
 	
 def lift(obj):
 	print("You lift the " + obj + " off of the ground.")
