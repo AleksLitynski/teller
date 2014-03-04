@@ -1,6 +1,9 @@
 #needed for user input
 import sys
 import random
+#importing our stuff
+import json
+from Query_Explorer import *
 
 #Create an array of chairs, tables, and beds
 chair=[]
