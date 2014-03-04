@@ -24,17 +24,17 @@
   ],
   "edges": [
     {
-      "id": "e0",
+      "id": "n0",
       "source": "n0",
       "target": "n1"
     },
     {
-      "id": "e1",
+      "id": "n1",
       "source": "n1",
       "target": "n2"
     },
     {
-      "id": "e2",
+      "id": "n2",
       "source": "n2",
       "target": "n0"
     }
