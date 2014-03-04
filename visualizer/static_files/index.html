@@ -11,116 +11,203 @@
     
 	<script src="scripts/sigma.min.js"></script>
 	<script src="scripts/plugins/sigma.parsers.json.min.js"></script>
-
+	<div id = "myDiv" > </div>
 	<script>
-	var graph;
-	//https://github.com/jacomyal/sigma.js/wiki/Public-API
-	//https://github.com/jacomyal/sigma.js/wiki add node
-		//var s = sigma.parsers.json('data.json', {
-		//	container: 'container',
-		//	settings: {defaultNodeColor: '#ec5148'}
-		//});
-		
-		$(document).ready(function() {
-		url='data.json', sig ={container: 'container',settings: {defaultNodeColor: '#eb2148'} };
-		s = document.getElementById('container');
-		
-		//	var sigRoot = document.getElementById('sig');
-		//	var sigInst = sigma.init(sigRoot);
-		
-		
-		
-	var xhr = sigma.utils.xhr();
-
-    if (!xhr)
-      throw 'XMLHttpRequest not supported, cannot load the file.';
-
-    xhr.open('GET', url, true);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-        graph = JSON.parse(xhr.responseText);
-
-        // Update the instance's graph:
-        if (sig instanceof sigma) {
-          sig.graph.clear();
-          sig.graph.read(graph);
-
-        
-        } else if (typeof sig === 'object') {
-          sig.graph = graph;
-          sig = new sigma(sig);
-
-        // ...or it's finally the callback:
-        } else if (typeof sig === 'function') {
-          callback = sig;
-          sig = null;
-        }
-
-        // Call the callback if specified:
-        //if (callback) callback(sig || graph);
-      }
-    };
-    xhr.send();
 	
-    xhr.open('GET', url, true);
-	xhr.onreadystatechange = function() {
-	if (xhr.readyState === 4){
-        graph = JSON.parse(xhr.responseText);
-        //graph = JSON.parse(xhr.responseText);
-		if (sig instanceof sigma) {
-			console.log("update");
-			sig.graph.clear();
-			sig.graph.read(graph);
-		}//instanciate sigma if needed:
-		else if (typeof sig === 'object') {
-			console.log("instantiate");
-			sig.graph = graph;
-			sig = new sigma(sig);
-			
-			//sig.graph.clear();
-			
-					
-			sig.graph.addNode({
-						"id": "n3",
-						"label": "I Am the new one",
-						"x": 0,
-						"y": 0,
-						"size": 3
-						});
-			sig.refresh();
+  // Add a method to the graph model that returns an
+  // object with every neighbors of a node inside:
+  sigma.classes.graph.addMethod('neighbors', function(nodeId) {
+    var k,
+        neighbors = {},
+        index = this.allNeighborsIndex[nodeId] || {};
+
+    for (k in index)
+      neighbors[k] = this.nodesIndex[k];
+
+    return neighbors;
+  });
+  
+  
+</script>
+	<script>
+	var sig;
+	
+	function patchNewData(nodes, edges){
+		for (var i  = 0 ; i < nodes.length;i++){
+			n = nodes[i];
+			try{
+				console.log(nodes[i]);
+				sig.graph.addNode(n);
+			}
+			catch(exception){console.log("Failed to node at " +i);}
 		}
+		for (var i  = 0 ; i < edges.length;i++){
+			n = edges[i];
+			try{
+				console.log(nodes[i]);
+				sig.graph.addEdge(n);
+			}
+			catch(excep){console.log("Failed to edge at " +i);}
 		}
 		
-    };
-	xhr.send();
+		sig.refresh();
+		sig.render();
+	}
+	function addSearchResult(){
+		var xhr = sigma.utils.xhr();
+		xhr.open('GET', 'search', true);
+		
+		xhr.onreadystatechange  = function(){
+			if (xhr.readyState === 4) {
+					graph = JSON.parse(xhr.responseText);
+					patchNewData(graph.nodes,graph.edges);
+				}
+		};
+		xhr.send();
+	}
+	function addInstancesSeparated(){
+		var xhr = sigma.utils.xhr();
+		xhr.open('GET', 'dataDummy00', true);
+		
+		xhr.onreadystatechange  = function(){
+			if (xhr.readyState === 4) {
+					graph = JSON.parse(xhr.responseText);
+					patchNewData(graph.nodes,graph.edges);
+				}
+		};
+		xhr.send();
+	}
+	function addInstancesOverlapping(){
+		var xhr = sigma.utils.xhr();
+		xhr.open('GET', 'dataDummy01', true);
+		
+		xhr.onreadystatechange  = function(){
+			if (xhr.readyState === 4) {
+					graph = JSON.parse(xhr.responseText);
+					patchNewData(graph.nodes,graph.edges);
+				}
+		};
+		xhr.send();
+	}
+	function addInstance_Dot() {
+		var xhr = sigma.utils.xhr();
+		console.log("instantiate" + graph);
 	
-    });
-  </script>
+		sig.graph.addNode({
+					"id": "n3",
+					"label": "I Am the dot but I don't really help you to improve this graph",
+					"x": 0,
+					"y": 0,
+					"size": 3
+					});
+		sig.refresh();
+		sig.render();
+	};
+	
+	function newDataAdded(s) {
+      // We first need to save the original colors of our
+      // nodes and edges, like this:
+      s.graph.nodes().forEach(function(n) {
+        n.originalColor = n.color;
+      });
+      s.graph.edges().forEach(function(e) {
+        e.originalColor = e.color;
+      });
 
-  <style type="text/css">
-    /* sigma.js context : */
-    .sigma {
-      margin-left:auto;
-      margin-right:auto;
-      position: relative;
-      border-radius: 4px;
-      -moz-border-radius: 4px;
-      -webkit-border-radius: 4px;
-      background: #222;
-      width: 80%;
-      height: 80%;
-      top: 0;
-      left: 0;
+      // When a node is clicked, we check for each node
+      // if it is a neighbor of the clicked one. If not,
+      // we set its color as grey, and else, it takes its
+      // original color.
+      // We do the same for the edges, and we only keep
+      // edges that have both extremities colored.
+      s.bind('clickNode', function(e) {
+        var nodeId = e.data.node.id,
+            toKeep = s.graph.neighbors(nodeId);
+        toKeep[nodeId] = e.data.node;
+
+        s.graph.nodes().forEach(function(n) {
+          if (toKeep[n.id])
+            n.color = n.originalColor;
+          else
+            n.color = '#eee';
+        });
+
+        s.graph.edges().forEach(function(e) {
+          if (toKeep[e.source] && toKeep[e.target])
+            e.color = e.originalColor;
+          else
+            e.color = '#eee';
+        });
+
+        // Since the data has been modified, we need to
+        // call the refresh method to make the colors
+        // update effective.
+        s.refresh();
+      });
+
+      // When the stage is clicked, we just color each
+      // node and edge with its original color.
+      s.bind('clickStage', function(e) {
+        s.graph.nodes().forEach(function(n) {
+          n.color = n.originalColor;
+        });
+
+        s.graph.edges().forEach(function(e) {
+          e.color = e.originalColor;
+        });
+
+        // Same as in the previous event:
+        s.refresh();
+      });
     }
-  </style>
+	
+		$(document).ready(function() {
+			url='data.json';
+			sig ={container: document.getElementById('graph-container'),settings: {defaultNodeColor: '#eb2148'} };
+			//document.getElementById('container') = sig;
+			var xhr = sigma.utils.xhr();
+			
+			if (!xhr)
+			throw 'XMLHttpRequest not supported, cannot load the file.';
+
+			xhr.open('GET', url, true);
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState === 4) {
+					graph = JSON.parse(xhr.responseText);
+					sig.graph = graph;
+					sig = new sigma(sig);
+					newDataAdded(sig);
+				}
+			};
+			xhr.send();
+			//starting new here
+			//xhr.open('GET', url, true);
+			
+			//xhr.send();
+	
+    }); //end of init
+	</script>
+
 
 </head>
 
 <body>
-	<div class="sigma" id="sig"></div>
-	<div id="container" style = ""> 
+	<div id="container" style = "position: absolute, left : 0; "> 
 	
-	<button type ="button">Click Me</button>
+  <style>
+    #graph-container {
+      top: 100;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+    }
+  </style>
+  <div id="graph-container"></div>
+	<button onClick = "addInstancesSeparated()" type ="button">Separated</button>
+	<button onClick = "addInstancesOverlapping()" type ="button">Overlapping</button>
+	<button onClick = "addSearchResult()" type ="button">FakeSarch</button>
+	<button onClick = "addInstance_Dot()" type ="button">add Dot</button>
 	</div>
     
    

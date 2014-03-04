@@ -34,8 +34,7 @@ roomContents=[chair[0],table[0],bed[0]]
 #Since chair[0] and table[0] are the basic versions of these objects, we don't need to worry about the range not including them
 def inspectObject(obj):
 	if obj[0] == "chair":
-		if roomContents[0] == "chair":
-			roomContents[0] = chair[random.randint(0,3)] #pick a random chair
+		roomContents[0] = chair[random.randint(0,3)] #pick a random chair
 			
 	elif obj[0] == "table":
 		roomContents[1] = table[random.randint(1,3)]
@@ -59,19 +58,25 @@ def fillRoom():
 #stuffInRoom[chair[0], table[0], bed[0]]
 	
 def sitOnIt(obj):
-	print("You sit on the " + obj);
+	print("You sit on the " + obj + ".")
 
 def jumpOnIt(obj):
-	print("You jump on the " + obj);
+	print("You jump on the " + obj + ".")
 
-
+def duckAndCover(obj):
+	print("You crawl under the " + obj + ".")
+	
+def lift(obj):
+	print("You lift the " + obj + " off of the ground.")
+	
+def search(obj):
+	print("You search the " + obj + ", finding nothing of interest.")
+	
 #Not work it. This is breaking too many things
 # def UserAction(action):
 	
 	#object represents something you want to do stuff to
 	# object = []
-	
-	
 	
 	# if "chair" in action:
 		# object = chair
@@ -90,20 +95,31 @@ def jumpOnIt(obj):
 	# if ("sit on " + object[0]) in action:
 		# sitOnIt(obj[0])
 	
-	
+
+		
 		
 	
 def chairNode(action):
 	if "chair" in action: 
 		
-			if(roomContents[0] == chair[0]):
-				inspectObject(chair)
-			
 			if "sit" in action:
 				sitOnIt(chair[0])
 			
-			if "jump" in action:
-				jumponit(chair[0])
+			elif "jump" in action:
+				jumpOnIt(chair[0])
+				
+			elif "under" in action:
+				duckAndCover(chair[0])
+				
+			elif "lift" in action:
+				lift(chair[0])
+			
+			elif "search" in action:
+				search(chair[0])
+			
+			elif(roomContents[0] == chair[0]):
+				inspectObject(chair)
+				print(roomContents[0])
 				
 			else:
 				print(roomContents[0])
@@ -111,14 +127,24 @@ def chairNode(action):
 def tableNode(action):
 	if "table" in action:
 		
-			if(roomContents[1] == table[0]):
-				inspectObject(table)
-			
 			if "sit" in action:
 				sitOnIt(table[0])
 				
-			if "jump" in action:
-				jumponit(table[0])
+			elif "jump" in action:
+				jumpOnIt(table[0])
+			
+			elif "under" in action:
+				duckAndCover(table[0])
+			
+			elif "lift" in action:
+				lift(table[0])
+			
+			elif "search" in action:
+				search(table[0])
+			
+			elif(roomContents[1] == table[0]):
+				inspectObject(table)
+				print(roomContents[1])
 			
 			else:
 				print(roomContents[1])
@@ -126,14 +152,24 @@ def tableNode(action):
 def bedNode(action):
 	if "bed" in action: 
 		
-			if(roomContents[2] == bed[0]):
-				inspectObject(bed)
-			
 			if "sit" in action:
 				sitOnIt(bed[0])
 				
-			if "jump" in action:
-				jumponit(bed[0])
+			elif "jump" in action:
+				jumpOnIt(bed[0])
+			
+			elif "under" in action:
+				duckAndCover(bed[0])
+			
+			elif "lift" in action:
+				lift(bed[0])
+			
+			elif "search" in action:
+				search(bed[0])
+			
+			elif(roomContents[2] == bed[0]):
+				inspectObject(bed)
+				print(roomContents[2])
 			
 			else:
 				print(roomContents[2])	
