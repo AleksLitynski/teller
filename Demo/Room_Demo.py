@@ -1,14 +1,15 @@
 #needed for user input
 import sys
 import random
+import shlex
 
 #Create an array of chairs, tables, and beds
-chair=[]
-table=[]
-bed=[]
+items={}
+attr = {'actions' : 0, 'material' : 1, 'size' : 2, 'cover_color' : 3}
+
 
 #create an array of hard materials
-hardMats=["plastic", "wood", "metal"]
+hardmats=["plastic", "wood", "metal"]
 
 #bed sizes
 bedSizes=["twin", "double", "queen-sized", "king-sized"]
@@ -16,164 +17,90 @@ bedSizes=["twin", "double", "queen-sized", "king-sized"]
 #create an array of colors
 colors=["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"]
 
+items["chair"] = [["sit", "jump", "under", "lift"], \
+				random.choice(hardmats), "!=", "!="]
 
-#Create some strings to act as nodes
-chair.append("chair")
-table.append("table")
-bed.append("bed")
+items["table"] = [["under", "lift", "search"], \
+				random.choice(hardmats), "!=", "!="]
 
-#make potential chairs and tables
-for m in hardMats:
-	chair.append("a " + m + " chair")
-	table.append("a " + m + " table")
+items["bed"] = [["sit", "jump", "search"], \
+				random.choice(hardmats), random.choice(bedSizes), random.choice(colors)]
 
 #Array to hold a chair, a table, and a bed
-roomContents=[chair[0],table[0],bed[0]]
+roomContents=["chair","table","bed"]
 
-#Note: Don't need to do anything to the first two randoms because they will pick a number from 1-3 in the chair and table arrays, respectively.
-#Since chair[0] and table[0] are the basic versions of these objects, we don't need to worry about the range not including them
 def inspectObject(obj):
-	if obj[0] == "chair":
-		roomContents[0] = chair[random.randint(0,3)] #pick a random chair
-			
-	elif obj[0] == "table":
-		roomContents[1] = table[random.randint(1,3)]
+	if obj == "chair" or obj == "table":
+		return "a " + items[obj][attr["material"]] + " " + obj
 		
-	elif obj[0] == "bed":
-		#Frame, then type, then color. Reduce random number by 1 because arrays are 0-indexed
-		roomContents[2] = "a " + hardMats[random.randint(0,3) - 1] + " " + bedSizes[random.randint(0,4) - 1] + " bed covered with a " + colors[random.randint(0,14) - 1] + " blanket"
+	elif obj == "bed":
+		#Frame, then type, then color
+		return "a " + items["bed"][attr["material"]] + " " + items["bed"][attr["size"]] + " bed covered with a " + items["bed"][attr["cover_color"]] + " blanket"
 	
 	
 #fill the room with stuff!
 def fillRoom():
-	#This code isn't working
-	#roomContents.append[chair[0]]
-	#roomContents.append[table[0]]
-	#roomContents.append[bed[0]]
 	print("You are in a room. Within the room, you can see: ")
-	print("-- a " + chair[0])
-	print("-- a " + table[0])
-	print("-- a " + bed[0])
+	for thing in roomContents:
+		print("-- a " + thing)
 
-#stuffInRoom[chair[0], table[0], bed[0]]
 	
-def sitOnIt(obj):
-	print("You sit on the " + obj + ".")
-
-def jumpOnIt(obj):
-	print("You jump on the " + obj + ".")
-
-def duckAndCover(obj):
-	print("You crawl under the " + obj + ".")
-	
-def lift(obj):
-	print("You lift the " + obj + " off of the ground.")
-	
-def search(obj):
-	print("You search the " + obj + ", finding nothing of interest.")
-	
-#Not work it. This is breaking too many things
-# def UserAction(action):
-	
-	#object represents something you want to do stuff to
-	# object = []
-	
-	# if "chair" in action:
-		# object = chair
-	# elif "table" in action:
-		# object = table
-	# elif "bed" in action:
-		# object = bed
-	
-	# if ("look at " + object[0]) in action:
-		# for cont in roomContents:
-			# if object[0] == cont:
-				# inspectObject(object) #look for the object
-			# else:
-				# print (object[0])
-				
-	# if ("sit on " + object[0]) in action:
-		# sitOnIt(obj[0])
+def node(action):
+	verb = "!="
+	subject = "!="
+	for word in shlex.split(action):#divides the action by spaces
+		if word in roomContents:
+			subject = word
+		elif word in methods:
+			verb = word
+	#verb methods are defined at the bottom of the file
 	
 
-		
-		
-	
-def chairNode(action):
-	if "chair" in action: 
-		
-			if "sit" in action:
-				sitOnIt(chair[0])
-			
-			elif "jump" in action:
-				jumpOnIt(chair[0])
-				
-			elif "under" in action:
-				duckAndCover(chair[0])
-				
-			elif "lift" in action:
-				lift(chair[0])
-			
-			elif "search" in action:
-				search(chair[0])
-			
-			elif(roomContents[0] == chair[0]):
-				inspectObject(chair)
-				print(roomContents[0])
-				
-			else:
-				print(roomContents[0])
+	if subject == "!=" and not "exit" in action:
+		print("I don't know what you're talking about.")
+	else:
+		if verb == "!=":
+			print(inspectObject(subject))
+		else:
+			methods[verb](subject, (verb in items[subject][attr["actions"]]))
+			#arg 2 evaluates to a boolean: can you verb this subject
+			#the method uses this to determine what happens
 
-def tableNode(action):
-	if "table" in action:
-		
-			if "sit" in action:
-				sitOnIt(table[0])
-				
-			elif "jump" in action:
-				jumpOnIt(table[0])
-			
-			elif "under" in action:
-				duckAndCover(table[0])
-			
-			elif "lift" in action:
-				lift(table[0])
-			
-			elif "search" in action:
-				search(table[0])
-			
-			elif(roomContents[1] == table[0]):
-				inspectObject(table)
-				print(roomContents[1])
-			
-			else:
-				print(roomContents[1])
-				
-def bedNode(action):
-	if "bed" in action: 
-		
-			if "sit" in action:
-				sitOnIt(bed[0])
-				
-			elif "jump" in action:
-				jumpOnIt(bed[0])
-			
-			elif "under" in action:
-				duckAndCover(bed[0])
-			
-			elif "lift" in action:
-				lift(bed[0])
-			
-			elif "search" in action:
-				search(bed[0])
-			
-			elif(roomContents[2] == bed[0]):
-				inspectObject(bed)
-				print(roomContents[2])
-			
-			else:
-				print(roomContents[2])	
-		
+	
+def sitOnIt(obj, can):
+	if can:
+		print("You sit on the " + obj + ".")
+	else:
+		print("You can't sit on the " + obj + ".")
+
+def jumpOnIt(obj, can):
+	if can:
+		print("You jump on the " + obj + ".")
+	else:
+		print("You can't jump on the " + obj + ".")
+
+def duckAndCover(obj, can):
+	if can:
+		print("You crawl under the " + obj + ".")
+	else:
+		print("You can't crawl under the " + obj + ".")
+	
+def lift(obj, can):
+	if can:
+		print("You lift the " + obj + " off of the ground.")
+	else:
+		print("You can't lift the " + obj + ".")
+	
+def search(obj, can):
+	if can:
+		print("You search the " + obj + ", finding nothing of interest.")
+	else:
+		print("You can't search the " + obj + ".")
+	
+methods = {"sit" : sitOnIt, "jump" : jumpOnIt, "under" : duckAndCover, \
+	   "lift" : lift, "search" : search}
+	
+
 #Game Loop
 def testLoop():
 	while(True):
@@ -181,13 +108,8 @@ def testLoop():
 		print ("")
 		action = input()
 		
-		#Fuck it. This was a bad idea.
-		#UserAction(action)
-		
 		#do stuff with objects
-		chairNode(action)
-		tableNode(action)
-		bedNode(action)
+		node(action)
 		
 		#leave the game
 		if action == "exit":
