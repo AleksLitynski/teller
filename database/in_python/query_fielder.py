@@ -167,7 +167,8 @@ if __name__ == '__main__':
     get_test_query = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
     room_test = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "room"}}]}}]}}'
     pinch_test_query = '{"type": "pinch", "params": {"depth":2, "time":1}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
-    print qf.field_query(room_test, ont)
+    all_nodes = '{"type":"get", "params":{"depth":1}, "search":{}}'
+    print qf.field_query(all_nodes, ont)
 
 
 
