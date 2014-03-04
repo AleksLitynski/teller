@@ -2,6 +2,9 @@
 import sys
 import random
 import shlex
+#importing our stuff
+import json
+from Query_Explorer import *
 
 #Create an array of chairs, tables, and beds
 items={}
@@ -32,7 +35,6 @@ roomContents=["chair","table","bed"]
 def inspectObject(obj):
 	if obj == "chair" or obj == "table":
 		return "a " + items[obj][attr["material"]] + " " + obj
-		
 	elif obj == "bed":
 		#Frame, then type, then color
 		return "a " + items["bed"][attr["material"]] + " " + items["bed"][attr["size"]] + " bed covered with a " + items["bed"][attr["cover_color"]] + " blanket"
@@ -55,9 +57,8 @@ def node(action):
 			verb = word
 	#verb methods are defined at the bottom of the file
 	
-
-	if subject == "!=" and not "exit" in action:
-		print("I don't know what you're talking about.")
+	if subject == "!=":
+		return False
 	else:
 		if verb == "!=":
 			print(inspectObject(subject))
@@ -65,6 +66,7 @@ def node(action):
 			methods[verb](subject, (verb in items[subject][attr["actions"]]))
 			#arg 2 evaluates to a boolean: can you verb this subject
 			#the method uses this to determine what happens
+	return True
 
 	
 def sitOnIt(obj, can):
@@ -100,7 +102,18 @@ def search(obj, can):
 methods = {"sit" : sitOnIt, "jump" : jumpOnIt, "under" : duckAndCover, \
 	   "lift" : lift, "search" : search}
 	
+		
+def playerNode(action):
+	if "sit" in action:
+		print("You sit down cross-legged on the floor.")
+		
+	if "dance" in action:
+		print("You dance for a moment, though you are not sure why." 
+		+ "\nIt is almost as if you are a puppet whose strings are being"
+		+ "\npulled by the invisible hands of some unknown God..."
+		+ "\nYou quickly dismiss that thought and return to a standing position.")
 
+				
 #Game Loop
 def testLoop():
 	while(True):
@@ -109,7 +122,9 @@ def testLoop():
 		action = input()
 		
 		#do stuff with objects
-		node(action)
+		if not node(action):
+			#Only access player node if you don't refer to any of the objects
+			playerNode(action)
 		
 		#leave the game
 		if action == "exit":
