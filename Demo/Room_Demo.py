@@ -20,13 +20,13 @@ bedSizes=["twin", "double", "queen-sized", "king-sized"]
 #create an array of colors
 colors=["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"]
 
-items["chair"] = [["sit", "jump", "under", "lift"], \
+items["chair"] = [["sit", "jump", "under", "lift", "stand"], \
 				random.choice(hardmats), "!=", "!="]
 
-items["table"] = [["under", "lift", "search"], \
+items["table"] = [["under", "lift", "search", "lean"], \
 				random.choice(hardmats), "!=", "!="]
 
-items["bed"] = [["sit", "jump", "search"], \
+items["bed"] = [["sit", "jump", "search", "lean", "stand"], \
 				random.choice(hardmats), random.choice(bedSizes), random.choice(colors)]
 
 #Array to hold a chair, a table, and a bed
@@ -46,15 +46,17 @@ def fillRoom():
 	for thing in roomContents:
 		print("-- a " + thing)
 
-#rasoning : they all shared the same pattern which can be factored out
+#reasoning : they all shared the same pattern which can be factored out
 #			And though they convey little importance than different outcome, they occupied much space
 #			Combining them this way it is more readable
-#			readable because you are interested only in the different output message.
+#			readable because you are interested only in the different output message. -- I think this is a huge improvement. Great job! ~Joe
 dialogsNode = { "sit" : ["You sit on the obj.","You can't sit on the obj."], 
 			"jump" : ["You jump on the obj.","You can't jump on the obj."], 
 			"under" : ["You crawl under the obj.", "You can't crawl under the obj"],
 			"lift" : ["You lift the obj off of the ground.","You can't lift the obj"], 
-			"search" : ["You search the obj finding nothing of interest.","You can't search the obj."]
+			"search" : ["You search the obj, finding nothing of interest.","You can't search the obj."],
+                        "lean" : ["You lean on the obj.","You cannot lean on the obj."],
+                        "stand" : ["You stand on the obj, taking great care not to fall.","You cannot stand on the obj."]
 }
 #ideal length of method 5-15 
 #http://programmers.stackexchange.com/questions/133404/what-is-the-ideal-length-of-a-method
@@ -81,7 +83,7 @@ dialogs = { "sit"	: "You sit down cross-legged on the floor.",
 }
 def playerNode(action):
 #Modification reasoning, function wraps a concept. hard coding if statemetns when it is
-#liekly subjected to expand(since we want to have more than two actions) is not a good practice.
+#likely subjected to expand(since we want to have more than two actions) is not a good practice. -- An excellent point.
 	isActionValid = False
 	for d in dialogs:
 		if d in action:
@@ -95,11 +97,11 @@ def testLoop():
 		#create some space between this and last input/output
 		print("   "),
 		#input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
-		try:action = input()
+		try:action = input().lower()    #convert to lower case to prevent problems where there are none (i.e. "sit on Chair" should work just like "sit on chair")
 		except :
 			#Failed with function input. Attempting to use function raw_input instead
 			print("Sorry the game made a mistake, could you type it one more time?\n   "),
-			try: action = raw_input()
+			try: action = raw_input().lower()
 			except :
 				print("SYSTEM : Cannot process user input")
 				break;
