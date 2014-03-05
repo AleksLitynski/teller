@@ -46,62 +46,32 @@ def fillRoom():
 	for thing in roomContents:
 		print("-- a " + thing)
 
-	
+#rasoning : they all shared the same pattern which can be factored out
+#			And though they convey little importance than different outcome, they occupied much space
+#			Combining them this way it is more readable
+#			readable because you are interested only in the different output message.
+dialogsNode = { "sit" : ["You sit on the obj.","You can't sit on the obj."], 
+			"jump" : ["You jump on the obj.","You can't jump on the obj."], 
+			"under" : ["You crawl under the obj.", "You can't crawl under the obj"],
+			"lift" : ["You lift the obj off of the ground.","You can't lift the obj"], 
+			"search" : ["You search the obj finding nothing of interest.","You can't search the obj."]
+}
+#ideal length of method 5-15 
+#http://programmers.stackexchange.com/questions/133404/what-is-the-ideal-length-of-a-method
 def node(action):
-	verb = "!="
-	subject = "!="
+	verb = ""; subject = ""
 	for word in shlex.split(action):#divides the action by spaces
-		if word in roomContents:
-			subject = word
-		elif word in methods:
-			verb = word
-	#verb methods are defined at the bottom of the file
-	
-	if subject == "!=":
-		return False
-	else:
-		if verb == "!=":
-			print(inspectObject(subject))
-		else:
-			methods[verb](subject, (verb in items[subject][attr["actions"]]))
-			#arg 2 evaluates to a boolean: can you verb this subject
-			#the method uses this to determine what happens
+		if word in roomContents: subject = word; continue;
+		if word in dialogsNode: verb = word; continue;
+	if subject == "": return False
+	if verb == "":
+		print(inspectObject(subject))
+	elif(verb in items[subject][attr["actions"]] ):
+		print dialogsNode[verb][0].replace("obj",subject)
+	else : 
+		print dialogsNode[verb][1].replace("obj",subject)
 	return True
 
-	
-def sitOnIt(obj, can):
-	if can:
-		print("You sit on the " + obj + ".")
-	else:
-		print("You can't sit on the " + obj + ".")
-
-def jumpOnIt(obj, can):
-	if can:
-		print("You jump on the " + obj + ".")
-	else:
-		print("You can't jump on the " + obj + ".")
-
-def duckAndCover(obj, can):
-	if can:
-		print("You crawl under the " + obj + ".")
-	else:
-		print("You can't crawl under the " + obj + ".")
-	
-def lift(obj, can):
-	if can:
-		print("You lift the " + obj + " off of the ground.")
-	else:
-		print("You can't lift the " + obj + ".")
-	
-def search(obj, can):
-	if can:
-		print("You search the " + obj + ", finding nothing of interest.")
-	else:
-		print("You can't search the " + obj + ".")
-	
-methods = {"sit" : sitOnIt, "jump" : jumpOnIt, "under" : duckAndCover, \
-	   "lift" : lift, "search" : search}
-	
 
 dialogs = { "sit"	: "You sit down cross-legged on the floor.",
 			"dance"	: "You dance for a moment, though you are not sure why." 
