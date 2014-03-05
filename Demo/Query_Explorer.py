@@ -90,8 +90,9 @@ class noun:
 
 
     def print_noun(self):
-        print "There is a " + self.get_value("named") + ". "
-
+        #print "There is a " + self.get_value("named") + ". "
+	    pass
+		
 class relationship:
     def __init__(self, type, value, reguarding):
         self.type = type
