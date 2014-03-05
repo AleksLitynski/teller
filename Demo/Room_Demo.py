@@ -102,24 +102,37 @@ def search(obj, can):
 methods = {"sit" : sitOnIt, "jump" : jumpOnIt, "under" : duckAndCover, \
 	   "lift" : lift, "search" : search}
 	
-		
-def playerNode(action):
-	if "sit" in action:
-		print("You sit down cross-legged on the floor.")
-		
-	if "dance" in action:
-		print("You dance for a moment, though you are not sure why." 
-		+ "\nIt is almost as if you are a puppet whose strings are being"
-		+ "\npulled by the invisible hands of some unknown God..."
-		+ "\nYou quickly dismiss that thought and return to a standing position.")
 
+dialogs = { "sit"	: "You sit down cross-legged on the floor.",
+			"dance"	: "You dance for a moment, though you are not sure why." 
+						+ "\nIt is almost as if you are a puppet whose strings are being"
+						+ "\npulled by the invisible hands of some unknown God..."
+						+ "\nYou quickly dismiss that thought and return to a standing position."
+}
+def playerNode(action):
+#Modification reasoning, function wraps a concept. hard coding if statemetns when it is
+#liekly subjected to expand(since we want to have more than two actions) is not a good practice.
+	isActionValid = False
+	for d in dialogs:
+		if d in action:
+			isActionValid = True
+			print dialogs[d]
+	if(not isActionValid):print "SYSTEM : Action not recognized"
 				
 #Game Loop
 def testLoop():
 	while(True):
 		#create some space between this and last input/output
-		print ("")
-		action = input()
+		print "   ",
+		#input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
+		try:action = input()
+		except :
+			#Failed with function input. Attempting to use function raw_input instead
+			print "Sorry the game made a mistake, could you type it one more time?\n   ",
+			try: action = raw_input()
+			except :
+				print "SYSTEM : Cannot process user input"
+				break;
 		
 		#do stuff with objects
 		if not node(action):
