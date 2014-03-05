@@ -16,6 +16,7 @@ def isDebug(): return False
 #Man... I wish we could have different colored messages so that way we can have better impression without having to actually read
 def printAlert(say):
 	print "   Alert :" + say
+	
 def printFunc(say):
 	print "   FunctionCall : " + say
 
