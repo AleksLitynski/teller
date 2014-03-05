@@ -67,9 +67,9 @@ def node(action):
 	if verb == "":
 		print(inspectObject(subject))
 	elif(verb in items[subject][attr["actions"]] ):
-		print dialogsNode[verb][0].replace("obj",subject)
+		print(dialogsNode[verb][0].replace("obj",subject))
 	else : 
-		print dialogsNode[verb][1].replace("obj",subject)
+		print(dialogsNode[verb][1].replace("obj",subject))
 	return True
 
 
@@ -86,22 +86,22 @@ def playerNode(action):
 	for d in dialogs:
 		if d in action:
 			isActionValid = True
-			print dialogs[d]
-	if(not isActionValid):print "SYSTEM : Action not recognized"
+			print(dialogs[d])
+	if(not isActionValid):print("SYSTEM : Action not recognized")
 				
 #Game Loop
 def testLoop():
 	while(True):
 		#create some space between this and last input/output
-		print "   ",
+		print("   "),
 		#input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
 		try:action = input()
 		except :
 			#Failed with function input. Attempting to use function raw_input instead
-			print "Sorry the game made a mistake, could you type it one more time?\n   ",
+			print("Sorry the game made a mistake, could you type it one more time?\n   "),
 			try: action = raw_input()
 			except :
-				print "SYSTEM : Cannot process user input"
+				print("SYSTEM : Cannot process user input")
 				break;
 		
 		#do stuff with objects
