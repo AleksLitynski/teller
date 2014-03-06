@@ -146,7 +146,8 @@ class ontology:
 		self.add_relationship(bed, blanket, "has_a", "True")
 
 		#Adds a noun for each color
-		colors = self.new_nouns_named(["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"], english) # <_________THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
+		#THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
+		colors = self.new_nouns_named(["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"], english) 
 		self.add_relationship(blanket, choice(colors), "colored", "True")
 
 		bed_sizes = self.new_nouns_named(["twin", "double", "queen", "king"], english)
@@ -173,7 +174,8 @@ class ontology:
 
 		book = self.new_noun_named("book", english)
 		self.add_relationship(choice(objects_in_room), book, "has_a", "True")
-		book_titles = self.new_nouns_named(["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force", "The Vengeful Penguin", "Ninjas Guide to Ornamental Horticulture", "Neko-nomicon; This is Not a Book"], english)
+		book_titles = self.new_nouns_named(["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force", "The Vengeful Penguin", "Ninja's Guide to Ornamental Horticulture",
+                                                    "Neko-nomicon", "This is Not a Book"], english)
 		self.add_relationship(book, choice(book_titles), "titled", "True")
 
 
