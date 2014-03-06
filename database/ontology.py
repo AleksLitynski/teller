@@ -188,16 +188,6 @@ class ontology:
 
 
 
-
-
-
-
-
-
-
-
-
-
 	def show_locally(self):
 		for n in self.graph.nodes_iter():
 			print(n.id + " " + n.type + " " + n.value)
@@ -207,11 +197,10 @@ class ontology:
 
 
 	def new_nouns_named(self, names, lang):
-		#nouns = []
-		#for noun in map( lambda x: self.new_noun_named(x, lang) , names):
-		#	nouns.append(noun)
-		# return nouns
-		return map( lambda x: self.new_noun_named(x, lang) , names)
+		nouns = []
+		for noun in map( lambda x: self.new_noun_named(x, lang) , names):
+			nouns.append(noun)
+		return nouns
 
 	def new_noun_named(self, name, lang):
 		new_node = self.add_node("noun", "")
