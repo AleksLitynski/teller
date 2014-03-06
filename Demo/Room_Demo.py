@@ -23,26 +23,33 @@ colors=["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azur
 items["chair"] = [["sit", "jump", "under", "lift", "stand"], \
 				random.choice(hardmats), "!=", "!="]
 
-items["table"] = [["under", "lift", "search", "lean"], \
+items["table"] = [["under", "lift", "search", "lean", "lie"], \
 				random.choice(hardmats), "!=", "!="]
 
-items["bed"] = [["sit", "jump", "search", "lean", "stand"], \
+items["bed"] = [["sit", "jump", "search", "lean", "stand", "lie"], \
 				random.choice(hardmats), random.choice(bedSizes), random.choice(colors)]
 
+items["wall"] = [["search", "lean"], \
+                                "!=", "!=", random.choice(colors)]
+
 #Array to hold a chair, a table, and a bed
-roomContents=["chair","table","bed"]
+roomContents=["chair","table","bed", "wall"]
 
 def inspectObject(obj):
 	if obj == "chair" or obj == "table":
 		return "a " + items[obj][attr["material"]] + " " + obj
+	elif obj == "wall":
+                return ("You see a " + items[obj][attr["cover_color"]] + " " + obj + " on the other side of the room."
+                        + "\nA large painting hangs crookedly above an old-fasioned fireplace.")
 	elif obj == "bed":
 		#Frame, then type, then color
 		return "a " + items["bed"][attr["material"]] + " " + items["bed"][attr["size"]] + " bed covered with a " + items["bed"][attr["cover_color"]] + " blanket"
 	
 	
 #fill the room with stuff!
+#Idea for fililng the room: only do this with stuff at a certain depth. Deeper stuff can be found by searching/inspecting objects (hidden panels, cupcakes, etc) ~Joe
 def fillRoom():
-	print("You are in a room. Within the room, you can see: ")
+	print("You are in a room with " + items["wall"][attr["cover_color"]] + " walls. Within the room, you can see: ")
 	for thing in roomContents:
 		print("-- a " + thing)
 
@@ -56,7 +63,10 @@ dialogsNode = { "sit" : ["You sit on the obj.","You can't sit on the obj."],
 			"lift" : ["You lift the obj off of the ground.","You can't lift the obj"], 
 			"search" : ["You search the obj, finding nothing of interest.","You can't search the obj."],
                         "lean" : ["You lean on the obj.","You cannot lean on the obj."],
-                        "stand" : ["You stand on the obj, taking great care not to fall.","You cannot stand on the obj."]
+                        "stand" : ["You stand on the obj, taking great care not to fall.","You cannot stand on the obj."],
+                        "lie" : ["You lie down on the obj.","You cannot lie down on that obj."],
+                        "talk" : ["You try to talk to obj.","Your only reply is the faint echo of your own voice."]
+                        
 }
 #ideal length of method 5-15 
 #http://programmers.stackexchange.com/questions/133404/what-is-the-ideal-length-of-a-method
@@ -79,7 +89,9 @@ dialogs = { "sit"	: "You sit down cross-legged on the floor.",
 			"dance"	: "You dance for a moment, though you are not sure why." 
 						+ "\nIt is almost as if you are a puppet whose strings are being"
 						+ "\npulled by the invisible hands of some unknown God..."
-						+ "\nYou quickly dismiss that thought and return to a standing position."
+						+ "\nYou quickly dismiss that thought and return to a standing position.",
+                        "lie" : "You lie down on the floor.",
+                        "talk" : "You talk to yourself. Sadly, doing so provides you with no new information."
 }
 def playerNode(action):
 #Modification reasoning, function wraps a concept. hard coding if statemetns when it is
@@ -97,7 +109,13 @@ def testLoop():
 		#create some space between this and last input/output
 		print("   "),
 		#input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
-		try:action = input().lower()    #convert to lower case to prevent problems where there are none (i.e. "sit on Chair" should work just like "sit on chair")
+		try:
+                        action = input().lower()    #convert to lower case to prevent problems where there are none (i.e. "SIT on Chair" should work just like "sit on chair")
+
+                        #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
+                        if action == "exit":
+                                break 
+
 		except :
 			#Failed with function input. Attempting to use function raw_input instead
 			print("Sorry the game made a mistake, could you type it one more time?\n   "),
@@ -111,9 +129,7 @@ def testLoop():
 			#Only access player node if you don't refer to any of the objects
 			playerNode(action)
 		
-		#leave the game
-		if action == "exit":
-			break 
+		
 		
 #This code runs as soon as the game starts...	
 #Run the game!
