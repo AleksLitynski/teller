@@ -6,7 +6,7 @@ import shlex
 import json
 from Query_Explorer import *
 
-#Create an array of chairs, tables, and beds
+#Create an array of items (chairs, tables, beds, etc.)
 items={}
 attr = {'actions' : 0, 'material' : 1, 'size' : 2, 'cover_color' : 3}
 
@@ -32,15 +32,18 @@ items["bed"] = [["sit", "jump", "search", "lean", "stand", "lie"], \
 items["wall"] = [["search", "lean"], \
                                 "!=", "!=", random.choice(colors)]
 
-#Array to hold a chair, a table, and a bed
-roomContents=["chair","table","bed", "wall"]
+items["teapot"] = [["search", "lift"], \
+                               random.choice(hardmats), "!=", "!="]
+
+#Array to hold a chair, a table, a wall, and a bed
+roomContents=["chair","table","bed", "wall", "teapot"]
 
 def inspectObject(obj):
-	if obj == "chair" or obj == "table":
+	if obj == "chair" or obj == "table" or obj == "teapot":
 		return "a " + items[obj][attr["material"]] + " " + obj
 	elif obj == "wall":
                 return ("You see a " + items[obj][attr["cover_color"]] + " " + obj + " on the other side of the room."
-                        + "\nA large painting hangs crookedly above an old-fasioned fireplace.")
+                        + "\nA large painting hangs crookedly above an old-fasioned fireplace.") 
 	elif obj == "bed":
 		#Frame, then type, then color
 		return "a " + items["bed"][attr["material"]] + " " + items["bed"][attr["size"]] + " bed covered with a " + items["bed"][attr["cover_color"]] + " blanket"
@@ -57,7 +60,7 @@ def fillRoom():
 #			And though they convey little importance than different outcome, they occupied much space
 #			Combining them this way it is more readable
 #			readable because you are interested only in the different output message. -- I think this is a huge improvement. Great job! ~Joe
-dialogsNode = { "sit" : ["You sit on the obj.","You can't sit on the obj."], 
+dialogsNode = {         "sit" : ["You sit on the obj.","You can't sit on the obj."], 
 			"jump" : ["You jump on the obj.","You can't jump on the obj."], 
 			"under" : ["You crawl under the obj.", "You can't crawl under the obj"],
 			"lift" : ["You lift the obj off of the ground.","You can't lift the obj"], 
@@ -85,13 +88,14 @@ def node(action):
 	return True
 
 
-dialogs = { "sit"	: "You sit down cross-legged on the floor.",
+dialogs = {             "sit"	: "You sit down cross-legged on the floor.",
 			"dance"	: "You dance for a moment, though you are not sure why." 
 						+ "\nIt is almost as if you are a puppet whose strings are being"
 						+ "\npulled by the invisible hands of some unknown God..."
 						+ "\nYou quickly dismiss that thought and return to a standing position.",
                         "lie" : "You lie down on the floor.",
-                        "talk" : "You talk to yourself. Sadly, doing so provides you with no new information."
+                        "talk" : "You talk to yourself. Sadly, doing so provides you with no new information.",
+                        "jump" : "You jump up and down. It's good for your buns and thighs."
 }
 def playerNode(action):
 #Modification reasoning, function wraps a concept. hard coding if statemetns when it is
@@ -107,7 +111,7 @@ def playerNode(action):
 def testLoop():
 	while(True):
 		#create some space between this and last input/output
-		print("   "),
+		print("\n"),
 		#input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
 		try:
                         action = input().lower()    #convert to lower case to prevent problems where there are none (i.e. "SIT on Chair" should work just like "sit on chair")
