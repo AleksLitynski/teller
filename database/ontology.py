@@ -207,10 +207,11 @@ class ontology:
 
 
 	def new_nouns_named(self, names, lang):
-		nouns = []
-		for noun in map( lambda x: self.new_noun_named(x, lang) , names):
-			nouns.append(noun)
-		return nouns
+		#nouns = []
+		#for noun in map( lambda x: self.new_noun_named(x, lang) , names):
+		#	nouns.append(noun)
+		# return nouns
+		return map( lambda x: self.new_noun_named(x, lang) , names)
 
 	def new_noun_named(self, name, lang):
 		new_node = self.add_node("noun", "")

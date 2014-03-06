@@ -2,22 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f35f8f20-72a1-4891-ac25-a1bf7dd309e6" name="Default" comment="">
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\README.md" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\lib\teller_db\TCPServer.ex" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\lib\teller_db\query_handler.ex" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\lib\teller_db\supervisor.ex" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\lib\teller_db\teller_db.ex" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\lib\teller_db\teller_graph.ex" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\mix.exs" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\test\teller_db_test.exs" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_elixir\teller_db\test\test_helper.exs" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_python\database_dump.tdb" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_python\main.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_python\ontology.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Aleksander\Documents\teller\database\in_python\query_fielder.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Demo/database_query_demo.py" afterPath="$PROJECT_DIR$/Demo/database_query_demo.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/teller.iml" afterPath="$PROJECT_DIR$/.idea/teller.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/main.py" afterPath="$PROJECT_DIR$/database/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/ontology.py" afterPath="$PROJECT_DIR$/database/ontology.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="teller.iws" />
@@ -85,28 +71,28 @@
       <file leaf-file-name="main.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/database/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="62" selection-start="193" selection-end="193" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="476">
-              <folding />
+            <state line="25" column="0" selection-start="714" selection-end="714" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="527">
+              <folding>
+                <element signature="e#71#91#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="query_fielder.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="query_fielder.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/database/query_fielder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="117" selection-start="529" selection-end="529" vertical-scroll-proportion="0.6101142" vertical-offset="0" max-vertical-offset="3128">
+            <state line="35" column="17" selection-start="1384" selection-end="1384" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3128">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ontology.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="ontology.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database/ontology.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="216" column="0" selection-start="7020" selection-end="7020" vertical-scroll-proportion="0.0" vertical-offset="3343" max-vertical-offset="4335">
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
+            <state line="202" column="54" selection-start="6620" selection-end="6620" vertical-scroll-proportion="0.22306034" vertical-offset="3176" max-vertical-offset="4335">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -124,8 +110,8 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/database/main.py" />
         <option value="$PROJECT_DIR$/database/query_fielder.py" />
+        <option value="$PROJECT_DIR$/database/main.py" />
         <option value="$PROJECT_DIR$/database/ontology.py" />
       </list>
     </option>
@@ -182,7 +168,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -218,6 +203,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -622,7 +608,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20260416" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33469388" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33469388" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -654,8 +640,56 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/database/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="62" selection-start="193" selection-end="193" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="476">
+        <state line="6" column="62" selection-start="193" selection-end="193" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="476">
+          <folding>
+            <element signature="e#71#91#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/query_fielder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="117" selection-start="529" selection-end="529" vertical-scroll-proportion="0.0" vertical-offset="408" max-vertical-offset="3128">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/ontology.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="216" column="0" selection-start="7020" selection-end="7020" vertical-scroll-proportion="0.0" vertical-offset="3672" max-vertical-offset="4335">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="62" selection-start="193" selection-end="193" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="476">
+          <folding>
+            <element signature="e#71#91#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/query_fielder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="117" selection-start="529" selection-end="529" vertical-scroll-proportion="0.0" vertical-offset="408" max-vertical-offset="3128">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/ontology.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="216" column="0" selection-start="7020" selection-end="7020" vertical-scroll-proportion="0.0" vertical-offset="3343" max-vertical-offset="4335">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="62" selection-start="193" selection-end="193" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="476">
+          <folding>
+            <element signature="e#71#91#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -669,16 +703,16 @@
     <entry file="file://$PROJECT_DIR$/database/ontology.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="208" column="0" selection-start="7622" selection-end="7622" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="4284">
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="10" column="0" selection-start="372" selection-end="372" vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="476">
-          <folding />
+          <folding>
+            <element signature="e#71#91#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -692,22 +726,13 @@
     <entry file="file://$PROJECT_DIR$/database/ontology.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="24" column="31" selection-start="968" selection-end="968" vertical-scroll-proportion="0.0" vertical-offset="95" max-vertical-offset="4216">
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://C:/tools/Python33/Lib/socketserver.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="5032" vertical-scroll-proportion="-8.892034" vertical-offset="8483" max-vertical-offset="12699" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="62" selection-start="193" selection-end="193" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="476">
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/.IdeaIC13/system/python_stubs/-827867724/builtins.py">
@@ -717,18 +742,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database/ontology.py">
+    <entry file="file://$PROJECT_DIR$/database/query_fielder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="216" column="0" selection-start="7020" selection-end="7020" vertical-scroll-proportion="0.0" vertical-offset="3343" max-vertical-offset="4335">
+        <state line="35" column="17" selection-start="1384" selection-end="1384" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3128">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="0" selection-start="714" selection-end="714" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="527">
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#71#91#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database/query_fielder.py">
+    <entry file="file://$PROJECT_DIR$/database/ontology.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="117" selection-start="529" selection-end="529" vertical-scroll-proportion="0.6101142" vertical-offset="0" max-vertical-offset="3128">
+        <state line="202" column="54" selection-start="6620" selection-end="6620" vertical-scroll-proportion="0.22306034" vertical-offset="3176" max-vertical-offset="4335">
           <folding />
         </state>
       </provider>
