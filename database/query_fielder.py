@@ -153,7 +153,8 @@ class query_fielder:
         return prop_value
 
 
-if __name__ == '__main__':
+
+def run():
 
     #Creates the fielder
     qf = query_fielder()
@@ -168,109 +169,12 @@ if __name__ == '__main__':
     room_test = '{"type": "get", "params": {"depth":2}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "room"}}]}}]}}'
     pinch_test_query = '{"type": "pinch", "params": {"depth":2, "time":1}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "fred"}}]}}]}}'
     all_nodes = '{"type":"get", "params":{"depth":1}, "search":{}}'
-    print qf.field_query(all_nodes, ont)
+    print(qf.field_query(all_nodes, ont))
 
 
 
+if __name__ == '__main__':
+	run()
 
 
 
-
-"""
-{"type":"get, "search":{}}
-{
-    type: "get", #get will return a filled out version of the form.
-    edge_depth: 0, #if you want all neighbor info, set to 1, nh of nh, 2, etc
-    search: {
-
-        id: "", #uuid of node
-        type: "",
-        value: "",
-
-        edges: [
-            {
-                direction: "inbound/outbound",
-                type: "",
-                weight-time: "",
-                weight-value: "",
-                terminal: same node description structure. Recursive, edge_depth - 1.
-            },
-            ...
-        ]
-    }
-}
-
-{
-    "type": "get",
-    "params": {
-        "depth": 2
-    },
-    "search": {
-        "edges": [
-            {
-                "direction": "inbound",
-                "type": "describes",
-                "weight-time": "1",
-                "terminal": {
-                    "type": "relationship",
-                    "edges": [
-                        {
-                            "terminal": {
-                                "type": "type",
-                                "value": "named"
-                            }
-                        },
-                        {
-                            "terminal": {
-                                "type": "value",
-                                "value": "fred"
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
-    }
-}
-
-
-
-
-
-#prints perfectly formatted json. The X, Y, Size should be removed soon.
-def to_string(self):
-    return "{ " \
-    "\"id\": \"n" + str(self.id) + "\"," \
-    "\"label\": \"" + str(self.value) + "\"," \
-    "\"x\": " + str(random.uniform(0,10)) + "," \
-    "\"y\": " + str(random.uniform(0,10)) + "," \
-    "\"size\": " + str(3) + "},"
-
-
-def to_string(self):
-    return "{ " \
-    "\"id\": \"e" + str(self.id) + "\"," \
-    "\"source\": \"n" + str(self.start) + "\"," \
-    "\"target\": \"n" + str(self.end) + "\"},"
-
-
-#prints out the whole graph.
-def print_all(self):
-    printed = "{ \"nodes\":["
-    for node in self.nodes:
-        printed = printed + node.to_string()
-    printed = printed[:-1] + "], \"edges\": ["
-    for edge in self.edges:
-        printed = printed + "\n" + edge.to_string()
-    printed = printed[:-1] + "]}"
-    return printed
-
-
-for e in graph.edges_iter([valid_node]): #edges to noun
-                    for rel_edge in graph.edges_iter(e[1]): #relationship
-                        print rel_edge[1].type + " " + rel_edge[1].value
-                        pass
-
-
-
-"""

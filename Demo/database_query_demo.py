@@ -34,11 +34,14 @@ def get_noun_by_name(name, noun_table):
     if name in noun_table:
         query_string = describe_noun(name, 2)
 
+        noun = Query_Explorer.get_noun(json.loads(query(query_string)))
         noun = pipe(query_string, [
             query,
             json.loads,
             Query_Explorer.get_noun
         ])
+
+
         return noun
     return Query_Explorer.noun()
 
