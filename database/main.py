@@ -1,4 +1,7 @@
-import socketserver
+try:
+	import socketserver
+except:
+	import SocketServer as socketserver
 import query_fielder
 import ontology
 

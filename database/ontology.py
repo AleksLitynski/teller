@@ -188,16 +188,6 @@ class ontology:
 
 
 
-
-
-
-
-
-
-
-
-
-
 	def show_locally(self):
 		for n in self.graph.nodes_iter():
 			print(n.id + " " + n.type + " " + n.value)
