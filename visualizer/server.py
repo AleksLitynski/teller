@@ -48,23 +48,16 @@ def describe_noun(noun_name, depth=2):
     return '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +    '"terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
 
 def sendSearch(handler):
+	printFunc("SendSearch")
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(('127.0.0.1', 5005))
 	s.send(describe_noun("room"))
 	raw = s.recv(10000)
 	read = SearchInterpreter.read(raw);
 	s.close()
-	print (raw);
 	handler.wfile.write(json.dumps(read))
 	return read
-	#
-	#printFunc("SEARCH")
-	#searchResult = open("dataSearch.txt").read()
-	#read = SearchInterpreter.read(searchResult);
-	#
-
 	
-#send them whatever file they asked for.
 def sendRequested(handler):
 	printFunc("SendingRequested")
 	try:
@@ -92,7 +85,7 @@ class web_handler(BaseHTTPRequestHandler):
 	def do_GET(self):
 		if ".." in self.path : self.send_error(404, "error'd")
 		if(isDebug()):self.printClisentInfo();
-		print "RECEIVED REQUEST : " + self.path
+		print ("RECEIVED REQUEST : " + self.path)
 		
 		#I am mimicking c style here swtich case statement here
 		#http://stackoverflow.com/questions/374239/why-doesnt-python-have-a-switch-statement
