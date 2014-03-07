@@ -2,7 +2,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import socket
 import json
 import SearchInterpreter
-
+#,miserver
 #Hey you cannot have global variable. unless you do,
 #global nameOfVariableHere
 #Python doesn't like global variables but if we must I think we can have global "variable" without having to declare global everytime.
@@ -15,10 +15,10 @@ def isDebug(): return False
 #helper functions for printing particular message
 #Man... I wish we could have different colored messages so that way we can have better impression without having to actually read
 def printAlert(say):
-	print "   Alert :" + say
+	print ("   Alert :" + say)
 	
 def printFunc(say):
-	print "   FunctionCall : " + say
+	print ("   FunctionCall : " + say)
 
 #I pulled out all the def from class. o_o
 #my reasoning was well, python doesn't support || reinforce the notion of object oriented programming.
@@ -42,11 +42,26 @@ def sendDummy00(handler):
 	handler.wfile.write(open("dataDummy00.txt").read())
 def sendDummy01(handler):
 	handler.wfile.write(open("dataDummy01.txt").read())
+	
+def describe_noun(noun_name, depth=2):
+    #broke up the return into 2 lines to make it more readable
+    return '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +    '"terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
+
 def sendSearch(handler):
-	printFunc("SEARCH")
-	searchResult = open("dataSearch.txt").read()
-	read = SearchInterpreter.read(searchResult);
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s.connect(('127.0.0.1', 5005))
+	s.send(describe_noun("room"))
+	raw = s.recv(10000)
+	read = SearchInterpreter.read(raw);
+	s.close()
+	print (raw);
 	handler.wfile.write(json.dumps(read))
+	return read
+	#
+	#printFunc("SEARCH")
+	#searchResult = open("dataSearch.txt").read()
+	#read = SearchInterpreter.read(searchResult);
+	#
 
 	
 #send them whatever file they asked for.

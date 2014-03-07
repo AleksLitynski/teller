@@ -16,7 +16,7 @@ def convertToGraphNode(e):
 	return {'id' : e['id'], 
 			'size': 1,
 			'x':(_pos % 20 ) ,'y': int( _pos / 20)  ,
-			'label': " Value [ " + str(e['value']) + " ] type [ " + str(e['type'])+" ]"}
+			'label': " Value [ " + str(e['value']) + " & " + str(e['type'])+" ] neighbors : " + str(len(e['edges'] ) )}
 
 countEdge = 0;
 def convert2Edges(a,b):
@@ -42,14 +42,14 @@ def helperAddEdge(list,dicNodes,dicEdges,edge):
 		if(int(dicNodes[edge[i]['id']]['size']) > 6 ):dicNodes[edge[i]['id']]['size']=6
 		
 	#print dicNodes[edge[0]['size']]
+	list.append(convert2Edges(edge[0],edge[1]) )
 	#list.append(convert2Edges(small,big) )
 	if not small['id'] in dicEdges:
-		list.append(convert2Edges(small,big) )
 		dicEdges[small['id']] = [big['id']]
 		#print "Edge New : "
 	#so this is not new edge to begin with, then is the connection recorded?
 	elif not big['id'] in dicEdges[small['id']] :
-		list.append(convert2Edges(small,big) )
+		#list.append(convert2Edges(small,big) )
 		dicEdges[small['id']].append(big['id'])
 		#print "Edge added : "
 	#else : print "Edge duplicate"
