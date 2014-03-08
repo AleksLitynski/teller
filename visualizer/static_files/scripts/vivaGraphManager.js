@@ -2,14 +2,63 @@
 		//var graph = graphGenerator.completeBipartite(10, 10);
 		//var graph = graphGenerator.complete(100);
 		//var graph = graphGenerator.balancedBinTree(10);
-		
+var VivaCustomNode ={
+	init : function(graphics,graph,node,obj) {
+		highlightRelatedNodes = function(nodeId, isOn) {
+            // just enumerate all realted nodes and update link color:
+            graph.forEachLinkedNode(nodeId, function(node, link){
+				//console.log(link)
+                var linkUI = graphics.getLinkUI(link.id);
+                if (linkUI) {
+                    // linkUI is a UI object created by graphics below
+                    linkUI.attr('stroke', isOn ? 'red' : 'gray');
+                }
+            });
+        };
+		changeEdgeLength = function(nodeId, size) {
+			nodeChanges =[]
+            // just enumerate all realted nodes and update link color:
+            graph.forEachLinkedNode(nodeId, function(node, link){
+                var ui = graphics.getLinkUI(link.id);
+				nodeChanges.push([link,link.fromId,link.toId,{lengthRatio : size}]);
+            });
+			for(i in nodeChanges){
+				var link = nodeChanges[i];
+				graph.removeLink(link[0]);
+				graph.addLink(link[1],link[2],link[3]);
+				//console.log("changesMade");
+			}
+        };
+		$(obj).mousedown(function() {
+			console.log("clicked "  + node.id);
+			changeEdgeLength(node.id,.005);
+		});
+		$(obj).mouseup(function() {
+			console.log("clicked "  + node.id);
+			changeEdgeLength(node.id,1);
+		});
+		$(obj).hover(function() { // mouse over
+				highlightRelatedNodes(node.id, true);
+			}, function() { // mouse out
+				highlightRelatedNodes(node.id, false);
+			});
+	}
+}		
 var vivaGraphManager = {
+	myLayout: "layout",
 	getLayOut:function(graph){
+		var idealLength = 500;
 		return Viva.Graph.Layout.forceDirected(graph, {
-		springLength : 500,
+		springLength : idealLength,
 		springCoeff : 0.0001,
 		dragCoeff : 0.031,
-		gravity : -25.2
+		gravity : -25.2,
+		// This is the main part of this example. We are telling force directed
+		// layout, that we want to change length of each physical spring
+		// by overriding `springTransform` method:
+		springTransform: function (link, spring) {
+                spring.length = idealLength * link.data.lengthRatio;
+                }
 		})
 	},
 	getRenderer :function (graph, layout,graphics,id){
@@ -19,40 +68,37 @@ var vivaGraphManager = {
 					container : document.getElementById(id)
                 });
 	},
-	init : function(id, nodes, edges){
-		var graphGenerator = Viva.Graph.generator();
-		var graph = Viva.Graph.graph();
-		var graphics = Viva.Graph.View.svgGraphics();
-		var i = 0;
-		
-		var layout = vivaGraphManager.getLayOut(graph)
-		var renderer = vivaGraphManager.getRenderer(graph,layout,graphics,id);
-		renderer.run();
-		//add events that will actually "affect" how it looks
-		
-		var nodeSize = 24;
+	
+	initEventsNode : function (graphics,graph){
+		var nodeSize = 10;
 		graphics.node(function(node) {
-              // This time it's a group of elements: http://www.w3.org/TR/SVG/struct.html#Groups
-              var ui = Viva.Graph.svg('g'),
-                  // Create SVG text element with user id as content
-                  svgText = Viva.Graph.svg('text').attr('y', '-4px').text(node.data),
-                  img = Viva.Graph.svg('image')
+            // Why svg('g')? group of elements: http://www.w3.org/TR/SVG/struct.html#Groups
+			var ui = Viva.Graph.svg('g'),
+            svgText = Viva.Graph.svg('text').attr('y', '-0px').attr('font-size','20').text(node.data),
+            img = Viva.Graph.svg('rect')
                      .attr('width', nodeSize)
                      .attr('height', nodeSize)
-                     .link('https://secure.gravatar.com/avatar/' + node.data); //TODO : take care of this code latter 
-
-              ui.append(svgText);
-              ui.append(img);
-              return ui;
+					 .attr('fill', 'blue');
+			ui.append(svgText);
+			ui.append(img);
+			VivaCustomNode.init(graphics,graph,node,ui);
+                     //.link('https://secure.gravatar.com/avatar/' + node.data); //TODO : take care of this code latter 
+			
+			
+			return ui;
             });
 		graphics.placeNode(function(nodeUI, pos) {
-                // 'g' element doesn't have convenient (x,y) attributes, instead
-                // we have to deal with transforms: http://www.w3.org/TR/SVG/coords.html#SVGGlobalTransformAttribute
-                nodeUI.attr('transform',
-                            'translate(' +
-                                  (pos.x - nodeSize/2) + ',' + (pos.y - nodeSize/2) +
-                            ')');
-            });
+            // 'g' element doesn't have convenient (x,y) attributes, instead
+            // we have to deal with transforms: http://www.w3.org/TR/SVG/coords.html#SVGGlobalTransformAttribute
+            nodeUI.attr('transform',
+                        'translate(' +
+                              (pos.x - nodeSize/2) + ',' + (pos.y - nodeSize/2) +
+                        ')');
+        });
+	},
+	initEventsPath: function (graphics){
+	
+		
 
 			// To render an arrow we have to address two problems:
             //  1. Links should start/stop at node's bounding box, not at the node center.
@@ -75,11 +121,14 @@ var vivaGraphManager = {
             marker = createMarker('Triangle');
             marker.append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z');
 			// Marker should be defined only once in <defs> child element of root <svg> element:
-		console.log(renderer)
+		
 		var defs = graphics.getSvgRoot().append('defs');
 		
         defs.append(marker);
 		console.log(defs)
+	},
+	initArrows : function (graphics){
+		var nodeSize = 10;
 		
 		
         var geom = Viva.Graph.geom();
@@ -90,7 +139,7 @@ var vivaGraphManager = {
                            .attr('stroke', 'gray')
                            .attr('marker-end', 'url(#Triangle)');
             });
-	graphics.placeLink(function(linkUI, fromPos, toPos) {
+		graphics.placeLink(function(linkUI, fromPos, toPos) {
               // Here we should take care about
               //  "Links should start/stop at node's bounding box, not at the node center."
 
@@ -125,19 +174,35 @@ var vivaGraphManager = {
               linkUI.attr("d", data);
           });
 	
+	},
+	
+	init : function(id, nodes, edges){
+		var graphGenerator = Viva.Graph.generator();
+		var graph = Viva.Graph.graph();
+		var graphics = Viva.Graph.View.svgGraphics();
+		var i = 0;
+		
+		console.log("mylayout"+ vivaGraphManager.myLayout);
+		vivaGraphManager.myLayout = vivaGraphManager.getLayOut(graph)
+		var renderer = vivaGraphManager.getRenderer(graph,vivaGraphManager.myLayout,graphics,id);
+		renderer.run(); //Must run renderer prior
+		//Otherwise SVG, the canvas thinging won't be created 
+		//add events that will actually "affect" how it looks
+		vivaGraphManager.initEventsNode(graphics,graph);
+		vivaGraphManager.initEventsPath(graphics);
+		vivaGraphManager.initArrows(graphics);
           // Render the graph
-    vivaGraphManager.addAll(graph,nodes,edges)
+		vivaGraphManager.addAll(graph,nodes,edges)
 		
 	},
 	addAll: function (graph, nodes,edges){
 		for (var n in nodes){
 			var me =nodes[n];
-			try {graph.addNode(me.id, me.label);}
+			try {graph.addNode(me.id, me.label); }
 			catch(exception){}
 		}
 		for (var n in edges){
-			//console.log(edges[0]);
-			try{graph.addLink(edges[n].source,edges[n].target);}
+			try{graph.addLink(edges[n].source,edges[n].target,{lengthRatio: 1.0});}
 			catch(exception){}
 		}
 	}
