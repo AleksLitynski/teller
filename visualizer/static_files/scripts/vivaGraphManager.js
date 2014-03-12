@@ -42,6 +42,22 @@ var VivaCustomNode ={
 			}, function() { // mouse out
 				highlightRelatedNodes(node.id, false);
 			});
+	},
+	nodeSelected : 0,
+	initLink : function(graphics,graph,node,obj){
+		$(obj).hover(function() { // mouse over
+			//console.log(obj);
+			//obj.attr('stroke','blue');
+			//if(VivaCustomNode.nodeSelected !=0){
+			//	VivaCustomNode.nodeSelected.attr('stroke','gray');
+			//}
+			//VivaCustomNode.nodeSelected = obj
+                           //.attr('stroke', 'gray')
+				//highlightRelatedNodes(node.id, true);
+			}, function() { // mouse out
+				//obj.attr('stroke','gray');
+				//highlightRelatedNodes(node.id, false);
+			});
 	}
 }		
 var vivaGraphManager = {
@@ -70,17 +86,18 @@ var vivaGraphManager = {
 	},
 	
 	initEventsNode : function (graphics,graph){
-		var nodeSize = 10;
+		var nodeSize = 20;
 		graphics.node(function(node) {
             // Why svg('g')? group of elements: http://www.w3.org/TR/SVG/struct.html#Groups
 			var ui = Viva.Graph.svg('g'),
-            svgText = Viva.Graph.svg('text').attr('y', '-0px').attr('font-size','20').text(node.data),
+            svgText = Viva.Graph.svg('text').attr('y', '-0px').attr('font-size','20')
+						.text(node.data.label + " / " + node.data.type + " "+node.data.data),
             img = Viva.Graph.svg('rect')
                      .attr('width', nodeSize)
                      .attr('height', nodeSize)
 					 .attr('fill', 'blue');
-			ui.append(svgText);
 			ui.append(img);
+			ui.append(svgText);
 			VivaCustomNode.init(graphics,graph,node,ui);
                      //.link('https://secure.gravatar.com/avatar/' + node.data); //TODO : take care of this code latter 
 			
@@ -96,48 +113,17 @@ var vivaGraphManager = {
                         ')');
         });
 	},
-	initEventsPath: function (graphics){
-	
-		
-
-			// To render an arrow we have to address two problems:
-            //  1. Links should start/stop at node's bounding box, not at the node center.
-            //  2. Render an arrow shape at the end of the link.
-
-            // Rendering arrow shape is achieved by using SVG markers, part of the SVG
-            // standard: http://www.w3.org/TR/SVG/painting.html#Markers
-        var createMarker = function(id) {
-                return Viva.Graph.svg('marker')
-                           .attr('id', id)
-                           .attr('viewBox', "0 0 10 10")
-                           .attr('refX', "10")
-                           .attr('refY', "5")
-                           .attr('markerUnits', "strokeWidth")
-                           .attr('markerWidth', "20")
-                           .attr('markerHeight', "15")
-                           .attr('orient', "auto");
-            },
-
-            marker = createMarker('Triangle');
-            marker.append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z');
-			// Marker should be defined only once in <defs> child element of root <svg> element:
-		
-		var defs = graphics.getSvgRoot().append('defs');
-		
-        defs.append(marker);
-		console.log(defs)
-	},
-	initArrows : function (graphics){
+	initLink : function (graphics,graph){
 		var nodeSize = 10;
-		
-		
         var geom = Viva.Graph.geom();
-
         graphics.link(function(link){
                 // Notice the Triangle marker-end attribe:
-                return Viva.Graph.svg('path')
+                var ui =  Viva.Graph.svg('path')
                            .attr('stroke', 'gray')
+						   .attr('stroke-width',5)
                            .attr('marker-end', 'url(#Triangle)');
+				VivaCustomNode.initLink(graphics,graph,link,ui);
+				return ui;
             });
 		graphics.placeLink(function(linkUI, fromPos, toPos) {
               // Here we should take care about
@@ -175,6 +161,35 @@ var vivaGraphManager = {
           });
 	
 	},
+	initEventsPath: function (graphics){
+			// To render an arrow we have to address two problems:
+            //  1. Links should start/stop at node's bounding box, not at the node center.
+            //  2. Render an arrow shape at the end of the link.
+
+            // Rendering arrow shape is achieved by using SVG markers, part of the SVG
+            // standard: http://www.w3.org/TR/SVG/painting.html#Markers
+        var createMarker = function(id) {
+                return Viva.Graph.svg('marker')
+                           .attr('id', id)
+                           .attr('viewBox', "0 0 10 10")
+                           .attr('refX', "10")
+                           .attr('refY', "5")
+                           .attr('markerUnits', "strokeWidth")
+                           .attr('markerWidth', "5")
+                           .attr('markerHeight', "5")
+                           .attr('orient', "auto");
+            },
+
+            marker = createMarker('Triangle');
+            marker.append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z');
+			// Marker should be defined only once in <defs> child element of root <svg> element:
+		
+		var defs = graphics.getSvgRoot().append('defs');
+		
+        defs.append(marker);
+		console.log(defs)
+	},
+	
 	
 	init : function(id, nodes, edges){
 		var graphGenerator = Viva.Graph.generator();
@@ -190,7 +205,7 @@ var vivaGraphManager = {
 		//add events that will actually "affect" how it looks
 		vivaGraphManager.initEventsNode(graphics,graph);
 		vivaGraphManager.initEventsPath(graphics);
-		vivaGraphManager.initArrows(graphics);
+		vivaGraphManager.initLink(graphics,graph);
           // Render the graph
 		vivaGraphManager.addAll(graph,nodes,edges)
 		
@@ -198,7 +213,7 @@ var vivaGraphManager = {
 	addAll: function (graph, nodes,edges){
 		for (var n in nodes){
 			var me =nodes[n];
-			try {graph.addNode(me.id, me.label); }
+			try {graph.addNode(me.id,{type : me.type, value : me.value, label : me.label} ); }
 			catch(exception){}
 		}
 		for (var n in edges){
