@@ -29,6 +29,8 @@ def query(query_string):
     s.send(query_string)            #It doesn't seem to like this line...
     query_response = s.recv(10000) #our replies are VERY long. GOTTA fix that. At least, don't recurse into nodes that already exist
     s.close()
+    #print("query_response: ")
+    #print (query_response)
     return query_response
 
 
@@ -175,34 +177,62 @@ def nodeception(queryResult):
 
                 #print(edge.get("type"))            #what type of thing is this? -- describes
 
-                if (edge.get("type") != "relationship"):
+                if (edge.get("value") == "room" or edge.get("value") == "named"):
+
+                    print("Edge found room/named")
+                    roomConts[edge.get("id")] = [edge.get("id"), edge.get("value"), edge.get("type"), edge.get("edges")]
+                    print (roomConts[terminal.get("id")])
+
+                else:
                     #Terminal has an id, a type, a value, and a list of edges -- Terminal is a relationship
                     print("terminal")
                     terminal = edge.get("terminal")
 
-                    if(terminal.get("type") == "relationship"):
+                    if(terminal.get("value") == "room" or terminal.get("value") == "named"):
                         #WE FOUND IT! WE FINALLY FOUND IT!
                         #print ("Found Relationship in terminal")
                         #print (terminal)
+                        print("Room/named was in terminal")
                         roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
                         print (roomConts[terminal.get("id")])
                         #return terminal
 
                     #This whole block is technically unnecessary right now.
-                    """ 
+                    
                     else:
-                        obj = terminal.get("edges")
+                        #we get a list of edges, so we need to look for 
+                        for ob in terminal.get("edges"):
                         
-                        for potNode in obj:
-
-                            if(potNode.get("type") == "name" or potNode.get("type") == "named"):
-                                print ("potNode found name")
+                            if(ob.get("value") == "room" or ob.get("value") == "named"):
+                                print ("Obj found name/room")
+                                roomConts[ob.get("value")] = [ob.get("id"), ob.get("value"), ob.get("type"), ob.get("edges")]
+                                print (roomConts[ob.get("value")])
+                                
                             else:
-                                #print ("potNode found nothing.")
-                                iCanHazNode = potNode.get("terminal")
-                                #We finally found some nouns!
-                                if(iCanHazNode.get("type") == "noun"):
-                                    nodePlz = iCanHazNode.get("edges")"""
+                            
+                                potNode = ob.get("terminal")
+
+                                if(potNode.get("value") == "room" or potNode.get("value") == "named"):
+                                    print ("potNode found name/room")
+                                    roomConts[potNode.get("value")] = [potNode.get("id"), potNode.get("value"), potNode.get("type"), potNode.get("edges")]
+                                    print (roomConts[potNode.get("value")])
+                                else:
+                                    #print ("potNode found nothing.")
+                                    for iCanHazNode in potNode.get("edges"):
+
+                                        if(iCanHazNode.get("value") == "room" or iCanHazNode.get("value") == "named"):
+                                            print ("iCanHazNode found name/room")
+                                            roomConts[iCanHazNode.get("value")] = [iCanHazNode.get("id"), iCanHazNode.get("value"), iCanHazNode.get("type"), iCanHazNode.get("edges")]
+                                            print (roomConts[iCanHazNode.get("value")])
+                                    
+                                        #We finally found some nouns!
+                                        else:
+                                            nodePlz = iCanHazNode.get("terminal")
+                                            
+                                            if(nodePlz.get("value") == "room" or nodePlz.get("value") == "named"):
+                                                print("nodePlz...")
+                                                roomConts[nodePlz.get("value")] = [nodePlz.get("id"), nodePlz.get("value"), nodePlz.get("type"), nodePlz.get("edges")]
+                                                print (roomConts[nodePlz.get("value")])
 
 
 def qrPrint(qrNode):
@@ -229,17 +259,15 @@ print("You are in a room. Inside, you see...")
 print("\n")
 queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we go down to a depth of 2
 
-#try to fill roomConts with query result -- it's not breaking anything
-roomConts[queryResult.get("id")] = [queryResult.get("id"), queryResult.get("value"), queryResult.get("type"), queryResult.get("edges")]
-
-print("\nRoom: ")
-print(roomConts);
-
 #this...should work? -- It does! We have a function that does the obnoxious node traversal!
 qrNode = nodeception(queryResult)
 
+#print room contents to make sure everything isn't breaking when I'm not looking
+print("\nRoom: ")
+print(roomConts);
+
 #test to see if we are getting things in roomConts, as we are supposed to
-roomPrint()
+#roomPrint()
 
 #qrPrint(qrNode)
 
