@@ -157,59 +157,84 @@ print("Creating Room...")
 edgeInfo("contains", 1)
 nodeInfo(0, "noun", "A Room", "contains")
 
-#print(json.loads(query(describe_noun("room", 2))))
+#function to travel through nodes...for sanity.
+def nodeception(queryResult):
+    if queryResult.get("type") == "get-success":
+        for response_node in queryResult.get("reply"):
+
+            #Idea: make this room a noun and then print it...
+            #This will require me to figure out how to use the noun class's print_noun method
+            
+            ##print response_node.get("id")
+            #print response_node.get("type")
+            #print response_node.get("value")
+
+            nouns["type"].append(response_node.get("type"))
+            #print (nouns["type"])
+            nouns["id"].append(response_node.get("id"))
+            #print (nouns["id"])
+            nouns["value"].append(response_node.get("value"))
+            #print (nouns["value"])
+
+            print("You are in a room.")
+
+            print("Inside, you see...")
+            
+            #Let's see if we can find/print the things a node is related to -- We can!
+            #print(response_node.get("edges"))
+            #Going off of that, let's try to get stuff from each node connected to the room
+            for edge in response_node.get("edges"):
+
+                print(edge.get("type"))            #what type of thing is this? -- describes
+
+                #if it is "describes", do stuff...
+                if (edge.get("type") == "relationship"):
+                    print ("")
+
+                else:
+                    #Terminal has an id, a type, a value, and a list of edges -- Terminal is a relationship
+                    terminal = edge.get("terminal")
+
+                    if(terminal.get("type") == "relationship"):
+                        #WE FOUND IT! WE FINALLY FOUND IT!
+                        #print ("Found Relationship in terminal")
+                        print (terminal.get("type"))
+                        print (terminal)
+                       
+                    else:
+                        obj = terminal.get("edges")
+                        
+                        for potNode in obj:
+
+                            if(potNode.get("type") == "name" or potNode.get("type") == "named"):
+                                print ("potNode found name")
+                            else:
+                                #print ("potNode found nothing.")
+                                iCanHazNode = potNode.get("terminal")
+                                #We finally found some nouns!
+                                if(iCanHazNode.get("type") == "noun"):
+                                    nodePlz = iCanHazNode.get("edges")
+
+                    
+                    #print(terminal.get("id"))
+                    #print(terminal.get("type"))
+                    #print(terminal.get("edges"))
+
+                    #both print "none"
+                    #print(edge.get("id"))
+                    #print(edge.get("value"))
+
+            
+#queryresult = json.loads(query(describe_noun("room",2)))
+
+
+#printnt(json.loads(query(describe_noun("room", 2))))
+
 print("\n")
 queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we go down to a depth of 2
 
-if queryResult.get("type") == "get-success":
-    for response_node in queryResult.get("reply"):
-
-        #Idea: make this room a noun and then print it...
-        #This will require me to figure out how to use the noun class's print_noun method
-        
-        ##print response_node.get("id")
-        #print response_node.get("type")
-        #print response_node.get("value")
-
-        nouns["type"].append(response_node.get("type"))
-        #print (nouns["type"])
-        nouns["id"].append(response_node.get("id"))
-        #print (nouns["id"])
-        nouns["value"].append(response_node.get("value"))
-        #print (nouns["value"])
-
-        print("You are in a room.")
-
-        print("Inside, you see...")
-        
-        #Let's see if we can find/print the things a node is related to -- We can!
-        #print(response_node.get("edges"))
-        #Going off of that, let's try to get stuff from each node connected to the room
-        for edge_node in response_node.get("edges"):
-            print(edge_node.get("type"))            #what type of thing is this? -- describes
-            #if it is "describes", do stuff...
-            if edge_node.get("type") == "describes":
-                print("This describes something...")
-                #print(edge_node)    #just print everything in it...
-                #both print "none"
-                #print(edge_node.get("id"))
-                #print(edge_node.get("value"))
-            else:
-                print ("something odd...")
-                #check if any of these are nouns -- they are not
-                #print("not a noun")
-        
-        #queryresult = json.loads(query(describe_noun("room",2)))
-        """
-        if response_node.get("type") == "noun":
-            nouns["type"].append(response_node.get("type"))
-            print (nouns["type"])
-            nouns["id"].append(response_node.get("id"))
-            print (nouns["id"])
-            nouns["value"].append(response_node.get("value"))
-            print (nouns["value"])
-            """
-        
+#this...should work? -- It does! We have a function that does the obnoxious node traversal!
+nodeception(queryResult)
 
 """
 #convert lots of json stuff into lists and dicts
