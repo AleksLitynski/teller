@@ -1,5 +1,5 @@
 import json
-
+import copy
 # convert them to nodes for graph
 # has [edges, id , value, type]  
 # nodes for graph : 
@@ -13,10 +13,16 @@ _pos =-1;
 def convertToGraphNode(e):
 	global _pos
 	_pos += 1
-	return {'id' : e['id'], 
+	data = copy.deepcopy(e)
+	del data['edges']
+	return {'id' : e['id'],
+			'value' : e['value'],
+			'type' : e['type'],
+			'data' : data,
 			'size': 1,
-			'x':(_pos % 20 ) ,'y': int( _pos / 20)  ,
-			'label': " Value [ " + str(e['value']) + " & " + str(e['type'])+" ] neighbors : " + str(len(e['edges'] ) )}
+			'x':(_pos % 20 ) ,'y': int( _pos / 20),
+			'label': " Value [ " + str(e['value']) + " & " + str(e['type'])+" ] neighbors : " + str(len(e['edges'] ) )
+			}
 
 countEdge = 0;
 def convert2Edges(a,b):

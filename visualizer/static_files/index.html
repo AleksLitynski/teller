@@ -24,27 +24,59 @@
 		#graph-container {
 			top: 100;
 			bottom: 0;
-			left: 0;
+			left: 200px;
 			right: 0;
-			position: absolute;
+			position: Absolute;
 		}
 	</style>
 	<script>
-	function init(){
-		url='data.json';
-		var xhr = sigma.utils.xhr();
-		
-		if (!xhr) throw 'XMLHttpRequest not supported, cannot load the file.';
-
-		xhr.open('GET', 'search', true);
+	function helperXHRPost(xhr,data,f){
+		console.log("Posting");
+		xhr.open('POST', '', true);
+		xhr.send(data);
 		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4) {
-				graph = JSON.parse(xhr.responseText);
-				//sigmaJsManager.init('graph-container',graph.nodes,graph.edges);
-				vivaGraphManager.init('graph-container',graph.nodes,graph.edges);
-			}
+			if (xhr.readyState === 4)f(xhr);
+		};
+	}
+	function helperXHRGet(xhr,path,f){
+		var xhr = sigma.utils.xhr();
+		xhr.open('GET', path, true);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4)f(xhr);
 		};
 		xhr.send();
+	}
+	function helperXHR(request,path,data,f){
+		var xhr = sigma.utils.xhr();
+		
+		xhr.open(request, path, true);
+		xhr.send(data);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4)f(xhr);
+		};
+		
+	}
+	function init(){
+		url='data.json';
+		//var xhr = sigma.utils.xhr();
+		
+		
+		helperXHR('GET','search',"",function(xhr){
+			graph = JSON.parse(xhr.responseText);
+			vivaGraphManager.init('graph-container',graph.nodes,graph.edges);
+			});
+		
+	}
+	function search(){
+		var input = document.getElementById("searchKeyword").value;
+		var data = ["keyword",input];
+		$("#graph-container").empty();
+		helperXHR('POST','search',JSON.stringify(data),function(xhr){
+			graph = JSON.parse(xhr.responseText);
+			console.log(graph);
+			vivaGraphManager.init('graph-container',graph.nodes,graph.edges);
+			});
+		//document.write('<h2>Your Text and or HTML here.</h2>');
 	}
 	</script>
 
@@ -58,9 +90,19 @@
 
 
 	
+
+<input id = "searchKeyword"type="text" name="search">
+<button onClick = "search()" type ="button">Search</button><br>
+
 <div id="graph-container"></div>
+<form>
+Node selected : <input type = "text" value = "notSelected" disabled ></br>
+type: <input type = "text" value = "notSelected" disabled ></br> 	
+valu: <input type = "text" value = "notSelected" disabled ></br>
+<input type="submit" value="Submit">
+</form>
+
 <!-- buttons that are now disabled, they server no purpose 
-<button onClick = "sigmaJsManager.addInstancesSeparated()" type ="button">Separated</button>
 <button onClick = "sigmaJsManager.addInstancesOverlapping()" type ="button">Overlapping</button>
 <button onClick = "sigmaJsManager.addSearchResult()" type ="button">FakeSarch</button>
 <button onClick = "sigmaJsManager.addInstance_Dot()" type ="button">add Dot</button>

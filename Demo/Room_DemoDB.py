@@ -3,10 +3,11 @@ import sys
 import random
 import shlex
 import socket
-#importing our stuff
 import json
 
-
+#must have foobar
+#can have arbitrary number of arguments and/or keyword arguments
+#def func(foobar, *args, **kwargs)
 
 #Nodes have: ID, type, value, & List of Edges
 #
@@ -24,7 +25,8 @@ import json
 def query(query_string):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(('127.0.0.1', 5005))
-    s.send(query_string)
+    #print (type(s))                 #What is the type of s... -- It's a socket!
+    s.send(query_string)            #It doesn't seem to like this line...
     query_response = s.recv(10000) #our replies are VERY long. GOTTA fix that. At least, don't recurse into nodes that already exist
     s.close()
     return query_response
@@ -34,6 +36,12 @@ def query(query_string):
 def describe_noun(noun_name, depth=2):
 	#broke up the return into 2 lines to make it more readable
     return '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
+
+#This will contain all the dictionaries returned from our JSON code
+encyclopedia = []
+
+#List of room contents
+roomConts = {"id" : 0, "rel_id" : 1, "value" : 2, "type" : 3, "edges" : 4}
 
 #want to create a list of nodes.
 nodes = {"info":[]}
@@ -58,8 +66,6 @@ def nodeInfo(node_id, node_type, value, edges):
         node["value"]= value
         node["edges"]= edges
         addNode(node)
-
-
 
         
 
@@ -110,12 +116,11 @@ def testLoop():
                         
                         #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
                         if action == "exit":
+                                print("Okay, bye!")
                                 break 
 
-                        
-                        
                         #User's query is the action
-                        query(action)
+                        json.loads(query(describe_noun(action, 2)))
                         
 		except :
 			#Failed with function input. Attempting to use function input instead
@@ -125,33 +130,133 @@ def testLoop():
                                 action = input().lower()
 			
                                 if action == "exit":
-                                        break
+                                    print("Okay, bye!")
+                                    break
 
-                                query(action)
+                                json.loads(query(describe_noun(action, 2)))
                                 
 			except :
                                 print("SYSTEM : Cannot process user input")
                                 
 		
 		#do stuff with objects
-		if not node(action):
-			#Only access player node if you don't refer to any of the objects
-			playerNode(action)
-		
+		if not playerNode(action):
+		    #Only access player node if you don't refer to any of the objects
+		    #node(action)
+                    pass    
 		
 		
 #This code runs as soon as the game starts...	
 #Run the game!
 
+print("Creating Room...")
 #create room
 edgeInfo("contains", 1)
 nodeInfo(0, "noun", "A Room", "contains")
 
-#convert lots of json stuff into lists and dicts
-json.loads(query(describe_noun("room", 1)))
+#function to travel through nodes...for sanity.
+def nodeception(queryResult):
+    if queryResult.get("type") == "get-success":
+        roomConts[queryResult.get("id")] = []
+        
+        for response_node in queryResult.get("reply"):
 
+            #roomConts["type"].append(response_node.get("type"))
+            #print (nouns["type"])
+            #roomConts["id"].append(response_node.get("id"))
+            #print (nouns["id"])
+            #nouns["value"].append(response_node.get("value"))
+            #print (nouns["value"])
+
+            #Let's see if we can find/print the things a node is related to -- We can!
+            #print(response_node.get("edges"))
+            #Going off of that, let's try to get stuff from each node connected to the room
+            for edge in response_node.get("edges"):
+
+                #print(edge.get("type"))            #what type of thing is this? -- describes
+
+                if (edge.get("type") != "relationship"):
+                    #Terminal has an id, a type, a value, and a list of edges -- Terminal is a relationship
+                    print("terminal")
+                    terminal = edge.get("terminal")
+
+                    if(terminal.get("type") == "relationship"):
+                        #WE FOUND IT! WE FINALLY FOUND IT!
+                        #print ("Found Relationship in terminal")
+                        #print (terminal)
+                        roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
+                        print (roomConts[terminal.get("id")])
+                        #return terminal
+
+                    #This whole block is technically unnecessary right now.
+                    """ 
+                    else:
+                        obj = terminal.get("edges")
+                        
+                        for potNode in obj:
+
+                            if(potNode.get("type") == "name" or potNode.get("type") == "named"):
+                                print ("potNode found name")
+                            else:
+                                #print ("potNode found nothing.")
+                                iCanHazNode = potNode.get("terminal")
+                                #We finally found some nouns!
+                                if(iCanHazNode.get("type") == "noun"):
+                                    nodePlz = iCanHazNode.get("edges")"""
+
+
+def qrPrint(qrNode):
+    #print("This is where more information would be... \nIF I HAD ANY!")
+    pNode = qrNode.get("type")
+    pNode += "; "
+    pNode += qrNode.get("value")
+    pNode += "; "
+    pNode += qrNode.get("id")
+    print(pNode)
+
+    #nodeCheck = json.loads(query(get_node(qrNode.get("id"), 2)))
+    #print(nodeCheck.get("type"))
+
+def roomPrint():
+    print("\nRoomContents: ")
+    print(roomConts)
+
+#queryresult = json.loads(query(describe_noun("room",2)))
+#printnt(json.loads(query(describe_noun("room", 2))))
+
+print("You are in a room. Inside, you see...")
+
+print("\n")
+queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we go down to a depth of 2
+
+#try to fill roomConts with query result -- it's not breaking anything
+roomConts[queryResult.get("id")] = [queryResult.get("id"), queryResult.get("value"), queryResult.get("type"), queryResult.get("edges")]
+
+print("\nRoom: ")
+print(roomConts);
+
+#this...should work? -- It does! We have a function that does the obnoxious node traversal!
+qrNode = nodeception(queryResult)
+
+#test to see if we are getting things in roomConts, as we are supposed to
+roomPrint()
+
+#qrPrint(qrNode)
+
+"""
+#convert lots of json stuff into lists and dicts
+for d in json.loads(query(describe_noun("room", 1))):
+    #each dictionary is appended to the encyclopedia
+    print(type(d))
+    encyclopedia.append(d)  #not breaking things so far
+    print(encyclopedia[0])  #prints 'reply'...twice
+    print(encyclopedia[0][2])
 #look into query.reply...?
 #get element 0
+#for n in encyclopedia:
+"""
+
+    
 #take that element (has edges property, which corresponds to a list)
 #iterate over list -- each element of list has a type, which should be describes
 #find describes -- look at its terminal
