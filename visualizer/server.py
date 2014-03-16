@@ -53,7 +53,8 @@ def sendSearchStatic(handler):
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(('127.0.0.1', 5005))
 	s.send(describe_noun("room"))
-	raw = s.recv(10000)
+	raw = s.recv(100000000)
+	
 	read = SearchInterpreter.read(raw);
 	s.close()
 	handler.wfile.write(json.dumps(read))
@@ -64,7 +65,7 @@ def sendSearch(handler,info):
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(('127.0.0.1', 5005))
 	s.send(info)
-	raw = s.recv(10000)
+	raw = s.recv(200000)
 	read = SearchInterpreter.read(raw);
 	s.close()
 	handler.wfile.write(json.dumps(read))

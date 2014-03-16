@@ -3,7 +3,51 @@
 		//var graph = graphGenerator.complete(100);
 		//var graph = graphGenerator.balancedBinTree(10);
 var VivaCustomNode ={
+	isCreateNewLink : true,
+	nodeSelected :[""],
+	EVENT_AddNewLink : function(graph,from, to){
+		console.log("VivaCustomNode::EVENT_ADDNEWLINK");
+		vivaGraphManager.helperAddLink(graph,from,to);
+	},
+	EVENT_NewNodeSeleccted : function(graphics,nodeId){
+	//https://developer.mozilla.org/en-US/docs/Web/API/Element
+	//access ui svelement
+	//to get child "rect" then change its color
+	//well for latter I suppose.
+	
+		var ui = graphics.getNodeUI(nodeId);
+		//ui.focuse();
+        //var img = graphics.getNodeUI(nodeId).getElementById('img');
+		console.log(ui);
+		console.log(ui.attributes);
+		console.log(ui.children);
+		//console.log(ui.getElementById('img'));
+		//console.log(img);
+		//ui.attr('fill','red');
+	},
+	EVENT_NodeDeSelected: function(graphics,nodeId){
+		var ui = graphics.getNodeUI(nodeId);
+		//ui.attr('fill','blue');
+	},
 	init : function(graphics,graph,node,obj) {
+		addNewLink = function(node){
+			arr = VivaCustomNode.nodeSelected;
+			
+			if(arr[0] == "") {
+				arr[0] = node.id;
+				VivaCustomNode.EVENT_NewNodeSeleccted(graphics,node.id);
+				}
+			else if(arr[0] == node.id);//duplicate click
+			else {
+				VivaCustomNode.EVENT_NodeDeSelected(graphics,arr[0]);
+				VivaCustomNode.EVENT_AddNewLink(graph, arr[0],node.id);
+				arr[0] = "";
+				
+			}
+			
+			console.log("Click");
+			console.log(arr);
+		};
 		highlightRelatedNodes = function(nodeId, isOn) {
             // just enumerate all realted nodes and update link color:
             graph.forEachLinkedNode(nodeId, function(node, link){
@@ -30,6 +74,8 @@ var VivaCustomNode ={
 			}
         };
 		$(obj).mousedown(function() {
+			if(VivaCustomNode.isCreateNewLink)
+				addNewLink(node);
 			console.log("clicked "  + node.id);
 			changeEdgeLength(node.id,.005);
 		});
@@ -43,8 +89,15 @@ var VivaCustomNode ={
 				highlightRelatedNodes(node.id, false);
 			});
 	},
-	nodeSelected : 0,
+	isRemoveLink : true,
+	//nodeSelected : 0,
 	initLink : function(graphics,graph,node,obj){
+		$(obj).mousedown(function() {
+			//removeLink
+			//console.log("clicked "  + node);
+			//console.log( node);
+			if(VivaCustomNode.isRemoveLink)graph.removeLink(node);
+		});
 		$(obj).hover(function() { // mouse over
 			//console.log(obj);
 			//obj.attr('stroke','blue');
@@ -59,7 +112,7 @@ var VivaCustomNode ={
 				//highlightRelatedNodes(node.id, false);
 			});
 	}
-}		
+}
 var vivaGraphManager = {
 	myLayout: "layout",
 	getLayOut:function(graph){
@@ -76,6 +129,10 @@ var vivaGraphManager = {
                 spring.length = idealLength * link.data.lengthRatio;
                 }
 		})
+	},
+	helperAddLink : function(graph,source,target, length) {
+		length = typeof a !== 'undefined' ? length : 1;
+		graph.addLink(source,target,{lengthRatio: length});
 	},
 	getRenderer :function (graph, layout,graphics,id){
 		return Viva.Graph.View.renderer(graph, {
@@ -95,7 +152,8 @@ var vivaGraphManager = {
             img = Viva.Graph.svg('rect')
                      .attr('width', nodeSize)
                      .attr('height', nodeSize)
-					 .attr('fill', 'blue');
+					 .attr('fill', 'blue')
+					 .attr('id', 'img');
 			ui.append(img);
 			ui.append(svgText);
 			VivaCustomNode.init(graphics,graph,node,ui);
@@ -120,7 +178,7 @@ var vivaGraphManager = {
                 // Notice the Triangle marker-end attribe:
                 var ui =  Viva.Graph.svg('path')
                            .attr('stroke', 'gray')
-						   .attr('stroke-width',5)
+						   .attr('stroke-width',10)
                            .attr('marker-end', 'url(#Triangle)');
 				VivaCustomNode.initLink(graphics,graph,link,ui);
 				return ui;
@@ -217,7 +275,7 @@ var vivaGraphManager = {
 			catch(exception){}
 		}
 		for (var n in edges){
-			try{graph.addLink(edges[n].source,edges[n].target,{lengthRatio: 1.0});}
+			try{vivaGraphManager.helperAddLink(graph,edges[n].source,edges[n].target);}
 			catch(exception){}
 		}
 	}
