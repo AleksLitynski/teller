@@ -147,7 +147,7 @@ class ontology:
 
 		#Adds a noun for each color
 		#THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
-		colors = self.new_nouns_named(["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"], english) 
+		colors = self.new_nouns_named(["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"], english)
 		self.add_relationship(blanket, choice(colors), "colored", "True")
 
 		bed_sizes = self.new_nouns_named(["twin", "double", "queen", "king"], english)
@@ -175,7 +175,7 @@ class ontology:
 		book = self.new_noun_named("book", english)
 		self.add_relationship(choice(objects_in_room), book, "has_a", "True")
 		book_titles = self.new_nouns_named(["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force", "The Vengeful Penguin", "Ninja's Guide to Ornamental Horticulture",
-                                                    "Neko-nomicon", "This is Not a Book"], english)
+													"Neko-nomicon", "This is Not a Book"], english)
 		self.add_relationship(book, choice(book_titles), "titled", "True")
 
 
@@ -207,10 +207,12 @@ class ontology:
 		self.add_relationship(new_node, lang, "named", name)
 		return new_node
 
-	def pinch(self, pinch_from, time):
+	def fork(self, fork_from, time):
 		new_noun = self.add_node("noun", "")
-		self.add_edge("is_a", new_noun, pinch_from, time, 100)
+		self.add_edge("is_a", new_noun, fork_from, time, 100)
 		return new_noun
+
+	#def discover(self, on, ):
 
 	#wraps the process of adding a relationship. Nice.
 	def add_relationship(self, src, target, type, value, weight=100, time=1):

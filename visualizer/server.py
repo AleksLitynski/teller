@@ -52,9 +52,14 @@ def sendSearchStatic(handler):
 	printFunc("sendSearchStatic")
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(('127.0.0.1', 5005))
+<<<<<<< HEAD
 	s.send(describe_noun("room"))
 	raw = s.recv(100000000)
 	
+=======
+	s.send('{"type":"get", "params":{"depth":1}, "search":{}}')
+	raw = s.recv(10000)
+>>>>>>> 6ad45b90c5d45445f1c700bada9c3eb093cb0101
 	read = SearchInterpreter.read(raw);
 	s.close()
 	handler.wfile.write(json.dumps(read))
