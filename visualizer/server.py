@@ -51,7 +51,7 @@ def sendSearch(handler):
 	printFunc("SendSearch")
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(('127.0.0.1', 5005))
-	s.send(describe_noun("room"))
+	s.send('{"type":"get", "params":{"depth":1}, "search":{}}')
 	raw = s.recv(10000)
 	read = SearchInterpreter.read(raw);
 	s.close()
