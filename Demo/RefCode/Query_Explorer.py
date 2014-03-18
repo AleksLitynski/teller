@@ -44,22 +44,10 @@ def get_relationship(query):
 
 
 
-
-
-
-
-
 def get_edge_named(edges, edge_name):
     for edge in edges:
         if edge.get("type") == edge_name:
             return edge.get("terminal")
-
-
-
-
-
-
-
 
 
 class noun:
@@ -90,19 +78,15 @@ class noun:
 
 
     def print_noun(self):
-        #print "There is a " + self.get_value("named") + ". "
-	    pass
+        #Testing self.get_value() -- it works
+        #print(self.get_value("named"))
+        return self.get_value("named")
 		
 class relationship:
     def __init__(self, type, value, reguarding):
         self.type = type
         self.value = value
         self.reguarding = reguarding
-
-
-
-
-
 
 
 """

@@ -3,7 +3,9 @@ import sys
 import random
 import shlex
 import socket
+#importing our stuff
 import json
+from RefCode.Query_Explorer import *
 
 #must have foobar
 #can have arbitrary number of arguments and/or keyword arguments
@@ -37,7 +39,34 @@ def query(query_string):
 #Give node a name and a depth; 2 is default, but you could do 10 or something, if needed.
 def describe_noun(noun_name, depth=2):
 	#broke up the return into 2 lines to make it more readable
-    return '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1","terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
+    return '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +\
+           '"terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
+
+
+def get_node(node_id, depth=2):
+    return '{"type": "get", ' \
+           '"params": {"depth":'+str(depth)+'}, ' \
+                                            '"search": {"id":"'+node_id+'"}}'
+
+
+def translate_type(type):
+    return type
+
+
+def get_node_by_name(name):
+
+    #exp = Query_Explorer()
+    query_string = describe_noun(name, 2)
+
+    noun = get_noun(json.loads(query(query_string)))
+    noun = pipe(query_string, [
+        query,
+        json.loads,
+        get_noun
+    ])
+
+
+    return noun
 
 #This will contain all the dictionaries returned from our JSON code
 encyclopedia = []
@@ -259,12 +288,21 @@ print("You are in a room. Inside, you see...")
 print("\n")
 queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we go down to a depth of 2
 
+#this is the room
+rm = get_node_by_name("room")
+
+#is this working?
+rm.print_noun()
+
+#call json.loads -> pass in query -> cast as string: get_node_by_name -> taking room as a parameter
+json.loads(query(rm.print_noun()))
+
 #this...should work? -- It does! We have a function that does the obnoxious node traversal!
-qrNode = nodeception(queryResult)
+#qrNode = nodeception(queryResult)
 
 #print room contents to make sure everything isn't breaking when I'm not looking
 print("\nRoom: ")
-print(roomConts);
+#print(roomConts);
 
 #test to see if we are getting things in roomConts, as we are supposed to
 #roomPrint()
