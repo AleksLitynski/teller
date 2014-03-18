@@ -5,11 +5,11 @@ import shlex
 import re
 #importing our stuff
 import json
-from Query_Explorer import *
+from RefCode.Query_Explorer import *
 
 #Create an array of items (chairs, tables, beds, etc.)
 items={}
-attr = {'actions' : 0, 'material' : 1, 'size' : 2, 'color' : 3, 'with' : 4}
+attr = {'actions' : 0, 'material' : 1, 'size' : 2, 'color' : 3, 'weight' : 4, 'with' : 5}
 
 
 #create an dictionary of materials
@@ -23,29 +23,29 @@ colors=["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azur
 
 items["chair"] = [["sit", "jump", "under", "lift", "stand"], \
 				random.choice(materials["furniture"]), 
-				"!=", random.choice(colors), "!="]
+				"!=", random.choice(colors), 5, "!="]
 
 items["table"] = [["under", "lift", "search", "lean", "lie"], \
 				random.choice(materials["furniture"]), 
-				"!=", random.choice(colors), "teapot"]
+				"!=", random.choice(colors), 20, "teapot"]
 
 items["bed"] = [["sit", "jump", "search", "lean", "stand", "lie"], \
 				random.choice(materials["furniture"]), 
-				random.choice(bedSizes), "!=", "cover"]
+				random.choice(bedSizes), "!=", 200, "cover"]
 
 items["cover"] = [["sit", "jump", "search", "lean", "stand", "lie"], \
 				random.choice(materials["fabric"]), 
-				"!=", random.choice(colors), "!="]
+				"!=", random.choice(colors), 2, "!="]
 
 items["wall"] = [["search", "lean"], \
-                "!=", "!=", random.choice(colors), "!="]
+                "!=", "!=", random.choice(colors), 200, "!="]
 
 items["teapot"] = [["search", "lift"], \
                 random.choice(materials["dishware"]), 
-				"!=", random.choice(colors), "liquid"]
+				"!=", random.choice(colors), 1, "liquid"]
 
 items["liquid"] = [["search"], \
-                "!=", "!=", random.choice(colors), "!="]
+                "!=", "!=", random.choice(colors), 3, "!="]
 
 #Array to hold a chair, a table, a wall, and a bed
 roomContents=["chair","table","bed", "wall"]
@@ -72,7 +72,7 @@ def inspectObject(obj, depth=0):
 				#s += " with " + items[obj][attr["with"]]
 
 		#fix a/an issues
-		s = re.sub('\\ba ([aeiou])', 'an \\1', s)
+		s = re.sub('\\ba ([aeiou])', 'an \\1', s, re.IGNORECASE)
 		return s
 	
 	
@@ -98,6 +98,13 @@ verbs = {         "sit" : ["You sit on the obj.","You can't sit on the obj."],
 }
 response_index = {"can" : 0, "can't" : 1}#removes hard-coding of indexes
 
+def lift(obj, limit):
+	if items[obj][attr["weight"]] <limit:
+		return "You lift the "+obj +"."
+		#off of the ground? what about things on other things
+	
+	return "The "+obj+" is too heavy to lift." 
+
 def node(action):
 	verb = "" 
 	subject = ""
@@ -111,6 +118,10 @@ def node(action):
 		return False
 	if verb == "":#if there is subject but no action
 		print(inspectObject(subject))#talk about the subject
+
+	elif verb == "lift":
+		print(lift(subject, 50))
+	
 	#there is a verb, and it can be applied to the subject
 	elif(verb in items[subject][attr["actions"]] ):
 		print(verbs[verb][response_index["can"]].replace("obj",subject))
