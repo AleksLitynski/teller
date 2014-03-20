@@ -136,55 +136,7 @@ def playerNode(action):
 			print(dialogs[d])
 	if(not isActionValid):print("SYSTEM : Action not recognized")
 				
-#Game Loop
-def testLoop():
-	while(True):
-		#create some space between this and last input/output
-		print("\n"),
-		#input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
-		try:
-                        action = raw_input().lower()    #convert to lower case to prevent problems where there are none (i.e. "SIT on Chair" should work just like "sit on chair")
-                        
-                        #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
-                        if action == "exit":
-                                print("Okay, bye!")
-                                break 
-
-                        #User's query is the action
-                        json.loads(query(describe_noun(action, 2)))
-                        
-		except :
-			#Failed with function input. Attempting to use function input instead
-			print("Sorry the game made a mistake, could you type it one more time?\n   "),
-			try:
-
-                                action = input().lower()
-			
-                                if action == "exit":
-                                    print("Okay, bye!")
-                                    break
-
-                                json.loads(query(describe_noun(action, 2)))
-                                
-			except :
-                                print("SYSTEM : Cannot process user input")
-                                
-		
-		#do stuff with objects
-		if not playerNode(action):
-		    #Only access player node if you don't refer to any of the objects
-		    #node(action)
-                    pass    
-		
-		
-#This code runs as soon as the game starts...	
-#Run the game!
-
-print("Creating Room...")
-#create room
-edgeInfo("contains", 1)
-nodeInfo(0, "noun", "A Room", "contains")
-
+    		
 def Check_Edge(node, searchFor, searchIn):
     for edge in node.get("edges"):
         if (edge.get(searchIn) == searchFor):
@@ -232,6 +184,61 @@ def roomPrint():
     print("\nRoomContents: ")
     print(roomConts)
 
+#Game Loop
+def testLoop():
+	while(True):
+		#create some space between this and last input/output
+		print("\n"),
+		#input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
+		try:
+                        action = raw_input().lower()    #convert to lower case to prevent problems where there are none (i.e. "SIT on Chair" should work just like "sit on chair")
+
+                        #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
+                        if action == "exit":
+                                print("Okay, bye!")
+                                break 
+
+                        #User's query is the action
+                        queryResult = json.loads(query(describe_noun("room", 2)))
+                        #check for action in value 
+                        Nodeception(queryResult, action, "value")
+                        #check for action in type
+                        Nodeception(queryResult, action, "type")
+                        #check for action in id
+                        Nodeception(queryResult, action, "id")
+                        
+                        
+		except :
+			#Failed with function input. Attempting to use function input instead
+			print("Sorry the game made a mistake, could you type it one more time?\n   "),
+			try:
+
+                                action = input().lower()
+			
+                                if action == "exit":
+                                    print("Okay, bye!")
+                                    break
+
+                                
+			except :
+                                print("SYSTEM : Cannot process user input")
+                                
+		
+		#do stuff with objects
+		if not playerNode(action):
+		    #Only access player node if you don't refer to any of the objects
+		    #node(action)
+                    pass
+
+#GAME START
+#This code runs as soon as the game starts...	
+#Run the game!
+
+print("Creating Room...")
+#create room
+edgeInfo("contains", 1)
+nodeInfo(0, "noun", "A Room", "contains")
+
 #queryresult = json.loads(query(describe_noun("room",2)))
 #print(json.loads(query(describe_noun("room", 2))))
 
@@ -258,30 +265,10 @@ print("\nRoom: ")
 
 #test to see if we are getting things in roomConts, as we are supposed to
 roomPrint()
-
-
-
-"""
-#convert lots of json stuff into lists and dicts
-for d in json.loads(query(describe_noun("room", 1))):
-    #each dictionary is appended to the encyclopedia
-    print(type(d))
-    encyclopedia.append(d)  #not breaking things so far
-    print(encyclopedia[0])  #prints 'reply'...twice
-    print(encyclopedia[0][2])
-#look into query.reply...?
-#get element 0
-#for n in encyclopedia:
-"""
-
-    
-#take that element (has edges property, which corresponds to a list)
-#iterate over list -- each element of list has a type, which should be describes
-#find describes -- look at its terminal
-#one should be "has a" -- shows what it is related to
 			
 #wait for user input
 testLoop()
 
+#GAME END
 
 
