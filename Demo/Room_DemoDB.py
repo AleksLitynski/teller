@@ -191,7 +191,7 @@ def Check_Edge(node, searchFor, searchIn):
             #add to roomConts
             roomConts[edge.get("id")] = [edge.get("id"), edge.get("value"), edge.get("type"), edge.get("edges")]
             print (roomConts[edge.get("id")])
-            return(edge)
+            return edge
         else:
             Check_Terminal(edge, searchFor, searchIn)
 
@@ -200,33 +200,20 @@ def Check_Terminal(edge, searchFor, searchIn):
     if(terminal.get(searchFor) == searchIn):
         roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
         print (roomConts[terminal.get("id")])
-        return(edge)
+        return terminal
     else:
         Check_Edge(terminal, searchFor, searchIn)
 
 #function to travel through nodes...for sanity.
-def Nodeception(queryResult):
+def Nodeception(queryResult, SF, SI):
     if queryResult.get("type") == "get-success":
         roomConts[queryResult.get("id")] = []
         
         for response_node in queryResult.get("reply"):
 
             #Try my new functions!
-            Check_Edge(response_node, "value", "room")
-            Check_Edge(response_node, "value", "named")
-
+            Check_Edge(response_node, SF, SI)
             
-            #roomConts["type"].append(response_node.get("type"))
-            #print (nouns["type"])
-            #roomConts["id"].append(response_node.get("id"))
-            #print (nouns["id"])
-            #nouns["value"].append(response_node.get("value"))
-            #print (nouns["value"])
-
-            #Let's see if we can find/print the things a node is related to -- We can!
-            #print(response_node.get("edges"))
-            #Going off of that, let's try to get stuff from each node connected to the room
-           
 
 
 def qrPrint(qrNode):
@@ -263,7 +250,8 @@ rm.print_noun()
 #json.loads(query(rm.print_noun()))
 
 #this...should work? -- It does! We have a function that does the obnoxious node traversal!
-qrNode = Nodeception(queryResult)
+qrNode = Nodeception(queryResult, "value", "room")
+qrNode = Nodeception(queryResult, "value", "named")
 
 #print room contents to make sure everything isn't breaking when I'm not looking
 print("\nRoom: ")
