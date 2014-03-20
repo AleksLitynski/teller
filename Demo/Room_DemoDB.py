@@ -185,13 +185,37 @@ print("Creating Room...")
 edgeInfo("contains", 1)
 nodeInfo(0, "noun", "A Room", "contains")
 
+def Check_Edge(node, searchFor, searchIn):
+    for edge in node.get("edges"):
+        if (edge.get(searchIn) == searchFor):
+            #add to roomConts
+            roomConts[edge.get("id")] = [edge.get("id"), edge.get("value"), edge.get("type"), edge.get("edges")]
+            print (roomConts[edge.get("id")])
+            return(edge)
+        else:
+            Check_Terminal(edge, searchFor, searchIn)
+
+def Check_Terminal(edge, searchFor, searchIn):
+    terminal = edge.get("terminal")
+    if(terminal.get(searchFor) == searchIn):
+        roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
+        print (roomConts[terminal.get("id")])
+        return(edge)
+    else:
+        Check_Edge(terminal, searchFor, searchIn)
+
 #function to travel through nodes...for sanity.
-def nodeception(queryResult):
+def Nodeception(queryResult):
     if queryResult.get("type") == "get-success":
         roomConts[queryResult.get("id")] = []
         
         for response_node in queryResult.get("reply"):
 
+            #Try my new functions!
+            Check_Edge(response_node, "value", "room")
+            Check_Edge(response_node, "value", "named")
+
+            
             #roomConts["type"].append(response_node.get("type"))
             #print (nouns["type"])
             #roomConts["id"].append(response_node.get("id"))
@@ -202,66 +226,7 @@ def nodeception(queryResult):
             #Let's see if we can find/print the things a node is related to -- We can!
             #print(response_node.get("edges"))
             #Going off of that, let's try to get stuff from each node connected to the room
-            for edge in response_node.get("edges"):
-
-                #print(edge.get("type"))            #what type of thing is this? -- describes
-
-                if (edge.get("value") == "room" or edge.get("value") == "named"):
-
-                    print("Edge found room/named")
-                    roomConts[edge.get("id")] = [edge.get("id"), edge.get("value"), edge.get("type"), edge.get("edges")]
-                    print (roomConts[terminal.get("id")])
-
-                else:
-                    #Terminal has an id, a type, a value, and a list of edges -- Terminal is a relationship
-                    print("terminal")
-                    terminal = edge.get("terminal")
-
-                    if(terminal.get("value") == "room" or terminal.get("value") == "named"):
-                        #WE FOUND IT! WE FINALLY FOUND IT!
-                        #print ("Found Relationship in terminal")
-                        #print (terminal)
-                        print("Room/named was in terminal")
-                        roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
-                        print (roomConts[terminal.get("id")])
-                        #return terminal
-
-                    #This whole block is technically unnecessary right now.
-                    
-                    else:
-                        #we get a list of edges, so we need to look for 
-                        for ob in terminal.get("edges"):
-                        
-                            if(ob.get("value") == "room" or ob.get("value") == "named"):
-                                print ("Obj found name/room")
-                                roomConts[ob.get("value")] = [ob.get("id"), ob.get("value"), ob.get("type"), ob.get("edges")]
-                                print (roomConts[ob.get("value")])
-                                
-                            else:
-                            
-                                potNode = ob.get("terminal")
-
-                                if(potNode.get("value") == "room" or potNode.get("value") == "named"):
-                                    print ("potNode found name/room")
-                                    roomConts[potNode.get("value")] = [potNode.get("id"), potNode.get("value"), potNode.get("type"), potNode.get("edges")]
-                                    print (roomConts[potNode.get("value")])
-                                else:
-                                    #print ("potNode found nothing.")
-                                    for iCanHazNode in potNode.get("edges"):
-
-                                        if(iCanHazNode.get("value") == "room" or iCanHazNode.get("value") == "named"):
-                                            print ("iCanHazNode found name/room")
-                                            roomConts[iCanHazNode.get("value")] = [iCanHazNode.get("id"), iCanHazNode.get("value"), iCanHazNode.get("type"), iCanHazNode.get("edges")]
-                                            print (roomConts[iCanHazNode.get("value")])
-                                    
-                                        #We finally found some nouns!
-                                        else:
-                                            nodePlz = iCanHazNode.get("terminal")
-                                            
-                                            if(nodePlz.get("value") == "room" or nodePlz.get("value") == "named"):
-                                                print("nodePlz...")
-                                                roomConts[nodePlz.get("value")] = [nodePlz.get("id"), nodePlz.get("value"), nodePlz.get("type"), nodePlz.get("edges")]
-                                                print (roomConts[nodePlz.get("value")])
+           
 
 
 def qrPrint(qrNode):
@@ -281,7 +246,7 @@ def roomPrint():
     print(roomConts)
 
 #queryresult = json.loads(query(describe_noun("room",2)))
-#printnt(json.loads(query(describe_noun("room", 2))))
+#print(json.loads(query(describe_noun("room", 2))))
 
 print("You are in a room. Inside, you see...")
 
@@ -295,19 +260,18 @@ rm = get_node_by_name("room")
 rm.print_noun()
 
 #call json.loads -> pass in query -> cast as string: get_node_by_name -> taking room as a parameter
-json.loads(query(rm.print_noun()))
+#json.loads(query(rm.print_noun()))
 
 #this...should work? -- It does! We have a function that does the obnoxious node traversal!
-#qrNode = nodeception(queryResult)
+qrNode = Nodeception(queryResult)
 
 #print room contents to make sure everything isn't breaking when I'm not looking
 print("\nRoom: ")
-#print(roomConts);
 
 #test to see if we are getting things in roomConts, as we are supposed to
-#roomPrint()
+roomPrint()
 
-#qrPrint(qrNode)
+
 
 """
 #convert lots of json stuff into lists and dicts
