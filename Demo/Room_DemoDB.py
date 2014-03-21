@@ -149,22 +149,24 @@ def Check_Edge(node, searchFor, searchIn):
 
 def Check_Terminal(edge, searchFor, searchIn):
     terminal = edge.get("terminal")
-    if(terminal.get(searchFor) == searchIn):
+    if(terminal.get(searchIn) == searchFor):
         roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
         print (roomConts[terminal.get("id")])
         return terminal
     else:
         Check_Edge(terminal, searchFor, searchIn)
 
+
+
 #function to travel through nodes...for sanity.
-def Nodeception(queryResult, SF, SI):
+def Nodeception(queryResult, searchFor, searchIn):
     if queryResult.get("type") == "get-success":
         roomConts[queryResult.get("id")] = []
         
         for response_node in queryResult.get("reply"):
 
             #Try my new functions!
-            Check_Edge(response_node, SF, SI)
+            Check_Edge(response_node, searchFor, searchIn)
             
 
 
@@ -194,18 +196,20 @@ def testLoop():
                         action = raw_input().lower()    #convert to lower case to prevent problems where there are none (i.e. "SIT on Chair" should work just like "sit on chair")
 
                         #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
-                        if action == "exit":
+                        if action == "exit" or action == "quit":
                                 print("Okay, bye!")
                                 break 
 
                         #User's query is the action
-                        queryResult = json.loads(query(describe_noun("room", 2)))
+                        queryResult = json.loads(query(describe_noun(action, 2)))
                         #check for action in value 
                         Nodeception(queryResult, action, "value")
                         #check for action in type
                         Nodeception(queryResult, action, "type")
                         #check for action in id
                         Nodeception(queryResult, action, "id")
+                        #check for action in terminal
+                        Nodeception(queryResult, action, "terminal")
                         
                         
 		except :
@@ -215,7 +219,7 @@ def testLoop():
 
                                 action = input().lower()
 			
-                                if action == "exit":
+                                if action == "exit" or action == "quit":
                                     print("Okay, bye!")
                                     break
 
@@ -257,8 +261,10 @@ rm.print_noun()
 #json.loads(query(rm.print_noun()))
 
 #this...should work? -- It does! We have a function that does the obnoxious node traversal!
-qrNode = Nodeception(queryResult, "value", "room")
-qrNode = Nodeception(queryResult, "value", "named")
+qrNode = Nodeception(queryResult, "room", "value")
+#print(qrNode)
+qrNode = Nodeception(queryResult, "named", "value")
+#print(qrNode)
 
 #print room contents to make sure everything isn't breaking when I'm not looking
 print("\nRoom: ")
