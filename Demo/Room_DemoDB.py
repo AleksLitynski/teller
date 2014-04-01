@@ -143,6 +143,7 @@ def Check_Edge(node, searchFor, searchIn):
             #add to roomConts
             roomConts[edge.get("id")] = [edge.get("id"), edge.get("value"), edge.get("type"), edge.get("edges")]
             print (roomConts[edge.get("id")])
+            print edge
             return edge
         else:
             Check_Terminal(edge, searchFor, searchIn)
@@ -152,21 +153,25 @@ def Check_Terminal(edge, searchFor, searchIn):
     if(terminal.get(searchIn) == searchFor):
         roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
         print (roomConts[terminal.get("id")])
+        print terminal
         return terminal
     else:
         Check_Edge(terminal, searchFor, searchIn)
 
 
 
-#function to travel through nodes...for sanity.
-def Nodeception(queryResult, searchFor, searchIn):
+#Recursive Search -- look through all nodes until you find searchFor
+#searchIn is the attribute to look for searchFor in.
+def recSearch(queryResult, searchFor, searchIn):
     if queryResult.get("type") == "get-success":
         roomConts[queryResult.get("id")] = []
         
         for response_node in queryResult.get("reply"):
 
-            #Try my new functions!
-            Check_Edge(response_node, searchFor, searchIn)
+            #looks for evbery node in the edges of that node, and finds our target
+            tmp = Check_Edge(response_node, searchFor, searchIn)
+            if tmp:
+                return tmp
             
 
 
@@ -188,51 +193,44 @@ def roomPrint():
 
 #Game Loop
 def testLoop():
-	while(True):
-		#create some space between this and last input/output
-		print("\n"),
-		#input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
-		try:
-                        action = raw_input().lower()    #convert to lower case to prevent problems where there are none (i.e. "SIT on Chair" should work just like "sit on chair")
+    while(True):
+        #create some space between this and last input/output
+        print("\n"),
+        #input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
+        action = raw_input().lower()    #convert to lower case to prevent problems where there are none (i.e. "SIT on Chair" should work just like "sit on chair")
 
-                        #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
-                        if action == "exit" or action == "quit":
-                                print("Okay, bye!")
-                                break 
+        #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
+        if action == "exit" or action == "quit":
+                print("Okay, bye!")
+                break 
 
-                        #User's query is the action
-                        queryResult = json.loads(query(describe_noun(action, 2)))
-                        #check for action in value 
-                        Nodeception(queryResult, action, "value")
-                        #check for action in type
-                        Nodeception(queryResult, action, "type")
-                        #check for action in id
-                        Nodeception(queryResult, action, "id")
-                        #check for action in terminal
-                        Nodeception(queryResult, action, "terminal")
-                        
-                        
-		except :
-			#Failed with function input. Attempting to use function input instead
-			print("Sorry the game made a mistake, could you type it one more time?\n   "),
-			try:
 
-                                action = input().lower()
-			
-                                if action == "exit" or action == "quit":
-                                    print("Okay, bye!")
-                                    break
+        
+        success = False
+        for word in shlex.split(action):
+            #User's query is the action
+            queryResult = json.loads(query(describe_noun(word, 2)))
 
-                                
-			except :
-                                print("SYSTEM : Cannot process user input")
-                                
-		
-		#do stuff with objects
-		if not playerNode(action):
-		    #Only access player node if you don't refer to any of the objects
-		    #node(action)
-                    pass
+            
+            #check for action in value, type, id, terminal
+            node = recSearch(queryResult, word, "value")
+            if not node:
+                node = recSearch(queryResult, word, "type")
+            if not node:
+                node = recSearch(queryResult, word, "id")
+            if not node:
+                node = recSearch(queryResult, word, "terminal")
+            if node:
+                success = True
+                print(roomConts[node.get("id")])
+                
+        if success:
+            pass
+        #do stuff with objects
+        elif not playerNode(action):
+            #Only access player node if you don't refer to any of the objects
+            #node(action)
+            pass
 
 #GAME START
 #This code runs as soon as the game starts...	
@@ -261,9 +259,9 @@ rm.print_noun()
 #json.loads(query(rm.print_noun()))
 
 #this...should work? -- It does! We have a function that does the obnoxious node traversal!
-qrNode = Nodeception(queryResult, "room", "value")
+qrNode = recSearch(queryResult, "room", "value")
 #print(qrNode)
-qrNode = Nodeception(queryResult, "named", "value")
+qrNode = recSearch(queryResult, "named", "value")
 #print(qrNode)
 
 #print room contents to make sure everything isn't breaking when I'm not looking
