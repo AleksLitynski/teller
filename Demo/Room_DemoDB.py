@@ -142,21 +142,21 @@ def Check_Edge(node, searchFor, searchIn):
         if (edge.get(searchIn) == searchFor):
             #add to roomConts
             roomConts[edge.get("id")] = [edge.get("id"), edge.get("value"), edge.get("type"), edge.get("edges")]
-            print (roomConts[edge.get("id")])
-            print edge
             return edge
         else:
-            Check_Terminal(edge, searchFor, searchIn)
+            tmp = Check_Terminal(edge, searchFor, searchIn)
+            if tmp:
+                return tmp
 
 def Check_Terminal(edge, searchFor, searchIn):
     terminal = edge.get("terminal")
     if(terminal.get(searchIn) == searchFor):
         roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
-        print (roomConts[terminal.get("id")])
-        print terminal
         return terminal
     else:
-        Check_Edge(terminal, searchFor, searchIn)
+        tmp = Check_Edge(terminal, searchFor, searchIn)
+        if tmp:
+            return tmp
 
 
 
