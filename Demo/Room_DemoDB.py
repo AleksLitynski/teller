@@ -172,7 +172,6 @@ def recSearch(queryResult, searchFor, searchIn):
             tmp = Check_Edge(response_node, searchFor, searchIn)
             if tmp:
                 return tmp
-            
 
 
 def qrPrint(qrNode):
@@ -232,6 +231,34 @@ def testLoop():
             #node(action)
             pass
 
+
+#create a version of recSearch that is designed to list things
+def listSearch(queryResult, searchFor, searchIn):
+    ls = []
+
+    if queryResult.get("type") == "get-success":
+        roomConts[queryResult.get("id")] = []
+        
+        for response_node in queryResult.get("reply"):
+
+            #looks for evbery node in the edges of that node, and finds our target
+            #IMPORTANT!!! -- Need to make new versions of Check_Edge and Check_Terminal that return lists
+            tmp = Check_Edge(response_node, searchFor, searchIn)
+            if tmp:
+                print (tmp)
+                ls+=[tmp]
+        return ls
+
+#Working on a function to list room contents at game start
+def listRoomConts():
+    node = listSearch(queryResult, "noun", "type")
+    #print ("1")
+    for n in node:
+        print (n.get("id"))
+    #pass
+    
+
+
 #GAME START
 #This code runs as soon as the game starts...	
 #Run the game!
@@ -241,9 +268,8 @@ print("Creating Room...")
 edgeInfo("contains", 1)
 nodeInfo(0, "noun", "A Room", "contains")
 
-print("You are in a room. Inside, you see...")
+print("You are in a room.")
 
-print("\n")
 queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we go down to a depth of 2
 
 #this is the room
@@ -254,7 +280,14 @@ qrNode = recSearch(queryResult, "room", "value")
 
 #test to see if we are getting things in roomConts, as we are supposed to
 roomPrint()
-			
+
+#rmcts = room contents
+print("\nInside the room, you can see...\n")
+#rmcts = recSearch(queryResult, "noun", "type")
+#print(rmcts)
+
+listRoomConts()
+
 #wait for user input
 testLoop()
 
