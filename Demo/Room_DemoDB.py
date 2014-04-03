@@ -241,9 +241,6 @@ print("Creating Room...")
 edgeInfo("contains", 1)
 nodeInfo(0, "noun", "A Room", "contains")
 
-#queryresult = json.loads(query(describe_noun("room",2)))
-#print(json.loads(query(describe_noun("room", 2))))
-
 print("You are in a room. Inside, you see...")
 
 print("\n")
@@ -252,20 +249,8 @@ queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we 
 #this is the room
 rm = get_node_by_name("room")
 
-#is this working?
-rm.print_noun()
-
-#call json.loads -> pass in query -> cast as string: get_node_by_name -> taking room as a parameter
-#json.loads(query(rm.print_noun()))
-
-#this...should work? -- It does! We have a function that does the obnoxious node traversal!
+#We have a set of functions that do the obnoxious node traversal!
 qrNode = recSearch(queryResult, "room", "value")
-#print(qrNode)
-qrNode = recSearch(queryResult, "named", "value")
-#print(qrNode)
-
-#print room contents to make sure everything isn't breaking when I'm not looking
-print("\nRoom: ")
 
 #test to see if we are getting things in roomConts, as we are supposed to
 roomPrint()
