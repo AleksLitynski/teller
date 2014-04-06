@@ -243,18 +243,51 @@ def listSearch(queryResult, searchFor, searchIn):
 
             #looks for evbery node in the edges of that node, and finds our target
             #IMPORTANT!!! -- Need to make new versions of Check_Edge and Check_Terminal that return lists
-            tmp = Check_Edge(response_node, searchFor, searchIn)
+            tmp = listEdge(response_node, searchFor, searchIn, ls)
             if tmp:
                 print (tmp)
                 ls+=[tmp]
+                
         return ls
+
+def listEdge (node, searchFor, searchIn, listToStore):
+
+    for edge in node.get("edges"):
+        if (edge.get(searchIn) == searchFor):
+            #add to roomConts
+            roomConts[edge.get("id")] = [edge.get("id"), edge.get("value"), edge.get("type"), edge.get("edges")]
+            return edge
+
+        else:
+            tmp = listTerminal(edge, searchFor, searchIn, listToStore)
+            
+            if tmp:
+                listToStore += tmp
+                return tmp
+
+def listTerminal(edge, searchFor, searchIn, listToStore):
+
+    terminal = edge.get("terminal")
+    if(terminal.get(searchIn) == searchFor):
+        roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
+        return terminal
+    else:
+        #see if you got anything
+        tmp = listEdge(terminal, searchFor, searchIn, listToStore)
+
+        #if tmp exists, add it to the list we want to store things in and return the list
+        if tmp:
+            listToStore += tmp
+            return listToStore
 
 #Working on a function to list room contents at game start
 def listRoomConts():
+    node = []
     node = listSearch(queryResult, "noun", "type")
     #print ("1")
     for n in node:
-        print (n.get("id"))
+        print ("\n")
+        print (n)
     #pass
     
 
