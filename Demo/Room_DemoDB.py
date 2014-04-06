@@ -23,6 +23,45 @@ from RefCode.Query_Explorer import *
 #Query about objects
 #Repeat
 
+class noun:
+
+    def __init__(self, id):
+        self.id = id
+        self.relationships = []
+
+    def get_value(self, relationship_type, default="Something"):
+        value = default
+        for noun_relationship in self.relationships:
+            if noun_relationship.type == relationship_type:
+                value = noun_relationship.value
+        return value
+
+    def get_all(self, relationship_type):
+        relationships = []
+        for noun_relationship in self.relationships:
+            if noun_relationship.type == relationship_type:
+                relationships.append(noun_relationship)
+        return relationships
+
+    def get_relationship_types(self):
+        relationship_types = set()
+        for relationships in self.relationships:
+            relationship_types.add(relationships.type)
+        return relationship_types
+
+
+    def print_noun(self):
+        #Testing self.get_value() -- it works
+        #print(self.get_value("named"))
+        return self.get_value("named")
+		
+class relationship:
+    def __init__(self, type, value, reguarding):
+        self.type = type
+        self.value = value
+        self.reguarding = reguarding
+
+
 #This is how we contact the database
 def query(query_string):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,9 +78,10 @@ def query(query_string):
 #Give node a name and a depth; 2 is default, but you could do 10 or something, if needed.
 def describe_noun(noun_name, depth=2):
 	#broke up the return into 2 lines to make it more readable
-    return '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +\
+    txt = '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +\
            '"terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
-
+    return txt
+    
 
 def get_node(node_id, depth=2):
     return '{"type": "get", ' \
@@ -212,7 +252,8 @@ def testLoop():
 
             
             #check for action in value, type, id, terminal
-            node = recSearch(queryResult, word, "value")
+            node = get_node_by_name(word)
+            #node = recSearch(queryResult, word, "value")
             if not node:
                 node = recSearch(queryResult, word, "type")
             if not node:
@@ -221,7 +262,9 @@ def testLoop():
                 node = recSearch(queryResult, word, "terminal")
             if node:
                 success = True
-                print(roomConts[node.get("id")])
+                #print(roomConts[node.get("id")])
+                print(node.get_value("named"))
+                print(node.get_value("type"))
                 
         if success:
             pass
@@ -245,13 +288,13 @@ def listSearch(queryResult, searchFor, searchIn):
             #IMPORTANT!!! -- Need to make new versions of Check_Edge and Check_Terminal that return lists
             tmp = listEdge(response_node, searchFor, searchIn, ls)
             if tmp:
-                print (tmp)
+                #print (tmp)
                 ls+=[tmp]
                 
         return ls
 
-def listEdge (node, searchFor, searchIn, listToStore):
-
+def listEdge (node, searchFor, searchIn, DictToStore):
+    
     for edge in node.get("edges"):
         if (edge.get(searchIn) == searchFor):
             #add to roomConts
@@ -259,37 +302,54 @@ def listEdge (node, searchFor, searchIn, listToStore):
             return edge
 
         else:
-            tmp = listTerminal(edge, searchFor, searchIn, listToStore)
+            tmp = listTerminal(edge, searchFor, searchIn, DictToStore)
             
             if tmp:
-                listToStore += tmp
-                return tmp
+                DictToStore += tmp
+                return edge
 
-def listTerminal(edge, searchFor, searchIn, listToStore):
+def listTerminal(edge, searchFor, searchIn, DictToStore):
 
     terminal = edge.get("terminal")
     if(terminal.get(searchIn) == searchFor):
         roomConts[terminal.get("id")] = [terminal.get("id"), terminal.get("value"), terminal.get("type"), terminal.get("edges")]
-        return terminal
+        return DictToStore
     else:
         #see if you got anything
-        tmp = listEdge(terminal, searchFor, searchIn, listToStore)
+        tmp = listEdge(terminal, searchFor, searchIn, DictToStore)
 
         #if tmp exists, add it to the list we want to store things in and return the list
         if tmp:
-            listToStore += tmp
-            return listToStore
+            DictToStore += tmp
+            return terminal
 
 #Working on a function to list room contents at game start
-def listRoomConts():
-    node = []
-    node = listSearch(queryResult, "noun", "type")
-    #print ("1")
-    for n in node:
-        print ("\n")
-        print (n)
-    #pass
+def listRoomConts(queryResult):
     
+    returnDict = listSearch(queryResult, "noun", "type")
+    #print ("1")
+    i = 1
+    for n in returnDict:
+        print (str(i) + ": ")
+        print (n)
+        i += 1
+        
+    #pass
+    return returnDict
+    
+#Class with ID and list of properties
+    #fill up from initial query
+    #take room object and use toString function to print things
+    #player types something in
+        #if any of those words are named properties of an object, find that object
+        #loop forever
+
+class room:
+    def __init__(self, contents):
+        self.contents = roomConts
+
+    def rm_print(self):
+        print (roomConts)
 
 
 #GAME START
@@ -309,17 +369,41 @@ queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we 
 rm = get_node_by_name("room")
 
 #We have a set of functions that do the obnoxious node traversal!
-qrNode = recSearch(queryResult, "room", "value")
+qrNode = listSearch(queryResult, "room", "value")
 
 #test to see if we are getting things in roomConts, as we are supposed to
 roomPrint()
 
-#rmcts = room contents
+#rmcts is room contents
 print("\nInside the room, you can see...\n")
 #rmcts = recSearch(queryResult, "noun", "type")
 #print(rmcts)
 
-listRoomConts()
+print(rm.print_noun)
+print(rm.get_relationship_types)
+
+rmcts = str(get_node_by_name("chair"))
+rmcts += "\n" + str(get_node_by_name("table"))
+rmcts += "\n" + str(get_node_by_name("bed"))
+
+print (rmcts)
+
+
+#This is...another way to make a room
+testRoom = room(get_node_by_name("room"))
+print("\n")
+testRoom.rm_print()
+
+#get relationships in room
+room_rel = rm.get_relationship_types()
+#print results
+print("\nRoom relations: " + str(room_rel))
+
+rmcts = {"id" : 0, "rel_id" : 1, "value" : 2, "type" : 3, "edges" : 4}
+
+#listRoomConts(qrNode)
+
+#print (rmcts)
 
 #wait for user input
 testLoop()
