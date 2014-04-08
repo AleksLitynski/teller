@@ -3,6 +3,7 @@ import sys
 import random
 import shlex
 import socket
+import re
 #importing our stuff
 import json
 from RefCode.Query_Explorer import *
@@ -138,7 +139,34 @@ def nodeInfo(node_id, node_type, value, edges):
         node["edges"]= edges
         addNode(node)
 
-        
+
+def inspectObject(node, depth=0):
+    #we'll want to adjust which attributes are told about at different depths
+        s = "a"
+        if len(node.get_all_type("color"))>0:
+            s+= " " + node.get_all_type("color")[0].value
+            #if there isn't a material, go ahead and say the color
+            #if depth==0 or items[obj][attr["material"]] == "!=":
+                #s += " "  + items[obj][attr["color"]]
+        if len(node.get_all_type("material"))>0:
+            s+= " " + node.get_all_type("material")[0].value
+        if len(node.get_all_type("size"))>0:
+            s+= " " + node.get_all_type("size")[0].value
+
+        if len(node.get_all_type("named"))>0:
+            s+= " " + node.get_all_type("named")[0].value #the name/type of the item
+
+        '''
+        if len(node.get_all_type("has_a"))>0:
+            for att in node.get_all_type("has_a"):
+                if depth==0:#if this is the first layer
+                        s += " with " + inspectObject(att, depth+1)
+                #else: #only one iteration
+                        #s += " with " + items[obj][attr["with"]]
+        '''
+        #fix a/an issues
+        s = re.sub('\\ba ([aeiou])', 'an \\1', s)
+        return s
 
 #ideal length of method 5-15 
 #http://programmers.stackexchange.com/questions/133404/what-is-the-ideal-length-of-a-method
@@ -167,8 +195,6 @@ dialogs = {             "sit"	: "You sit down cross-legged on the floor.",
                         "jump" : "You jump up and down. It's good for your buns and thighs."
 }
 def playerNode(action):
-#Modification reasoning, function wraps a concept. hard coding if statemetns when it is
-#likely subjected to expand(since we want to have more than two actions) is not a good practice. -- An excellent point.
 	isActionValid = False
 	for d in dialogs:
 		if d in action:
@@ -177,6 +203,14 @@ def playerNode(action):
 	if(not isActionValid):print("SYSTEM : Action not recognized")
 				
     		
+def Get_All_Edges(node):
+    li = []
+    for edge in node.get("edges"):
+        terminal = edge.get("terminal")
+        if terminal:
+            li += [terminal]
+    return li
+            
 def Check_Edge(node, searchFor, searchIn):
     for edge in node.get("edges"):
         if (edge.get(searchIn) == searchFor):
@@ -204,6 +238,7 @@ def Check_Terminal(edge, searchFor, searchIn):
 #searchIn is the attribute to look for searchFor in.
 def recSearch(queryResult, searchFor, searchIn):
     if queryResult.get("type") == "get-success":
+
         roomConts[queryResult.get("id")] = []
         
         for response_node in queryResult.get("reply"):
@@ -265,6 +300,8 @@ def testLoop():
                 #print(roomConts[node.get("id")])
                 print(node.get_value("named"))
                 print(node.get_value("type"))
+                print(inspectObject(node))
+                #print(Get_All_Edges(node))
                 
         if success:
             pass
@@ -366,7 +403,7 @@ print("You are in a room.")
 queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we go down to a depth of 2
 
 #this is the room
-rm = get_node_by_name("room")
+#rm = get_node_by_name("room")
 
 #We have a set of functions that do the obnoxious node traversal!
 qrNode = listSearch(queryResult, "room", "value")
@@ -379,25 +416,25 @@ print("\nInside the room, you can see...\n")
 #rmcts = recSearch(queryResult, "noun", "type")
 #print(rmcts)
 
-print(rm.print_noun)
-print(rm.get_relationship_types)
+#print(rm.print_noun)
+#print(rm.get_relationship_types)
 
-rmcts = str(get_node_by_name("chair"))
-rmcts += "\n" + str(get_node_by_name("table"))
-rmcts += "\n" + str(get_node_by_name("bed"))
+#rmcts = str(get_node_by_name("chair"))
+#rmcts += "\n" + str(get_node_by_name("table"))
+#rmcts += "\n" + str(get_node_by_name("bed"))
 
-print (rmcts)
+#print (rmcts)
 
 
 #This is...another way to make a room
-testRoom = room(get_node_by_name("room"))
-print("\n")
-testRoom.rm_print()
+#testRoom = room(get_node_by_name("room"))
+#print("\n")
+#testRoom.rm_print()
 
 #get relationships in room
-room_rel = rm.get_relationship_types()
+#room_rel = rm.get_relationship_types()
 #print results
-print("\nRoom relations: " + str(room_rel))
+#print("\nRoom relations: " + str(room_rel))
 
 rmcts = {"id" : 0, "rel_id" : 1, "value" : 2, "type" : 3, "edges" : 4}
 

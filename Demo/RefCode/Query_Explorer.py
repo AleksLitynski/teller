@@ -63,11 +63,16 @@ class noun:
                 value = noun_relationship.value
         return value
 
-    def get_all(self, relationship_type):
+    def get_all_type(self, relationship_type):
         relationships = []
         for noun_relationship in self.relationships:
             if noun_relationship.type == relationship_type:
                 relationships.append(noun_relationship)
+        return relationships
+    def get_all(self):
+        relationships = []
+        for noun_relationship in self.relationships:
+            relationships.append(noun_relationship)
         return relationships
 
     def get_relationship_types(self):
@@ -83,10 +88,10 @@ class noun:
         return self.get_value("named")
 		
 class relationship:
-    def __init__(self, type, value, reguarding):
+    def __init__(self, type, value, regarding):
         self.type = type
         self.value = value
-        self.reguarding = reguarding
+        self.regarding = regarding
 
 
 """
