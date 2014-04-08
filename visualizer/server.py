@@ -48,18 +48,13 @@ def describe_noun(noun_name, depth=2):
 	#broke up the return into 2 lines to make it more readable
 	return '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +    '"terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
 
-def sendSearchStatic(handler):
-	printFunc("sendSearchStatic")
+def doSearch(handler):
+	printFunc("doSearch")
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(('127.0.0.1', 5005))
-<<<<<<< HEAD
 	s.send(describe_noun("room"))
-	raw = s.recv(100000000)
-	
-=======
-	s.send('{"type":"get", "params":{"depth":1}, "search":{}}')
-	raw = s.recv(10000)
->>>>>>> 6ad45b90c5d45445f1c700bada9c3eb093cb0101
+	s.send('{"type":"get", "params":{"depth":2}, "search":{}}')
+	raw = s.recv(10000000)
 	read = SearchInterpreter.read(raw);
 	s.close()
 	handler.wfile.write(json.dumps(read))
@@ -141,7 +136,7 @@ class web_handler(BaseHTTPRequestHandler):
 			'/data.json': sendJson,
 			'/dataDummy00' : sendDummy00,
 			'/dataDummy01' : sendDummy01,
-			'/search' : sendSearchStatic
+			'/search' : doSearch
 		}
 			
 		try : response[self.path](self)
