@@ -9,10 +9,8 @@ import copy
 # label : describe the node here 
 # { id,size, x,y, label} sweet
 # http://stackoverflow.com/questions/1323410/has-key-or-in
-_pos =-1;
+
 def convertToGraphNode(e):
-	global _pos
-	_pos += 1
 	data = copy.deepcopy(e)
 	del data['edges']
 	return {'id' : e['id'],
@@ -20,7 +18,6 @@ def convertToGraphNode(e):
 			'type' : e['type'],
 			'data' : data,
 			'size': 1,
-			'x':(_pos % 20 ) ,'y': int( _pos / 20),
 			'label': " Value [ " + str(e['value']) + " & " + str(e['type'])+" ] neighbors : " + str(len(e['edges'] ) )
 			}
 
@@ -72,26 +69,14 @@ def add(listNodes,listEdges, dicNodes,dicEdges, e):
 		helperAddEdge(listEdges,dicNodes,dicEdges,[e,newNode]);
 	#raw_input()
 	
-def read(s):
-	global _pos
-	_pos = -1
+def read(s): #s is raw data received
 	graphNodes = []
 	graphEdges = []
 	dicNodes = {} 
 	dicEdges = {}
 	nodes = json.loads(s)['reply'];
-	it = iter(nodes)
 	number = 0
 	for i in range(0, len(nodes)):
 		add(graphNodes,graphEdges,dicNodes,dicEdges,nodes[i])
-		
-		#print "AT " + str(i)
 
-		
-	#it = iter(nodes)
-	#while True:
-	#	print it.next()
-	#	raw_input()
-	#print item
-	#print "Interpreter loaded : " + nodes
 	return {'nodes':graphNodes , 'edges':graphEdges}
