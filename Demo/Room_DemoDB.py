@@ -143,28 +143,35 @@ def nodeInfo(node_id, node_type, value, edges):
 def inspectObject(node, depth=0):
     #we'll want to adjust which attributes are told about at different depths
         s = "a"
-        if len(node.get_all_type("color"))>0:
-            s+= " " + node.get_all_type("color")[0].value
+        #azure seems to be breaking, but aluminum doesn't, so it's not an issue with the vowel code
+        if len(node.get_all_type("colored"))>0:
+            s+= " " + node.get_all_type("colored")[0].value
+            #s+= " " + node.get_value("colored")[0].value
             #if there isn't a material, go ahead and say the color
             #if depth==0 or items[obj][attr["material"]] == "!=":
                 #s += " "  + items[obj][attr["color"]]
-        if len(node.get_all_type("material"))>0:
-            s+= " " + node.get_all_type("material")[0].value
+        if len(node.get_all_type("is_made_of"))>0:
+            s+= " " + node.get_all_type("is_made_of")[0].value  #true
+            #s+= " " + node.get_relationship_types()
+            s+= " " + node.get_value("is_made_of")
         if len(node.get_all_type("size"))>0:
             s+= " " + node.get_all_type("size")[0].value
-
+        if len(node.get_all_type("has_a"))>0:
+            s+= " " + node.get_all_type("has_a")[0].value       #true
         if len(node.get_all_type("named"))>0:
             s+= " " + node.get_all_type("named")[0].value #the name/type of the item
 
-        '''
+        #'''
+        #Test "has_a" code
         if len(node.get_all_type("has_a"))>0:
             for att in node.get_all_type("has_a"):
                 if depth==0:#if this is the first layer
                         s += " with " + inspectObject(att, depth+1)
                 #else: #only one iteration
                         #s += " with " + items[obj][attr["with"]]
-        '''
-        #fix a/an issues
+        #'''
+                        
+        #fix a/an issues 
         s = re.sub('\\ba ([aeiou])', 'an \\1', s)
         return s
 
@@ -298,10 +305,9 @@ def testLoop():
                         print("You can't do that.")
                     
                 if node:
-                    #print(roomConts[node.get("id")])
-                    print(inspectObject(node))
-                    #print(Get_All_Edges(node))
-
+                    #inspect the node to a depth of... (depth doesn't seem to be doing anything right now)
+                    print(inspectObject(node,2))
+                    
 
 #create a version of recSearch that is designed to list things
 def listSearch(queryResult, searchFor, searchIn):
