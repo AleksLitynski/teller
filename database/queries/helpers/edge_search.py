@@ -1,4 +1,4 @@
-class query_helper:
+class node_search:
 
 	#creates a list of nodes from the given graph that match the pattern structure (query)
 	def find_nodes(self, query, graph): #creates a list of all nodes that fit the query

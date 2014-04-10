@@ -16,7 +16,7 @@ This function
 option = (edge weight + time) between pattern A to pattern B
 
 New queries:
-1) List options (A, B, time)
-2) Update option (A, B, new-val, time)
+1) List options (A, B, time) <- edges
+2) Update option (A, B, new-val, time) <- update
 3) Normalize option (list of desired options, unchanged options, and removed options, sort of vague still)
 """
