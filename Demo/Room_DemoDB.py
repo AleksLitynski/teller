@@ -279,37 +279,28 @@ def testLoop():
                 break 
 
 
-        
-        success = False
-        for word in shlex.split(action):
-            #User's query is the action
-            queryResult = json.loads(query(describe_noun(word, 2)))
+        else:
+            for word in shlex.split(action):
+                #User's query is the action
+                queryResult = json.loads(query(describe_noun(word, 2)))
 
-            
-            #check for action in value, type, id, terminal
-            node = get_node_by_name(word)
-            #node = recSearch(queryResult, word, "value")
-            if not node:
-                node = recSearch(queryResult, word, "type")
-            if not node:
-                node = recSearch(queryResult, word, "id")
-            if not node:
-                node = recSearch(queryResult, word, "terminal")
-            if node:
-                success = True
-                #print(roomConts[node.get("id")])
-                print(node.get_value("named"))
-                print(node.get_value("type"))
-                print(inspectObject(node))
-                #print(Get_All_Edges(node))
-                
-        if success:
-            pass
-        #do stuff with objects
-        elif not playerNode(action):
-            #Only access player node if you don't refer to any of the objects
-            #node(action)
-            pass
+                #try to get the node
+                try:
+                    node = get_node_by_name(word)
+                except:
+                    node = None
+                    #see if this is one of the pre-defined player commands
+                    try:
+                        playerNode(action)
+                    #If not, the player did something wrong -- or we did.
+                    except:
+                        #feedback for bad input
+                        print("You can't do that.")
+                    
+                if node:
+                    #print(roomConts[node.get("id")])
+                    print(inspectObject(node))
+                    #print(Get_All_Edges(node))
 
 
 #create a version of recSearch that is designed to list things
