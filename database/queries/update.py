@@ -1,15 +1,36 @@
-from helpers import query_helper
+from helpers.node_search import node_search
+from helpers.edge_search import edge_search
+from helpers.edge_writer import edge_writer
 
-def fork(search, ontology):
+def update(search, params, ontology):
 
-	node_list = query_helper().find_nodes(search.get("target-node"), ontology.graph)
+	left_node_list =  node_search().find_nodes(search.get("left-node"),  ontology.graph)
+	right_node_list = node_search().find_nodes(search.get("right-node"), ontology.graph)
 
-	#make sure we only got one node as a response
-	if len(node_list) == 1:
-		new_node = [ ontology.fork(node_list[0], search.get("time") ) ]
-		return ("fork-success", new_node)
+	es = edge_search()
+	valid_edges = es.find_edges(left_node_list, right_node_list,
+					{"weight-time":search.get("weight-time"),
+					"cardinality":search.get("cardinality"),
+					"weight-value":None,
+					"type":search.get("type")}, ontology.graph)
+
+
+	if len(valid_edges) == 1:
+
+		edge_obj = ontology.graph[valid_edges[0]["left-node"]][valid_edges[0]["right-node"]]["edge"]
+		edge_obj.weights[search.get("weight-time")] = search.get("weight-value")
+
+		valid_edges = es.find_edges(left_node_list, right_node_list,
+									{"weight-time":search.get("weight-time"),
+									 "cardinality":search.get("cardinality"),
+									 "weight-value":search.get("weight-value"),
+									 "type":search.get("type")}, ontology.graph)
+		ew = edge_writer()
+		edgeson = ew.to_json(valid_edges, ontology.graph, params)
+		return ("update-success", edgeson)
+
 	else:
-		return ("fork-failure-wrong-number-of-nodes", [])
+		return ("update-failure-argument-count", [])
 
 
 
@@ -17,9 +38,10 @@ def fork(search, ontology):
 """
 	Valid Query Structure:
 
-
+	#LEFT AND RIGHT MUST MATCH ONLY ONE PATTERN EACH
 	{
 		"time":"EDGE TIME",
+		"weight":"NEW EDGE WEIGHT"
 		"left-node": {
 						   #A "GET" QUERY FOR THE PATTERN ON THE LEFT OF THE EDGE
 					 },
@@ -27,27 +49,4 @@ def fork(search, ontology):
 						   #A "GET" QUERY FOR THE PATTERN ON THE RIGHT OF THE EDGE
 					  }
 	}
-"""
-
-
-
-"""
-1) target (describe a node that we will create a new connection on
-2) desired new node
-
-3) new weight/time
-
-
-
-If a node doesn't have a property, we can find one in it's is_a chain that fits a description
-This function
-
-
-
-option = (edge weight + time) between pattern A to pattern B
-
-New queries:
-1) List options (A, B, time) <- edges
-2) Update option (A, B, new-val, time) <- update
-3) Normalize option (list of desired options, unchanged options, and removed options, sort of vague still)
 """

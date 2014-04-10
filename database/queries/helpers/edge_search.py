@@ -1,67 +1,77 @@
-class node_search:
+import itertools
+import pprint
+#import matplotlib.pyplot as plt
 
-	#creates a list of nodes from the given graph that match the pattern structure (query)
-	def find_nodes(self, query, graph): #creates a list of all nodes that fit the query
-		valid_nodes = []
-		for node in graph.nodes_iter():     #itterate every node in the graph to find the one we seek.
-											#Obviously, this has to get better.
-			(is_valid, valid_node) = self.is_valid_node(query, node, graph)
-			if is_valid:
-				valid_nodes.append(valid_node)
+class edge_search:
+    def find_edges(self, lefts, rights, props, graph):
+        valid_edges = []
 
-		return valid_nodes
+        node_pairs = []
+        if props.get("cardinality") == None:
+            node_pairs = list(itertools.product(lefts, rights))
+        elif props.get("cardinality") == "inbound":
+            node_pairs = [(x, y) for x in lefts for y in rights]
+        elif props.get("cardinality") == "outbound":
+            node_pairs = [(y, x) for x in lefts for y in rights]
 
+        for (left, right) in node_pairs: #itterate each valid pair of nodes
+            local_properties = self.edge_properties (left, right, props, graph) #go in and check edge weight up each inherit chain. I'm not liking the look of this.
+            if local_properties["weight-value"] != 0:
+                valid_edges.append( {"left-node":left,"right-node":right, "properties":local_properties} )
 
-	#returns a boolean (valid/invalid) and the node itself.
-	def is_valid_node(self, query, node, graph):
-		#check the properties of the node
-		all_good =  self.check_property("id", node.id, query) and \
-					self.check_property("type", node.type, query) and \
-					self.check_property("value", node.value, query)
+        return valid_edges
 
-		#check if edge matches edges
-		if all_good:
-			query_edges = query.get("edges", [])
+    def edge_properties(self, left, right, properties, graph):
+        properties["weight-time"] = properties.get("weight-time", 1)
+        properties["cardinality"] = "outbound"
 
-			#goes into the edge (recursion will happen in there)
-			for query_edge in query_edges:
-				all_good = self.is_valid_edge(query_edge, node, graph)
-				if not all_good:
-					break
+        for (left, right) in [(x, y) for x in self.node_and_parents(left, graph) for y in self.node_and_parents(right, graph)]:
 
-		return (all_good, node)
+            for edge in graph.edges_iter([right]):
 
+                if (edge[0] == left) or (edge[1] == left):
 
-	#checks if an edge is valid
-	def is_valid_edge(self, query, node, graph):
-		for edge in graph.edges_iter([node]):
+                    edge_obj = graph[edge[0]][edge[1]]["edge"]
 
-			#The object holding the edge's weight
-			edge_obj = graph[edge[0]][edge[1]]["edge"]
+                    if self.check_property("type", edge_obj.type, properties) and self.check_property("weight-value", edge_obj.weights.get(properties.get("weight-time"), None), properties): #condition so "if not defiened" will return true as well.
 
-			#get the object on the other end of the edge
-			other_end = edge[0]
-			if edge[0] == node: other_end = edge[1]
-
-			#checks the properties of the edges
-			edge_ok = self.check_property("type", edge_obj.type, query) and \
-						self.check_property("weight-value", edge_obj.weights.get(query.get("weight-time")), query) and \
-						(self.check_property("direction", "inbound", query) and node == edge[0])
-
-			#reursivly check the other end of the edge
-			if edge_ok:
-				terminal_recurse = self.is_valid_node( query.get("terminal"), other_end, graph)
-				edge_ok = edge_ok and terminal_recurse[0]
-
-			if edge_ok: return True
-
-		return False
+                        properties["type"] = edge_obj.type  #set rest of properties and return properties object
+                        properties["weight-value"] = edge_obj.weights.get(properties.get("weight-time"))
+                        return properties  #break on first match. We are counting up
 
 
+        properties["type"] = "none"
+        properties["weight-value"] = 0
+        return properties
 
-	#Check if a value is valid. "Valid" means it matches, or wasn't specified
-	def check_property(self, prop_name, target_value, query):
-		prop_value = query.get(prop_name, None)
-		if prop_value == None: #If the value wasn't given, we assume it "could" match.
-			return True
-		return prop_value == target_value
+
+    def node_and_parents(self, node, graph, rest=[]):
+        node_and_parents = rest if rest != []  else [node]
+        for edge in graph.edges_iter([node]):
+            edge_obj = graph[edge[0]][edge[1]]["edge"]
+            if edge_obj.type == "is_a":
+                node_and_parents.append(node_and_parents(edge[1], graph, node_and_parents))
+        return node_and_parents
+
+
+    #Check if a value is valid. "Valid" means it matches, or wasn't specified
+    def check_property(self, prop_name, target_value, query):
+        prop_value = query.get(prop_name, None)
+        if prop_value is None: #If the value wasn't given, we assume it "could" match.
+            return True
+        return prop_value == target_value
+
+
+
+"""
+{"weight-time":search.get("weight-time"),
+ "cardinality":search.get("cardinality"),
+ "weight-value":search.get("weight-value"),
+ "type":search.get("type")}
+
+
+for edge in graph.edges_iter([node]):
+
+#The object holding the edge's weight
+edge_obj = graph[edge[0]][edge[1]]["edge"]
+"""

@@ -1,7 +1,8 @@
-class graph_writer:
+class node_writer:
 
 	#takes a node and returns a json form of it, recursivinly including edges to a certain depth
 	def to_json(self, data_to_jsonify, graph, params):
+
 		depth = params.get("depth", 2)
 
 		nodes_to_write = data_to_jsonify

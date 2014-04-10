@@ -1,8 +1,13 @@
-from helpers import query_helper
+from database.queries.helpers import node_writer
+from helpers.node_search import node_search
 
-def get(search, ontology):
-	node_list = query_helper().find_nodes(search, ontology.graph)
-	return ("get-success", node_list)
+
+def get(search, params, ontology):
+	node_list = node_search().find_nodes(search, ontology.graph)
+
+	nw = node_writer.node_writer()
+	result_data = nw.to_json(node_list, ontology.graph, params)
+	return ("get-success", result_data)
 
 
 """

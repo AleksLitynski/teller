@@ -117,6 +117,11 @@ class ontology:
 		english = self.add_node("noun", "")
 		self.add_relationship(english, english, "named", "english")
 		frank = self.new_noun_named("fred", english)
+		greg = self.new_noun_named("greg", english)
+		self.add_edge("knows_of", frank, greg, 1, 100)
+
+
+
 
 	def override_with_random_room(self):
 		self.graph = nx.Graph()
@@ -207,8 +212,8 @@ class ontology:
 		self.add_relationship(new_node, lang, "named", name)
 		return new_node
 
-	def fork(self, fork_from, time):
-		new_noun = self.add_node("noun", "")
+	def fork(self, fork_from, name, time):
+		new_noun = self.add_node(fork_from.type, name)
 		self.add_edge("is_a", new_noun, fork_from, time, 100)
 		return new_noun
 
