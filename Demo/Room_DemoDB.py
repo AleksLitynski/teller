@@ -147,23 +147,28 @@ def inspectObject(node, depth=0):
         if len(node.get_all_type("colored"))>0:
             s+= " " + node.get_all_type("colored")[0].value
             #s+= " " + node.get_value("colored")[0].value
-            #if there isn't a material, go ahead and say the color
+            #if there isn't a material, go ahead and say the color -- it actually already does that
             #if depth==0 or items[obj][attr["material"]] == "!=":
                 #s += " "  + items[obj][attr["color"]]
         if len(node.get_all_type("is_made_of"))>0:
-            s+= " " + node.get_all_type("is_made_of")[0].value  #true
+            #s+= " made_of " + node.get_all_type("is_made_of")[0].value  # returns true
             #s+= " " + node.get_relationship_types()
-            s+= " " + node.get_value("is_made_of")
+            s+= " " + node.get_value("is_made_of") #also returns true
         if len(node.get_all_type("size"))>0:
             s+= " " + node.get_all_type("size")[0].value
         if len(node.get_all_type("has_a"))>0:
             s+= " " + node.get_all_type("has_a")[0].value       #true
+            
         if len(node.get_all_type("named"))>0:
             s+= " " + node.get_all_type("named")[0].value #the name/type of the item
+        if len(node.get_all_type("titled"))>0:
+            s+= " " + node.get_all_type("titled")[0].value #the name/type of the item
 
+        
         #'''
         #Test "has_a" code
-        if len(node.get_all_type("has_a"))>0:
+        #this is a relationship instance it doesn't have get_all_type
+        if len(node.get_all_type("has_a"))>0:       
             for att in node.get_all_type("has_a"):
                 if depth==0:#if this is the first layer
                         s += " with " + inspectObject(att, depth+1)
@@ -284,7 +289,6 @@ def testLoop():
         if action == "exit" or action == "quit":
                 print("Okay, bye!")
                 break 
-
 
         else:
             for word in shlex.split(action):
