@@ -63,6 +63,11 @@ class noun:
                 value = noun_relationship.value
         return value
 
+    def set_value(self, rel_type, val):
+        for noun_relationship in self.relationships:
+            if noun_relationship.type == rel_type:
+                value = val
+    
     def get_all_type(self, relationship_type):
         relationships = []
         for noun_relationship in self.relationships:

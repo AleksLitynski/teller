@@ -36,7 +36,7 @@ class noun:
             if noun_relationship.type == relationship_type:
                 value = noun_relationship.value
         return value
-
+    
     def get_all(self, relationship_type):
         relationships = []
         for noun_relationship in self.relationships:
@@ -50,11 +50,19 @@ class noun:
             relationship_types.add(relationships.type)
         return relationship_types
 
-
     def print_noun(self):
         #Testing self.get_value() -- it works
         #print(self.get_value("named"))
         return self.get_value("named")
+
+    def get_relationship(query):
+        type = get_edge_named(query.get("edges"), "has_type").get("value")
+
+        value = get_edge_named(query.get("edges"), "has_value").get("value")
+
+        target = get_edge_named(query.get("edges"), "regarding").get("id")
+
+        return relationship(type, value, target)
 		
 class relationship:
     def __init__(self, type, value, reguarding):
@@ -139,46 +147,111 @@ def nodeInfo(node_id, node_type, value, edges):
         node["edges"]= edges
         addNode(node)
 
+def show_locally(self):
+		for n in self.graph.nodes_iter():
+			print(n.id + " " + n.type + " " + n.value)
+
+		for e in self.graph.edges_iter():
+			print(str(e[0].id) + " -" + str(get_edge_val(e, self.graph).weights) + "-> " + str(e[1].id))
+
+def new_noun_named(self, name, lang):
+		new_node = self.add_node("noun", "")
+		self.add_relationship(new_node, lang, "named", name)
+		return new_node
+
+def new_nouns_named(self, names, lang):
+		nouns = []
+		for noun in map( lambda x: self.new_noun_named(x, lang) , names):
+			nouns.append(noun)
+		return nouns
+
+def fork(self, fork_from, name, time):
+		new_noun = self.add_node(fork_from.type, name)
+		self.add_edge("is_a", new_noun, fork_from, time, 100)
+		return new_noun
 
 def inspectObject(node, depth=0):
-    #we'll want to adjust which attributes are told about at different depths
-        s = "a"
-        #azure seems to be breaking, but aluminum doesn't, so it's not an issue with the vowel code
-        if len(node.get_all_type("colored"))>0:
-            s+= " " + node.get_all_type("colored")[0].value
-            #s+= " " + node.get_value("colored")[0].value
-            #if there isn't a material, go ahead and say the color -- it actually already does that
-            #if depth==0 or items[obj][attr["material"]] == "!=":
-                #s += " "  + items[obj][attr["color"]]
-        if len(node.get_all_type("is_made_of"))>0:
-            #s+= " made_of " + node.get_all_type("is_made_of")[0].value  # returns true
-            #s+= " " + node.get_relationship_types()
-            s+= " " + node.get_value("is_made_of") #also returns true
-        if len(node.get_all_type("size"))>0:
-            s+= " " + node.get_all_type("size")[0].value
-        if len(node.get_all_type("has_a"))>0:
-            s+= " " + node.get_all_type("has_a")[0].value       #true
-            
-        if len(node.get_all_type("named"))>0:
-            s+= " " + node.get_all_type("named")[0].value #the name/type of the item
-        if len(node.get_all_type("titled"))>0:
-            s+= " " + node.get_all_type("titled")[0].value #the name/type of the item
+    #Although I don't typically like making decisions that unilaterally effect a project...no one is here
+    #So, I'm going to try to make this work, regardless of whether or not it technically fully utilizes our database
 
+    #These are our lists of stuff
+    colors = ["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"]
+    materials = ["plastic", "wood", "aluminum", "duct tape"]
+    bed_sizes = ["twin", "double", "queen", "king"]
+    book_titles = ["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force",
+                 "The Vengeful Penguin", "Ninja's Guide to Ornamental Horticulture", "Neko-nomicon", "This is Not a Book"]
+    power_state = ["on", "off"]
+    liquids = ["water", "juice", "wine", "soda", "nothing"]
+
+    #we'll want to adjust which attributes are told about at different depths
+    s = "a"
+    #The length of all of these is always either 1 or 0...
+    if len(node.get_all_type("colored"))>0:
         
-        #'''
-        #Test "has_a" code
-        #this is a relationship instance it doesn't have get_all_type
-        if len(node.get_all_type("has_a"))>0:       
-            for att in node.get_all_type("has_a"):
-                if depth==0:#if this is the first layer
-                        s += " with " + inspectObject(att, depth+1)
-                #else: #only one iteration
-                        #s += " with " + items[obj][attr["with"]]
-        #'''
-                        
-        #fix a/an issues 
-        s = re.sub('\\ba ([aeiou])', 'an \\1', s)
-        return s
+        #We can generate random stuff!
+        #I will use colors for testing things and update other parts accordingly
+        
+        color_rand = random.randint(0, len(colors) - 1)
+        node.get_all_type("colored")[0].value = colors[color_rand]
+        #node.set_value("colored", colors[color_rand])
+        s+= " " + node.get_value("colored")
+        
+        #s+= " " + node.get_value("colored")[0].value
+        #if there isn't a material, go ahead and say the color -- it actually already does that
+        #if depth==0 or items[obj][attr["material"]] == "!=":
+            #s += " "  + items[obj][attr["color"]]
+    if len(node.get_all_type("is_made_of"))>0:
+        #s+= " made_of " + node.get_all_type("is_made_of")[0].value  # returns true
+        #s+= " " + node.get_relationship_types()
+        mat_rand = random.randint(0, len(materials) - 1)
+        node.get_all_type("is_made_of")[0].value = materials[mat_rand]
+
+        s+= " " + node.get_value("is_made_of") #also returns true
+
+    if len(node.get_all_type("size"))>0:
+
+        bed_rand = random.randint(0, len(bed_sizes) - 1)
+        node.get_all_type("size")[0].value = bed_sizes[bed_rand]
+        
+        s+= " " + node.get_value("size")
+        
+    if len(node.get_all_type("has_a"))>0:
+        #s+= " " + node.get_value("has_a")      #true -- this is making things look weird without really adding anything
+        pass
+        
+    if len(node.get_all_type("named"))>0:
+        s+= " " + node.get_value("named") #the name/type of the item
+        
+    if len(node.get_all_type("titled"))>0:
+
+        title_rand = random.randint(0, len(book_titles) - 1)
+        node.get_all_type("titled")[0].value = book_titles[title_rand]
+
+        s+= ". The title reads: " + node.get_value("titled") #the name/type of the item
+        
+    if len(node.get_all_type("power_state")) > 0:
+
+        power_rand = random.randint(0, len(power_state) - 1)
+        node.get_all_type("power_state")[0].value = power_state[power_rand]
+        
+        s+= ". It is " + node.get_value("power_state")[0].value
+    
+    #'''
+    #Test "has_a" code
+    #this is a relationship instance it doesn't have get_all_type
+    if len(node.get_all_type("has_a"))>0:       
+        for att in node.get_all_type("has_a"):
+            if depth==0:#if this is the first layer
+                    s += " with " + inspectObject(att, depth+1) #This could theoretically run forever...
+            #else: #only one iteration
+                    #s += " with " + items[obj][attr["with"]]
+    #'''
+                    
+    #fix a/an issues 
+    s = re.sub('\\ba ([aeiou])', 'an \\1', s)
+
+    s += "."
+    return s
 
 #ideal length of method 5-15 
 #http://programmers.stackexchange.com/questions/133404/what-is-the-ideal-length-of-a-method
