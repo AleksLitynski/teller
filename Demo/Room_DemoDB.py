@@ -189,7 +189,19 @@ def inspectOldObject(obj):
     if "colored" in obj:
         s += " " + obj["colored"]
 
-    s += " " + obj["named"] + "."
+    if "is_made_of" in obj:
+        s += " " + obj["is_made_of"]
+
+    if "size" in obj:
+        s += " " + obj["size"]
+
+    s += " " + obj["named"] + ". "
+
+    if "titled" in obj:
+        s+= "The title reads: " + obj["titled"] + ". "
+
+    if "power_state" in obj:
+        s+= "It is " + obj["power_state"] + ". "
     
     return s
 
@@ -211,7 +223,7 @@ def inspectObject(node, depth=0):
     #otherwise, we will put the object and its attributes into our dictionary
         #This allows us to assume that the code below is always being used for new objects, rather than old ones
     else:
-        #rm_obj is a dictionary meant to hold the new object
+        #rm_obj is a dictionary meant to hold the new object -- Also creates the "named" key.
         rm_obj = {"named":node.get_value("named") }
         
         #we'll want to adjust which attributes are told about at different depths
@@ -235,37 +247,38 @@ def inspectObject(node, depth=0):
             #s+= " made_of " + node.get_all_type("is_made_of")[0].value  # returns true
             #s+= " " + node.get_relationship_types()
             mat_rand = random.randint(0, len(materials) - 1)
-            node.get_all_type("is_made_of")[0].value = materials[mat_rand]
+            rm_obj["is_made_of"] = materials[mat_rand]
 
-            s+= " " + node.get_value("is_made_of") #also returns true
+            s+= " " + rm_obj["is_made_of"] #also returns true
 
         if len(node.get_all_type("size"))>0:
 
             bed_rand = random.randint(0, len(bed_sizes) - 1)
-            node.get_all_type("size")[0].value = bed_sizes[bed_rand]
+            rm_obj["size"] = bed_sizes[bed_rand]
             
-            s+= " " + node.get_value("size")
+            s+= " " + rm_obj["size"]
             
         if len(node.get_all_type("has_a"))>0:
             #s+= " " + node.get_value("has_a")      #true -- this is making things look weird without really adding anything
             pass
             
         if len(node.get_all_type("named"))>0:
+            #This doesn't need to set anything because we have already created a key for "named"
             s+= " " + node.get_value("named") #the name/type of the item
             
         if len(node.get_all_type("titled"))>0:
 
             title_rand = random.randint(0, len(book_titles) - 1)
-            node.get_all_type("titled")[0].value = book_titles[title_rand]
+            rm_obj["titled"] = book_titles[title_rand]
 
-            s+= ". The title reads: " + node.get_value("titled") #the name/type of the item
+            s+= ". The title reads: " + rm_obj["titled"] #the name/type of the item
             
         if len(node.get_all_type("power_state")) > 0:
 
             power_rand = random.randint(0, len(power_state) - 1)
-            node.get_all_type("power_state")[0].value = power_state[power_rand]
+            rm_obj["power_state"] = power_state[power_rand]
             
-            s+= ". It is " + node.get_value("power_state")[0].value
+            s+= ". It is " + rm_obj["power_state"]
         
         #'''
         #Test "has_a" code
