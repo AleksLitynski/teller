@@ -215,7 +215,8 @@ def inspectObject(node, depth=0):
     for obj in room_dict:
         #run inspectOldObject if we've already assigned values to it --this isn't being hit
         if node.get_value("named") in obj:
-            is_old = True
+            print("finding object...")
+            #is_old = True
 
     if is_old == True:
         return inspectOldObject(room_dict[node.get_value("named")])
@@ -232,14 +233,18 @@ def inspectObject(node, depth=0):
         #The length of all of these is always either 1 or 0...
         #I will use colors for testing things and update other parts accordingly
         if len(node.get_all_type("colored"))>0:
-            
-            color_rand = random.randint(0, len(colors) - 1)     #select a random color
-            rm_obj["colored"] = colors[color_rand]              #give rm_obj a "colored" attribute, and set it to the random color
 
-            #print rm_obj's "colored" attribute -- prints properly
-            s+= " " + rm_obj["colored"]
+            #query = node.get_all_type("colored")[0].reguarding
             
-            #s+= " " + node.get_value("colored")[0].value
+            s+= " " + node.get_value("colored")
+            
+            #Non-database code
+            #color_rand = random.randint(0, len(colors) - 1)     #select a random color
+            #rm_obj["colored"] = colors[color_rand]              #give rm_obj a "colored" attribute, and set it to the random color
+            #print rm_obj's "colored" attribute -- prints properly
+            #s+= " " + rm_obj["colored"]
+            
+            
             #if there isn't a material, go ahead and say the color -- it actually already does that
             #if depth==0 or items[obj][attr["material"]] == "!=":
                 #s += " "  + items[obj][attr["color"]]
@@ -398,6 +403,48 @@ def roomPrint():
     print("\nRoomContents: ")
     print(roomConts)
 
+def get_from_id(val_id, val_type):
+    results = json.dumps( 	
+        {
+                "type":"get",
+                "params":
+                {
+                        "depth":0
+                },
+                "search":
+                {
+                        "edges":
+                        [
+                                {
+                                        "type":"has_value",
+                                        "terminal":
+                                        {
+                                                "type":"relationship",
+                                                "edges":
+                                                [
+                                                        {
+                                                                "terminal":
+                                                                {
+                                                                        "id": val_id
+                                                                }
+                                                        },
+         
+         
+                                                        {
+                                                                "terminal":
+                                                                {
+                                                                        "type": val_type
+                                                                }
+                                                        }
+                                                ]
+                                        }
+                                }
+                        ]
+                }
+        })
+
+    return results
+
 #Game Loop
 def testLoop():
     while(True):
@@ -414,11 +461,21 @@ def testLoop():
         else:
             for word in shlex.split(action):
                 #User's query is the action
-                queryResult = json.loads(query(describe_noun(word, 2)))
+                resultString = query(describe_noun(word, 1))
+                
 
                 #try to get the node
                 try:
+                    #print (resultString)
+                    queryResult = json.loads(resultString)
+                    q_id = queryResult.get("reply")[0].get("id")
+                    print(q_id)
+
+                    query2 = query(get_from_id(q_id, "colored"))
+                    print (query2)
+
                     node = get_node_by_name(word)
+                    
                 except:
                     node = None
                     #see if this is one of the pre-defined player commands
