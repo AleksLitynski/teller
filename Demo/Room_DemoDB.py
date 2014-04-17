@@ -206,105 +206,96 @@ def inspectOldObject(obj):
     return s
 
 def inspectObject(node, depth=0):
-    #Although I don't typically like making decisions that unilaterally effect a project...no one is here
-    #So, I'm going to try to make this work, regardless of whether or not it technically fully utilizes our database
 
-    #this is an old object
-    is_old = False
+    #rm_obj is a dictionary meant to hold the new object -- Also creates the "named" key.
+    rm_obj = {"named":node.get_value("named") }
     
-    for obj in room_dict:
-        #run inspectOldObject if we've already assigned values to it --this isn't being hit
-        if node.get_value("named") in obj:
-            print("finding object...")
-            #is_old = True
+    #we'll want to adjust which attributes are told about at different depths
+    s = "a"
 
-    if is_old == True:
-        return inspectOldObject(room_dict[node.get_value("named")])
+    #The length of all of these is always either 1 or 0...
+    #I will use colors for testing things and update other parts accordingly
+    if len(node.get_all_type("colored"))>0:
+
+        #Will fix later
+        """
+        resultString = query(describe_noun(str(node), 1))
+        queryResult = json.loads(str(resultString))
+        q_id = queryResult.get("reply")[0].get("id")
+        print(q_id)
+
+        query2 = query(get_from_id(q_id, "colored"))
+        print (query2)
+
+        #s += " " + str(query2)
         
-    #otherwise, we will put the object and its attributes into our dictionary
-        #This allows us to assume that the code below is always being used for new objects, rather than old ones
-    else:
-        #rm_obj is a dictionary meant to hold the new object -- Also creates the "named" key.
-        rm_obj = {"named":node.get_value("named") }
+        #s+= " " + node.get_value("colored")
+        """
         
-        #we'll want to adjust which attributes are told about at different depths
-        s = "a"
-
-        #The length of all of these is always either 1 or 0...
-        #I will use colors for testing things and update other parts accordingly
-        if len(node.get_all_type("colored"))>0:
-
-            #query = node.get_all_type("colored")[0].reguarding
-            
-            s+= " " + node.get_value("colored")
-            
-            #Non-database code
-            #color_rand = random.randint(0, len(colors) - 1)     #select a random color
-            #rm_obj["colored"] = colors[color_rand]              #give rm_obj a "colored" attribute, and set it to the random color
-            #print rm_obj's "colored" attribute -- prints properly
-            #s+= " " + rm_obj["colored"]
-            
-            
-            #if there isn't a material, go ahead and say the color -- it actually already does that
-            #if depth==0 or items[obj][attr["material"]] == "!=":
-                #s += " "  + items[obj][attr["color"]]
-        if len(node.get_all_type("is_made_of"))>0:
-            #s+= " made_of " + node.get_all_type("is_made_of")[0].value  # returns true
-            #s+= " " + node.get_relationship_types()
-            mat_rand = random.randint(0, len(materials) - 1)
-            rm_obj["is_made_of"] = materials[mat_rand]
-
-            s+= " " + rm_obj["is_made_of"] #also returns true
-
-        if len(node.get_all_type("size"))>0:
-
-            bed_rand = random.randint(0, len(bed_sizes) - 1)
-            rm_obj["size"] = bed_sizes[bed_rand]
-            
-            s+= " " + rm_obj["size"]
-            
-        if len(node.get_all_type("has_a"))>0:
-            #s+= " " + node.get_value("has_a")      #true -- this is making things look weird without really adding anything
-            pass
-            
-        if len(node.get_all_type("named"))>0:
-            #This doesn't need to set anything because we have already created a key for "named"
-            s+= " " + node.get_value("named") #the name/type of the item
-            
-        if len(node.get_all_type("titled"))>0:
-
-            title_rand = random.randint(0, len(book_titles) - 1)
-            rm_obj["titled"] = book_titles[title_rand]
-
-            s+= ". The title reads: " + rm_obj["titled"] #the name/type of the item
-            
-        if len(node.get_all_type("power_state")) > 0:
-
-            power_rand = random.randint(0, len(power_state) - 1)
-            rm_obj["power_state"] = power_state[power_rand]
-            
-            s+= ". It is " + rm_obj["power_state"]
+        #Non-database code
+        #color_rand = random.randint(0, len(colors) - 1)     #select a random color
+        #rm_obj["colored"] = colors[color_rand]              #give rm_obj a "colored" attribute, and set it to the random color
+        #print rm_obj's "colored" attribute -- prints properly
+        #s+= " " + rm_obj["colored"]
         
-        #'''
-        #Test "has_a" code
-        #this is a relationship instance it doesn't have get_all_type
-        if len(node.get_all_type("has_a"))>0:       
-            for att in node.get_all_type("has_a"):
-                if depth==0:#if this is the first layer
-                        s += " with " + inspectObject(att, depth+1) #This could theoretically run forever...
-                #else: #only one iteration
-                        #s += " with " + items[obj][attr["with"]]
-        #'''
-                        
-        #fix a/an issues 
-        s = re.sub('\\ba ([aeiou])', 'an \\1', s)
-
-        s += "."
-
-        #add rm_obj to room_dict
-        room_dict[rm_obj["named"]] = rm_obj
         
-        return s
+        #if there isn't a material, go ahead and say the color -- it actually already does that
+        #if depth==0 or items[obj][attr["material"]] == "!=":
+            #s += " "  + items[obj][attr["color"]]
+    if len(node.get_all_type("is_made_of"))>0:
+        #s+= " made_of " + node.get_all_type("is_made_of")[0].value  # returns true
+        #s+= " " + node.get_relationship_types()
+        mat_rand = random.randint(0, len(materials) - 1)
+        rm_obj["is_made_of"] = materials[mat_rand]
+
+        s+= " " + rm_obj["is_made_of"] #also returns true
+
+    if len(node.get_all_type("size"))>0:
+
+        bed_rand = random.randint(0, len(bed_sizes) - 1)
+        rm_obj["size"] = bed_sizes[bed_rand]
+        
+        s+= " " + rm_obj["size"]
+        
+    if len(node.get_all_type("has_a"))>0:
+        #s+= " " + node.get_value("has_a")      #true -- this is making things look weird without really adding anything
+        pass
+        
+    if len(node.get_all_type("named"))>0:
+        #This doesn't need to set anything because we have already created a key for "named"
+        s+= " " + node.get_value("named") #the name/type of the item
+        
+    if len(node.get_all_type("titled"))>0:
+
+        title_rand = random.randint(0, len(book_titles) - 1)
+        rm_obj["titled"] = book_titles[title_rand]
+
+        s+= ". The title reads: " + rm_obj["titled"] #the name/type of the item
+        
+    if len(node.get_all_type("power_state")) > 0:
+
+        power_rand = random.randint(0, len(power_state) - 1)
+        rm_obj["power_state"] = power_state[power_rand]
+        
+        s+= ". It is " + rm_obj["power_state"]
+    
+    #'''
+    #Test "has_a" code
+    #this is a relationship instance it doesn't have get_all_type
+    if len(node.get_all_type("has_a"))>0:       
+        for att in node.get_all_type("has_a"):
+            if depth==0:#if this is the first layer
+                    s += " with " + inspectObject(att, depth+1) #This could theoretically run forever...
+            #else: #only one iteration
+                    #s += " with " + items[obj][attr["with"]]
+    #'''
+                    
+    #fix a/an issues 
+    s = re.sub('\\ba ([aeiou])', 'an \\1', s)
+
+    s += "."
+
+    return s
 
 #ideal length of method 5-15 
 #http://programmers.stackexchange.com/questions/133404/what-is-the-ideal-length-of-a-method
