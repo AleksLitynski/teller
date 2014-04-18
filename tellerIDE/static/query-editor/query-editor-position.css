@@ -1,0 +1,29 @@
+.query-editor{
+
+
+	height:calc(100% - 1px);
+	width:100%;
+
+
+
+}
+
+.query-editor-body{
+    height: calc(100% - 50px);
+    width: 100%;
+
+    float:left;
+
+
+
+
+
+
+}
+
+.CodeMirror{
+    height: 100%;
+    width: 100%;
+    
+
+}

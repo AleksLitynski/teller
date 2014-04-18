@@ -1,0 +1,81 @@
+.query-editor-tabs{
+	width:100%;
+	height:25px;
+
+}
+
+@keyframes expandTab
+{
+	from {width: 0px;}
+	to {}
+}
+
+@keyframes shrinkTab
+{
+	from {}
+	to {width: 0px;}
+} 
+.query-editor-tab{
+	
+	animation: expandTab 0.1s;
+	height:100%;
+	width:100px;
+	background-color:white;
+	border-top:1px solid grey;
+	border-left:1px solid grey;
+	border-right:1px solid grey;
+
+
+	border-top-left-radius:2px;
+	border-top-right-radius:2px;
+	float:left;
+
+}
+
+
+.add-tab{
+	width:25px;
+
+}
+
+
+.active-tab{
+	transition: all 0.1s ease;
+	border-top:3px solid black;
+	margin-bottom:-2px;
+
+	border-top-left-radius:0px;
+	border-top-right-radius:0px;
+
+}
+
+.query-editor-tab-name{
+	margin-left:5px;
+	padding-top:3px;
+	font-size:16.5px;
+	display:block;
+	float:left;
+}
+
+
+
+.query-editor-tab-icon {
+	width: 15px; 
+	height: 15px; 
+
+	float:right;
+	margin-right:2px;
+	margin-top:2px;
+	padding:2px;
+
+	background: transparent;
+	
+
+	border-radius:2px;
+	border:1px solid transparent;
+}
+.query-editor-tab-icon:hover {
+	transition: all 0.2s ease-in;
+
+	border:1px solid grey;
+}
