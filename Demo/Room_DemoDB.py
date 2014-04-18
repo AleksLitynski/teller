@@ -36,7 +36,7 @@ class noun:
             if noun_relationship.type == relationship_type:
                 value = noun_relationship.value
         return value
-
+    
     def get_all(self, relationship_type):
         relationships = []
         for noun_relationship in self.relationships:
@@ -50,11 +50,19 @@ class noun:
             relationship_types.add(relationships.type)
         return relationship_types
 
-
     def print_noun(self):
         #Testing self.get_value() -- it works
         #print(self.get_value("named"))
         return self.get_value("named")
+
+    def get_relationship(query):
+        type = get_edge_named(query.get("edges"), "has_type").get("value")
+
+        value = get_edge_named(query.get("edges"), "has_value").get("value")
+
+        target = get_edge_named(query.get("edges"), "regarding").get("id")
+
+        return relationship(type, value, target)
 		
 class relationship:
     def __init__(self, type, value, reguarding):
@@ -139,34 +147,155 @@ def nodeInfo(node_id, node_type, value, edges):
         node["edges"]= edges
         addNode(node)
 
+def show_locally(self):
+		for n in self.graph.nodes_iter():
+			print(n.id + " " + n.type + " " + n.value)
+
+		for e in self.graph.edges_iter():
+			print(str(e[0].id) + " -" + str(get_edge_val(e, self.graph).weights) + "-> " + str(e[1].id))
+
+def new_noun_named(self, name, lang):
+		new_node = self.add_node("noun", "")
+		self.add_relationship(new_node, lang, "named", name)
+		return new_node
+
+def new_nouns_named(self, names, lang):
+		nouns = []
+		for noun in map( lambda x: self.new_noun_named(x, lang) , names):
+			nouns.append(noun)
+		return nouns
+
+def fork(self, fork_from, name, time):
+		new_noun = self.add_node(fork_from.type, name)
+		self.add_edge("is_a", new_noun, fork_from, time, 100)
+		return new_noun
+
+#These are our lists of stuff
+colors = ["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"]
+materials = ["plastic", "wood", "aluminum", "duct tape"]
+bed_sizes = ["twin", "double", "queen-sized", "king-sized"]
+book_titles = ["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force",
+             "The Vengeful Penguin", "Ninja's Guide to Ornamental Horticulture", "Neko-nomicon", "This is Not a Book"]
+power_state = ["on", "off"]
+liquids = ["water", "juice", "wine", "soda", "nothing"]
+
+#Room will hold saved values -- [room_number][object_in_room][attribute_type][attribute_value]
+room_dict = {}
+
+#print objects, whose values we have already found/made -- It works!
+def inspectOldObject(obj):
+    s = "a"
+
+    if "colored" in obj:
+        s += " " + obj["colored"]
+
+    if "is_made_of" in obj:
+        s += " " + obj["is_made_of"]
+
+    if "size" in obj:
+        s += " " + obj["size"]
+
+    s += " " + obj["named"] + ". "
+
+    if "titled" in obj:
+        s+= "The title reads: " + obj["titled"] + ". "
+
+    if "power_state" in obj:
+        s+= "It is " + obj["power_state"] + ". "
+    
+    return s
 
 def inspectObject(node, depth=0):
+
+    #rm_obj is a dictionary meant to hold the new object -- Also creates the "named" key.
+    rm_obj = {"named":node.get_value("named") }
+    
     #we'll want to adjust which attributes are told about at different depths
-        s = "a"
-        if len(node.get_all_type("color"))>0:
-            s+= " " + node.get_all_type("color")[0].value
-            #if there isn't a material, go ahead and say the color
-            #if depth==0 or items[obj][attr["material"]] == "!=":
-                #s += " "  + items[obj][attr["color"]]
-        if len(node.get_all_type("material"))>0:
-            s+= " " + node.get_all_type("material")[0].value
-        if len(node.get_all_type("size"))>0:
-            s+= " " + node.get_all_type("size")[0].value
+    s = "a"
 
-        if len(node.get_all_type("named"))>0:
-            s+= " " + node.get_all_type("named")[0].value #the name/type of the item
+    #The length of all of these is always either 1 or 0...
+    #I will use colors for testing things and update other parts accordingly
+    if len(node.get_all_type("colored"))>0:
 
-        '''
-        if len(node.get_all_type("has_a"))>0:
-            for att in node.get_all_type("has_a"):
-                if depth==0:#if this is the first layer
-                        s += " with " + inspectObject(att, depth+1)
-                #else: #only one iteration
-                        #s += " with " + items[obj][attr["with"]]
-        '''
-        #fix a/an issues
-        s = re.sub('\\ba ([aeiou])', 'an \\1', s)
-        return s
+        #Will fix later
+        """
+        resultString = query(describe_noun(str(node), 1))
+        queryResult = json.loads(str(resultString))
+        q_id = queryResult.get("reply")[0].get("id")
+        print(q_id)
+
+        query2 = query(get_from_id(q_id, "colored"))
+        print (query2)
+
+        #s += " " + str(query2)
+        
+        #s+= " " + node.get_value("colored")
+        """
+        
+        #Non-database code
+        #color_rand = random.randint(0, len(colors) - 1)     #select a random color
+        #rm_obj["colored"] = colors[color_rand]              #give rm_obj a "colored" attribute, and set it to the random color
+        #print rm_obj's "colored" attribute -- prints properly
+        #s+= " " + rm_obj["colored"]
+        
+        
+        #if there isn't a material, go ahead and say the color -- it actually already does that
+        #if depth==0 or items[obj][attr["material"]] == "!=":
+            #s += " "  + items[obj][attr["color"]]
+    if len(node.get_all_type("is_made_of"))>0:
+        #s+= " made_of " + node.get_all_type("is_made_of")[0].value  # returns true
+        #s+= " " + node.get_relationship_types()
+        mat_rand = random.randint(0, len(materials) - 1)
+        rm_obj["is_made_of"] = materials[mat_rand]
+
+        s+= " " + rm_obj["is_made_of"] #also returns true
+
+    if len(node.get_all_type("size"))>0:
+
+        bed_rand = random.randint(0, len(bed_sizes) - 1)
+        rm_obj["size"] = bed_sizes[bed_rand]
+        
+        s+= " " + rm_obj["size"]
+        
+    if len(node.get_all_type("has_a"))>0:
+        #s+= " " + node.get_value("has_a")      #true -- this is making things look weird without really adding anything
+        pass
+        
+    if len(node.get_all_type("named"))>0:
+        #This doesn't need to set anything because we have already created a key for "named"
+        s+= " " + node.get_value("named") #the name/type of the item
+        
+    if len(node.get_all_type("titled"))>0:
+
+        title_rand = random.randint(0, len(book_titles) - 1)
+        rm_obj["titled"] = book_titles[title_rand]
+
+        s+= ". The title reads: " + rm_obj["titled"] #the name/type of the item
+        
+    if len(node.get_all_type("power_state")) > 0:
+
+        power_rand = random.randint(0, len(power_state) - 1)
+        rm_obj["power_state"] = power_state[power_rand]
+        
+        s+= ". It is " + rm_obj["power_state"]
+    
+    #'''
+    #Test "has_a" code
+    #this is a relationship instance it doesn't have get_all_type
+    if len(node.get_all_type("has_a"))>0:       
+        for att in node.get_all_type("has_a"):
+            if depth==0:#if this is the first layer
+                    s += " with " + inspectObject(att, depth+1) #This could theoretically run forever...
+            #else: #only one iteration
+                    #s += " with " + items[obj][attr["with"]]
+    #'''
+                    
+    #fix a/an issues 
+    s = re.sub('\\ba ([aeiou])', 'an \\1', s)
+
+    s += "."
+
+    return s
 
 #ideal length of method 5-15 
 #http://programmers.stackexchange.com/questions/133404/what-is-the-ideal-length-of-a-method
@@ -265,6 +394,48 @@ def roomPrint():
     print("\nRoomContents: ")
     print(roomConts)
 
+def get_from_id(val_id, val_type):
+    results = json.dumps( 	
+        {
+                "type":"get",
+                "params":
+                {
+                        "depth":0
+                },
+                "search":
+                {
+                        "edges":
+                        [
+                                {
+                                        "type":"has_value",
+                                        "terminal":
+                                        {
+                                                "type":"relationship",
+                                                "edges":
+                                                [
+                                                        {
+                                                                "terminal":
+                                                                {
+                                                                        "id": val_id
+                                                                }
+                                                        },
+         
+         
+                                                        {
+                                                                "terminal":
+                                                                {
+                                                                        "type": val_type
+                                                                }
+                                                        }
+                                                ]
+                                        }
+                                }
+                        ]
+                }
+        })
+
+    return results
+
 #Game Loop
 def testLoop():
     while(True):
@@ -278,15 +449,24 @@ def testLoop():
                 print("Okay, bye!")
                 break 
 
-
         else:
             for word in shlex.split(action):
                 #User's query is the action
-                queryResult = json.loads(query(describe_noun(word, 2)))
+                resultString = query(describe_noun(word, 1))
+                
 
                 #try to get the node
                 try:
+                    #print (resultString)
+                    queryResult = json.loads(resultString)
+                    q_id = queryResult.get("reply")[0].get("id")
+                    print(q_id)
+
+                    query2 = query(get_from_id(q_id, "colored"))
+                    print (query2)
+
                     node = get_node_by_name(word)
+                    
                 except:
                     node = None
                     #see if this is one of the pre-defined player commands
@@ -298,10 +478,9 @@ def testLoop():
                         print("You can't do that.")
                     
                 if node:
-                    #print(roomConts[node.get("id")])
-                    print(inspectObject(node))
-                    #print(Get_All_Edges(node))
-
+                    #inspect the node to a depth of... (depth doesn't seem to be doing anything right now)
+                    print(inspectObject(node,2))
+                    
 
 #create a version of recSearch that is designed to list things
 def listSearch(queryResult, searchFor, searchIn):

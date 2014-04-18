@@ -152,8 +152,9 @@ class ontology:
 
 		#Adds a noun for each color
 		#THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
-		colors = self.new_nouns_named(["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"], english)
-		self.add_relationship(blanket, choice(colors), "colored", "True")
+		colors = ["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"]
+		rgb_color = self.new_noun_named("rgb color", english)
+		self.add_relationship(blanket, rgb_color, "colored", choice(colors))
 
 		bed_sizes = self.new_nouns_named(["twin", "double", "queen", "king"], english)
 		self.add_relationship(bed, choice(bed_sizes), "size", "True")

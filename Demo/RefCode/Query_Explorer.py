@@ -56,13 +56,18 @@ class noun:
         self.id = id
         self.relationships = []
 
-    def get_value(self, relationship_type, default="Something"):
-        value = default
+    def get_value(self, relationship_type):
+        value = None
         for noun_relationship in self.relationships:
             if noun_relationship.type == relationship_type:
                 value = noun_relationship.value
         return value
 
+    def set_value(self, rel_type, val):
+        for noun_relationship in self.relationships:
+            if noun_relationship.type == rel_type:
+                value = val
+    
     def get_all_type(self, relationship_type):
         relationships = []
         for noun_relationship in self.relationships:
