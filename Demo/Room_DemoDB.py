@@ -182,29 +182,6 @@ liquids = ["water", "juice", "wine", "soda", "nothing"]
 #Room will hold saved values -- [room_number][object_in_room][attribute_type][attribute_value]
 room_dict = {}
 
-#print objects, whose values we have already found/made -- It works!
-def inspectOldObject(obj):
-    s = "a"
-
-    if "colored" in obj:
-        s += " " + obj["colored"]
-
-    if "is_made_of" in obj:
-        s += " " + obj["is_made_of"]
-
-    if "size" in obj:
-        s += " " + obj["size"]
-
-    s += " " + obj["named"] + ". "
-
-    if "titled" in obj:
-        s+= "The title reads: " + obj["titled"] + ". "
-
-    if "power_state" in obj:
-        s+= "It is " + obj["power_state"] + ". "
-    
-    return s
-
 def inspectObject(node, depth=0):
     #Although I don't typically like making decisions that unilaterally effect a project...no one is here
     #So, I'm going to try to make this work, regardless of whether or not it technically fully utilizes our database
