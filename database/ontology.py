@@ -122,7 +122,7 @@ class ontology:
 
 
 
-
+        #Note -- need to restart TCP Listener for changes to take effect
 	def override_with_random_room(self):
 		self.graph = nx.Graph()
 		english = self.add_node("noun", "")
@@ -138,10 +138,11 @@ class ontology:
 		objects_in_room.append(table)
 
 
-		materials = self.new_nouns_named(["plastic", "wood", "aluminum", "duct tape"], english) #make a node for each material
+		materials = ["plastic", "wood", "aluminum", "duct tape"] #make a node for each material
+		mat_type = self.new_noun_named("mat_type", english)
 
-		self.add_relationship(chair, choice(materials), "is_made_of", "True") #declare we are made of ONE material
-		self.add_relationship(table, choice(materials), "is_made_of", "True")
+		self.add_relationship(chair, mat_type, "is_made_of", choice(materials)) #declare we are made of ONE material
+		self.add_relationship(table, mat_type, "is_made_of", choice(materials))
 
 
 
@@ -156,8 +157,9 @@ class ontology:
 		rgb_color = self.new_noun_named("rgb color", english)
 		self.add_relationship(blanket, rgb_color, "colored", choice(colors))
 
-		bed_sizes = self.new_nouns_named(["twin", "double", "queen", "king"], english)
-		self.add_relationship(bed, choice(bed_sizes), "size", "True")
+		bed_sizes = ["twin", "double", "queen", "king"]
+		b_size = self.new_noun_named("b_size", english)
+		self.add_relationship(bed, b_size, "bed_size", choice(bed_sizes))
 
 		floor = self.new_noun_named("floor", english)
 		objects_in_room.append(floor)
@@ -166,23 +168,26 @@ class ontology:
 
 		cup = self.new_noun_named("cup", english)
 		self.add_relationship(choice(objects_in_room), cup, "has_a", "True")
-		self.add_relationship(cup, choice(materials), "is_made_of", "True")
+		self.add_relationship(cup, mat_type, "is_made_of", choice(materials))
 
-		liquids = self.new_nouns_named(["water", "juice", "wine", "soda", "nothing"], english)
-		self.add_relationship(cup, choice(liquids), "contains", "True")
+		liquids = ["water", "juice", "wine", "soda", "nothing"]
+		liquid = self.new_noun_named("liquid", english)
+		self.add_relationship(cup, liquid, "contains", choice(liquids))
 
 
 		lamp = self.new_noun_named("lamp", english)
 		self.add_relationship(choice(objects_in_room), lamp, "has_a", "True")
-		power_state = self.new_nouns_named(["on", "off"], english)
-		self.add_relationship(lamp, choice(power_state), "is_currently_turned", "True")
+		power_state = ["on", "off"]
+		p_state = self.new_noun_named("p_state", english)
+		self.add_relationship(lamp, p_state, "power_state", choice(power_state))
 
 
 		book = self.new_noun_named("book", english)
 		self.add_relationship(choice(objects_in_room), book, "has_a", "True")
-		book_titles = self.new_nouns_named(["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force", "The Vengeful Penguin", "Ninja's Guide to Ornamental Horticulture",
-													"Neko-nomicon", "This is Not a Book"], english)
-		self.add_relationship(book, choice(book_titles), "titled", "True")
+		book_titles = ["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force", "The Vengeful Penguin", "Ninja's Guide to Ornamental Horticulture",
+				"Neko-nomicon", "This is Not a Book"]
+		title = self.new_noun_named("title", english)
+		self.add_relationship(book, title, "titled", choice(book_titles))
 
 
 
