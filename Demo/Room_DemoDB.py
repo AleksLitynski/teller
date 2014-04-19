@@ -217,20 +217,19 @@ def inspectObject(node, depth=0):
     #I will use colors for testing things and update other parts accordingly
     if len(node.get_all_type("colored"))>0:
 
-        #Will fix later
-        """
-        resultString = query(describe_noun(str(node), 1))
-        queryResult = json.loads(str(resultString))
+        #Will fix later -- And by later, I mean immediately!
+        #"""
+        resultString = query(describe_noun(rm_obj["named"], 2))
+        queryResult = json.loads(resultString)
+
         q_id = queryResult.get("reply")[0].get("id")
-        print(q_id)
-
+        #print(q_id)
         query2 = query(get_from_id(q_id, "colored"))
-        print (query2)
 
-        #s += " " + str(query2)
+        s += " " + query2
         
         #s+= " " + node.get_value("colored")
-        """
+        #"""
         
         #Non-database code
         #color_rand = random.randint(0, len(colors) - 1)     #select a random color
@@ -464,7 +463,7 @@ def testLoop():
 
                     query2 = query(get_from_id(q_id, "colored"))
                     print (query2)
-
+                    
                     node = get_node_by_name(word)
                     
                 except:
