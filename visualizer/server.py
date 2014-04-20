@@ -50,22 +50,34 @@ def describe_noun(noun_name, depth=2):
 
 def doSearch(handler):
 	printFunc("doSearch")
+
+	handler.send_response(200)
+	handler.send_header('Content-type', 'text/html')
+	handler.end_headers()
+
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(('127.0.0.1', 5005))
 	s.send(describe_noun("room"))
-	s.send('{"type":"get", "params":{"depth":2}, "search":{}}')
+	printAlert("doSearch_Sending query now")
+	#s.send('{"type":"get", "params":{"depth":2}, "search":{}}')
+	printAlert("doSearch_Sent query now")
 	raw = s.recv(10000000)
-	read = SearchInterpreter.read(raw);
 	s.close()
+	printAlert("READING " )
+	print raw
+	read = SearchInterpreter.read(raw);
 	handler.wfile.write(json.dumps(read))
 	return read
 
 def sendSearch(handler,info):
 	printFunc("SendSearch")
+
+
+
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(('127.0.0.1', 5005))
 	s.send(info)
-	raw = s.recv(200000)
+	raw = s.recv(2000000)
 	read = SearchInterpreter.read(raw);
 	s.close()
 	handler.wfile.write(json.dumps(read))
@@ -82,6 +94,9 @@ def sendRequested(handler):
 		handler.send_error(404, "big whoopsie on somebodies part")
 		
 def ERROR_NO_INDEX(handler):
+	handler.send_response(200)
+	handler.send_header('Content-type', 'text/html')
+	handler.end_headers()
 	printFunc("ERROR_NO_INDEX")
 	handler.path = "/index.html"
 	sendRequested(handler);
@@ -89,12 +104,19 @@ def searchByKeyword(data) : return describe_noun(data[1]);
 	
 def POSTsearch(handler,data):
 	printFunc("POSTsearch");
+	printAlert("POSTsearch received data is " + data)
 	searchType = {
 			'keyword' : searchByKeyword
 		}
 	try :
 		print("POST SEARCH RECEIVED ",data);
 		sendSearch(handler,describe_noun(data[1]) );
+	except : print "SearchPatternNotFound"
+
+def POSTsendDatabase(handler, data):
+	try :
+		print("POSTsendDatabase RECEIVED ",data);
+		sendSearch(handler,data );
 	except : print "SearchPatternNotFound"
 
 #used by HTTPServer to field all queries.	
@@ -106,15 +128,14 @@ class web_handler(BaseHTTPRequestHandler):
 		s.send_header('Content-type', 'text/html')
 		s.end_headers()
 	
-		
-	
 	def do_POST(s):
 		printFunc("do_POST");
 		length = int(s.headers['Content-Length'])
-		data = json.loads(s.rfile.read(length));
+		data = s.rfile.read(length);
 		print ("Received : " + s.path,data);
 		response = {
-			'/search' :POSTsearch
+			'/search' :POSTsearch, #need to unwrap  the data to use this function, buggy
+			'/sendToDataBase': POSTsendDatabase
 		}
 		try : response[s.path](s,data)
 		except :
