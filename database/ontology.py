@@ -186,7 +186,7 @@ class ontology:
 
 
 
-
+                #need to fix this so it works with room contents.
 		for object_in_room in objects_in_room:
 			self.add_relationship(room, object_in_room,"has_a", "True")
 

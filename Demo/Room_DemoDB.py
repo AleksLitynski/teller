@@ -251,6 +251,8 @@ def inspectObject(node, depth=0):
 
     s += "."
 
+    #s += " (" +  node.get_value("") + ")"
+    
     #add rm_obj to room_dict
     room_dict[rm_obj["named"]] = rm_obj
     
@@ -351,7 +353,16 @@ def qrPrint(qrNode):
 
 def roomPrint():
     print("\nRoomContents: ")
-    print(roomConts)
+    node = get_node_by_name("room")
+
+    iterator = 0
+
+    while iterator < len(roomConts):
+        if node.get_value("has_a") == "True":
+            print(node.get_value("has_a")) #This is always going to return room...
+        iterator += 1
+    
+    #print(roomConts)
 
 def get_from_id(val_id, val_type):
     results = json.dumps( 	
