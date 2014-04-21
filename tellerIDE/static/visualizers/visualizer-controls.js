@@ -1,7 +1,6 @@
-loaders.push(function(){
+state().loaded(function(){
 
 	nodeListIter(".visualizer-option-selection", function(e, i, a){
-		console.log("rigged");
 		e.onmouseup = function(){
 			set_active_button(e);
 		}
@@ -11,9 +10,6 @@ loaders.push(function(){
 	function set_active_button(active_button){
 			disable_all_selections();
 			active_button.classList.add("active-button");
-			console.log("Why");
-
-
 
 			function toggle_if_self(nm){
 

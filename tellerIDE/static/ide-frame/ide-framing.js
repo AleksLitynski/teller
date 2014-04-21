@@ -1,4 +1,5 @@
-loaders.push(function(){
+state().loaded(function(){
+
 
     var vert_hor = "vert";
     var currentlyResizing = false;

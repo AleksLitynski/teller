@@ -90,7 +90,8 @@ def main():
 
         #(r'/static/(.*)', tornado.web.StaticFileHandler, {'path': static_path}
 
-        static_path=os.path.join(root, 'static')
+        static_path=os.path.join(root, 'static'),
+        debug=True
         )
 
     http_server = tornado.httpserver.HTTPServer(application)

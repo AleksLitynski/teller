@@ -1,6 +1,4 @@
-loaders.push(function(){
-
-	display_json('{"string":"foo","number":5,"array":[1,2,3],"object":{"property":"value","subobj":{"arr":["foo","ha"],"numero":1}}}');
+state().loaded(function(){
 
 
 	function display_json(to_display){
@@ -21,6 +19,8 @@ loaders.push(function(){
             data: to_display
         });
 	}
+
+	display_json('{"string":"foo","number":5,"array":[1,2,3],"object":{"property":"value","subobj":{"arr":["foo","ha"],"numero":1}}}');
 
 /*
 var i = 0; 

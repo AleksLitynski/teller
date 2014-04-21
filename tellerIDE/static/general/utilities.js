@@ -1,14 +1,9 @@
-var loaders = [];
+/*
+	Function that *should be* part of javascript nativly,
+	but don't warent an entire library to add their functionality.
+*/
 
-function loaded()
-{
-	for(loader in loaders){
-		loaders[loader]();
-	}
-}
-
-
-
+//Lets you itterate the result of a querySelectorAll query
 function nodeListIter(list_query, func){
     var list = document.querySelectorAll(list_query);
     for(var i = 0; i < list.length; i++){
@@ -16,7 +11,7 @@ function nodeListIter(list_query, func){
     }
 }
 
-
+//Gets the previous sibling that ISN'T a text node (ie: white space)
 function previous_sibling(node){
 	prev_sib = node.previousSibling;
 	if(prev_sib.nodeName == "#text"){
@@ -26,6 +21,7 @@ function previous_sibling(node){
 	}
 }
 
+//Gets the next sibling that ISN'T a text node (ie: white space)
 function next_sibling(node){
 	next_sib = node.nextSibling;
 
@@ -36,6 +32,7 @@ function next_sibling(node){
 	}
 }
 
+//Concats a string to itself X times.
 String.prototype.repeat = function( num )
 {
     return new Array( num + 1 ).join( this );

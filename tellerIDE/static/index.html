@@ -9,7 +9,9 @@
 		<!--Utility libraries-->
 		<link rel="stylesheet" type="text/css" 	href="general/reset.css"></link>
 		<link rel="stylesheet" type="text/css" 	href="general/buttons.css"></link>
-		<script type="text/javascript" 			src="general/general.js"></script>
+		<script type="text/javascript" 			src="libraries/stately-min.js"></script>
+		<script type="text/javascript" 			src="general/utilities.js"></script>
+		<script type="text/javascript" 			src="general/setup.js"></script>
 		<script type="text/javascript" 			src="libraries/jquery.js"></script>
 
 		<!--Modular editor layout-->
@@ -23,8 +25,6 @@
 		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-tabs.css"></link>
 		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-controls.css"></link>
 		<script type="text/javascript"			src="query-editor/query-editor-setup.js"></script>
-		<script type="text/javascript"			src="query-editor/query-editor-runner.js"></script>
-
 
 		<!--Visualizer-->		
 		<link rel="stylesheet" type="text/css"	href="visualizers/visualizer-controls.css"></link>
@@ -49,7 +49,7 @@
 		<title>Teller IDE</title>
 	</head>
 
-	<body onload="loaded()">
+	<body onload="state().loaded(true)">
 
 		<div class="left-column">
 			<div class="frame top-row">

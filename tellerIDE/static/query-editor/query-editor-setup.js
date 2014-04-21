@@ -1,4 +1,4 @@
-loaders.push(function(){
+state().loaded(function(){
 
 	var tab_data = [];
 
@@ -9,7 +9,6 @@ loaders.push(function(){
 		theme: "default"
     });
 
-	document.querySelector(".add-tab").onclick = add_tab;
 	
 
 
@@ -65,7 +64,6 @@ loaders.push(function(){
 			select_tab(clickedTab);
 		}
 
-
 		function select_tab(target_tab){
 
 			var tab_text = "";
@@ -102,6 +100,7 @@ loaders.push(function(){
 
 
 	}
+	document.querySelector(".add-tab").onclick = add_tab;
 	add_tab();
 
 
