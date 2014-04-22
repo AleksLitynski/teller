@@ -42,4 +42,6 @@ var state = stately(
 
 );
 
+
+
 state().settings().prompt_for_tab_name(false);

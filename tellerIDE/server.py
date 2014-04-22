@@ -66,6 +66,12 @@ class StaticHandler(tornado.web.RequestHandler):
         self.finish()
 
 
+class QueryHandler(tornado.web.RequestHandler):
+    def initialize(self):
+    	pass
+    def post(self):
+        self.set_header("Content-Type", "application/json")
+        self.render('{"a":"b"}')
 
 
 
@@ -89,6 +95,7 @@ def main():
     application = tornado.web.Application(
         [
             (r"/", IndexHandler, {'path': os.path.join(root, 'static')}),
+            (r"/query", QueryHandler),
             (r"/.*", StaticHandler, {'path': os.path.join(root, 'static')})
         ], 
 
