@@ -17,8 +17,7 @@ state().loaded(function(){
 		})
 	}
 	function receive_query(data){
-		console.log("dats");
-		console.log(data.data);
+		console.log(data.reply);
 	}
 
 

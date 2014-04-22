@@ -72,7 +72,7 @@ class QueryHandler(tornado.web.RequestHandler):
     def post(self):
         self.set_header("Content-Type", "application/json")
 
-        data = self.get_argument("data")
+        data = self.get_argument("query")
         #{k:''.join(v) for k,v in req.arguments.iteritems()}
         self.write('{"reply":"'+str(data)+'"}')
         self.finish()
