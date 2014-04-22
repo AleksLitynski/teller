@@ -183,15 +183,6 @@ liquids = ["water", "juice", "wine", "soda", "nothing"]
 room_dict = {}
 
 def inspectObject(node, depth=0):
-    #Although I don't typically like making decisions that unilaterally effect a project...no one is here
-    #So, I'm going to try to make this work, regardless of whether or not it technically fully utilizes our database
-
-    for obj in room_dict:
-        #run inspectOldObject if we've already assigned values to it --this isn't being hit
-        if node.get_value("named") in obj:
-            print("finding object...")
-            #is_old = True
-
 
     #This allows us to assume that the code below is always being used for new objects, rather than old ones
     #rm_obj is a dictionary meant to hold the new object -- Also creates the "named" key.
@@ -218,11 +209,7 @@ def inspectObject(node, depth=0):
         
     if len(node.get_all_type("named"))>0:
         s+= " " + node.get_value("named") #the name/type of the item
-
-    if len(node.get_all_type("has_a"))>0:
-        #s+= " it has a " + node.get_value("has_a")      #true -- this is making things look weird without really adding anything
-        pass
-        
+    
     if len(node.get_all_type("titled"))>0:
 
         s+= ". The title reads: " + node.get_value("titled")
@@ -234,6 +221,10 @@ def inspectObject(node, depth=0):
     if len(node.get_all_type("power_state")) > 0:
 
         s+= ". It is " + node.get_value("power_state")
+
+    if len(node.get_all_type("has_a"))>0:
+        #s+= ". It has a " + node.get_value("has_a")      #true -- this is making things look weird without really adding anything
+        pass
     
     #'''
     #Test "has_a" code
@@ -353,6 +344,8 @@ def qrPrint(qrNode):
 
 def roomPrint():
     print("\nRoomContents: ")
+
+    """
     node = get_node_by_name("room")
 
     iterator = 0
@@ -361,8 +354,8 @@ def roomPrint():
         if node.get_value("has_a") == "True":
             print(node.get_value("has_a")) #This is always going to return room...
         iterator += 1
-    
-    #print(roomConts)
+    #"""
+    print(roomConts)
 
 def get_from_id(val_id, val_type):
     results = json.dumps( 	
