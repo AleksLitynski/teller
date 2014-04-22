@@ -203,6 +203,10 @@ def inspectObject(node, depth=0):
 
         s+= " " + node.get_value("is_made_of")
 
+    if len(node.get_all_type("floor_mat"))>0:
+
+        s+= " " + node.get_value("floor_mat")
+    
     if len(node.get_all_type("bed_size"))>0:
         
         s+= " " + node.get_value("bed_size") + "-sized"

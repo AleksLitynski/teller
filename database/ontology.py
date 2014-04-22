@@ -158,9 +158,14 @@ class ontology:
 		bed_size = self.new_noun_named("bed_size", english)
 		self.add_relationship(bed, bed_size, "bed_size", choice(bed_sizes))
 
-		floor = self.new_noun_named("floor", english)
+
+                floor = self.new_noun_named("floor", english)
 		objects_in_room.append(floor)
 
+                floor_mats = ["hardwood", "linoleum", "concrete", "marble", "carpeted"]
+                floor_mat = self.new_noun_named("floor_mat", english)
+                self.add_relationship(floor, floor_mat, "floor_mat", choice(floor_mats))
+		
 		cup = self.new_noun_named("cup", english)
 		self.add_relationship(choice(objects_in_room), cup, "has_a", "True")
 		self.add_relationship(cup, mat, "is_made_of", choice(materials))
