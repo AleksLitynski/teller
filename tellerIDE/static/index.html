@@ -26,6 +26,10 @@
 		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-controls.css"></link>
 		<script type="text/javascript"			src="query-editor/query-editor-setup.js"></script>
 
+		<!--Mutation Visualizer-->
+		<link rel="stylesheet" type="text/css" 	href="mutations/mutation-list.css"></link>
+		<script type="text/javascript"			src="mutations/mutation-loader.js"></script>
+
 		<!--Visualizer-->		
 		<link rel="stylesheet" type="text/css"	href="visualizers/visualizer-controls.css"></link>
 		<link rel="stylesheet" type="text/css"	href="visualizers/visualizer-bodies.css"></link>
@@ -77,6 +81,18 @@
 			</div>
 			<div class="handle hor-handle"></div>
 			<div class="frame bottom-row">
+
+				<div class="mutation-column">
+					<span class="mutation-header">Name</span>
+					<span class="mutation-header">Value</span>
+					<span class="mutation-header">Pattern</span>
+					<span class="mutation-header">Description</span>
+					<span class="mutation-header">Makes new Tab?</span>
+
+				</div>
+
+				<div class="mutations"></div>
+
 			</div>
 		</div>
 		<div class="handle vert-handle"></div>

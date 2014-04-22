@@ -20,7 +20,7 @@ var state = stately(
 		mutations: [{
 			value: "string",
 			target: "string",
-			makes_new_tab: "boolean",
+			makes_new_tab: "string",
 			name: "string",
 			description: "string"
 		}],

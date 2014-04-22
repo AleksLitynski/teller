@@ -64,8 +64,7 @@ state().loaded(function(){
 
 		if(type == "remove"){
 			if( tic( index ).classList.contains("active-tab") 
-				&& tic( index ).parentNode.querySelectorAll("div").length > 1){
-
+				&& tic( index ).parentNode.querySelectorAll("div").length > 2){
 		 		ed().current_tab(0);
 			}
 			close_tab( tic( index ) );

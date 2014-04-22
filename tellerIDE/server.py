@@ -17,7 +17,6 @@
 
 import signal
 import os
-import mimetypes
 import webbrowser
 
 import tornado.httpserver
@@ -44,16 +43,21 @@ class StaticHandler(tornado.web.RequestHandler):
         self.path = path
     def get(self):
 
-        extension = self.request.uri.split(".")[-1]
+        ext = "."+ self.request.uri.split(".")[-1]
+        mimetype = "application/octet-stream"
+        if(ext == ".svg"):  mimetype = "image/svg+xml"
+        if(ext == ".js"):   mimetype = "application/javascript"
+        if(ext == ".html"): mimetype = "text/html"
+        if(ext == ".json"): mimetype = "application/json"
+        if(ext == ".png"):  mimetype = "image/png"
+        if(ext == ".txt"):  mimetype = "text/plain"
+        if(ext == ".py"):   mimetype = "text/x-script.phyton"
+        if(ext == ".ttf"):  mimetype = "application/octet-stream"
+        if(ext == ".css"):  mimetype = "text/css"
 
-        mimetypes.init()
-        try:
-            mimetype = mimetypes.types_map["."+extension]
+        
            
-        except KeyError:
-            mimetype = "application/octet-stream"
-
-        self.set_header("Content-Type", mimetype[0])
+        self.set_header("Content-Type", mimetype)
 
         with open(self.path + self.request.uri, 'rb') as f:
             self.write(f.read())
