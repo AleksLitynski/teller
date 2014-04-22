@@ -74,7 +74,7 @@ class QueryHandler(tornado.web.RequestHandler):
 
         data = self.get_argument("data")
         #{k:''.join(v) for k,v in req.arguments.iteritems()}
-        self.write('{"a":"'+str(data)+'"}')
+        self.write('{"reply":"'+str(data)+'"}')
         self.finish()
 
 

@@ -11,14 +11,14 @@ state().loaded(function(){
 
 			type: "POST",
 			url: "query",
-			data: {"data": query},
+			data: {"query": query},
 			success: receive_query,
 			dataType: "json"
 		})
 	}
 	function receive_query(data){
 		console.log("dats");
-		console.log(data);
+		console.log(data.data);
 	}
 
 
