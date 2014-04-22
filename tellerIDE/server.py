@@ -46,7 +46,7 @@ class StaticHandler(tornado.web.RequestHandler):
         ext = "."+ self.request.uri.split(".")[-1]
         mimetype = "application/octet-stream"
         if(ext == ".svg"):  mimetype = "image/svg+xml"
-        if(ext == ".js"):   mimetype = "application/javascript"
+        if(ext == ".js"):   mimetype = "text/javascript"
         if(ext == ".html"): mimetype = "text/html"
         if(ext == ".json"): mimetype = "application/json"
         if(ext == ".png"):  mimetype = "image/png"
@@ -71,7 +71,11 @@ class QueryHandler(tornado.web.RequestHandler):
     	pass
     def post(self):
         self.set_header("Content-Type", "application/json")
-        self.render('{"a":"b"}')
+
+        data = self.get_argument("data")
+        #{k:''.join(v) for k,v in req.arguments.iteritems()}
+        self.write('{"a":"'+str(data)+'"}')
+        self.finish()
 
 
 

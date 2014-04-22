@@ -2,7 +2,7 @@ state().loaded(function(){
 
 
 	document.querySelector(".run-query-button").onclick = function(){
-		send_query();
+		send_query( state().editor().tabs().get( state().editor().current_tab() ).body() );
 	}
 
 
@@ -11,13 +11,13 @@ state().loaded(function(){
 
 			type: "POST",
 			url: "query",
-			data: query,
+			data: {"data": query},
 			success: receive_query,
 			dataType: "json"
 		})
 	}
-
 	function receive_query(data){
+		console.log("dats");
 		console.log(data);
 	}
 
