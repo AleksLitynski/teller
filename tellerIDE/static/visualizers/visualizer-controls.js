@@ -1,33 +1,23 @@
 state().loaded(function(){
 
 	nodeListIter(".visualizer-option-selection", function(e, i, a){
-		e.onmouseup = function(){
-			set_active_button(e);
+		e.onclick = function(){
+			state().visualizer_mode(e.dataset["vistype"]);
 		}
-
 	})
 
-	function set_active_button(active_button){
-			disable_all_selections();
-			active_button.classList.add("active-button");
-
-			function toggle_if_self(nm){
-
-				if(active_button.classList.contains(nm + "-button")){
-					document.querySelector("." + nm + "-visualizer").style.display = "block";
-				}
-			}
-			toggle_if_self("json");
-			toggle_if_self("graph");
-			toggle_if_self("dataflow");
-			toggle_if_self("threed");
+	//when someone sets the mode, toggle to the proper mode, visually.
+	state().visualizer_mode(function(current_mode){
+		set_active_button(current_mode);
+		return true;
+	});
 
 
 
-	}
 
+	function set_active_button(button_type){
 
-	function disable_all_selections(){
+		//disable all buttons
 		nodeListIter(".visualizer-option-selection", function(e, i, a){
 			e.classList.remove("active-button");
 		})
@@ -36,9 +26,13 @@ state().loaded(function(){
 			e.style.display = "none";
 		})
 
-		 
+		//enable the correct button
+		var active_button = document.querySelector("[data-vistype='"+button_type+"']");
+		active_button.classList.add("active-button");
+		document.querySelector( "." + button_type + "-visualizer").style.display = "block";
 	}
 
-	set_active_button(document.querySelector(".json-button"));
+	//set to json by default
+	state().visualizer_mode("json");
 
 })
