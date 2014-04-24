@@ -404,7 +404,11 @@ def testLoop():
         #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
         if action == "exit" or action == "quit":
                 print("Okay, bye!")
-                break 
+                break
+
+        #Allow the user to call roomPrint() in case they need a reminder.
+        elif action == "room" or action == "look":
+            roomPrint()
 
         else:
             for word in shlex.split(action):
