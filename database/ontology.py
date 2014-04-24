@@ -136,11 +136,11 @@ class ontology:
 		chair = self.new_noun_named("chair", english) #lots of helper functions for more sprawling graph structures
 		objects_in_room.append(chair)
                 #add to string
-                room_str += "\n-- a chair"
+                room_str += "\n-- chair"
 		
 		table = self.new_noun_named("table", english)
 		objects_in_room.append(table)
-		room_str += "\n-- a table"
+		room_str += "\n-- table"
 
 
 		materials = ["plastic", "wood", "aluminum", "duct tape"] #make an attribute for each material
@@ -150,11 +150,11 @@ class ontology:
 
 		bed = self.new_noun_named("bed", english)
 		objects_in_room.append(bed)
-                room_str += "\n-- a bed"
+                room_str += "\n-- bed"
 		
 		blanket = self.new_noun_named("blanket", english)
 		self.add_relationship(bed, blanket, "has_a", "True")
-		room_str += "\n-- a blanket"
+		room_str += "\n-- blanket"
 
 		#Adds a noun for each color
 		#THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
@@ -169,6 +169,7 @@ class ontology:
 
                 floor = self.new_noun_named("floor", english)
 		objects_in_room.append(floor)
+		room_str += "\n-- floor"
 
                 floor_mats = ["hardwood", "linoleum", "concrete", "marble", "carpeted"]
                 floor_mat = self.new_noun_named("floor_mat", english)
@@ -177,7 +178,7 @@ class ontology:
 		cup = self.new_noun_named("cup", english)
 		self.add_relationship(choice(objects_in_room), cup, "has_a", "True")
 		self.add_relationship(cup, mat, "is_made_of", choice(materials))
-		room_str += "\n-- a cup"
+		room_str += "\n-- cup"
 
 		liquids = ["water", "juice", "wine", "soda", "nothing"]
 		contents = self.new_noun_named("contents", english)
@@ -189,7 +190,7 @@ class ontology:
 		power_state = ["on", "off"]
 		p_state = self.new_noun_named("on/off", english)
 		self.add_relationship(lamp, p_state, "power_state", choice(power_state))
-		room_str += "\n-- a lamp"
+		room_str += "\n-- lamp"
 
 		book = self.new_noun_named("book", english)
 		self.add_relationship(choice(objects_in_room), book, "has_a", "True")
@@ -197,9 +198,9 @@ class ontology:
 				"Neko-nomicon", "This is Not a Book"]
 		title = self.new_noun_named("title", english)
 		self.add_relationship(book, title, "titled", choice(book_titles))
-                room_str += "\n-- a book"
+                room_str += "\n-- book"
 
-                #Does it work with one big string?
+                #Does it work with one big string? -- it does
 		in_room = self.new_noun_named("in_room", english)
                 self.add_relationship(room, in_room, "in_room", room_str)
 
