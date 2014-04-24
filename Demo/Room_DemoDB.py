@@ -393,6 +393,36 @@ def get_from_id(val_id, val_type):
 
     return results
 
+#function to allow users to create new objects from the console
+def createObject():
+    #make sure the user did not come here in error
+    print("Would you like to make an object? (Y/N)")
+    want_new_obj = raw_input().lower()
+
+    if want_new_obj == "yes" or want_new_obj == "y":
+
+        #prompt for name of object
+        print("What do you want to create?")
+        obj_name = raw_input().lower()
+
+        #add attributes to object, if applicable
+        print("Would you like to add an attribute to " + obj_name + "? (Y/N)")
+        att_permission = raw_input().lower()
+
+        if att_permission == "yes" or att_permission == "y":
+
+            #give attribute a name
+            print("Name of attribute:")
+            att_name = raw_input().lower()
+
+            #give attribute a list of values
+            print("Value of attribute:")
+            att_vals = []
+            att_vals.append(raw_input().lower())
+    
+
+    
+
 #Game Loop
 def testLoop():
     while(True):
