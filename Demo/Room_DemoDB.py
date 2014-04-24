@@ -242,7 +242,7 @@ def inspectObject(node, depth=0):
     #'''
                     
     #fix a/an issues 
-    s = re.sub('\\ba ([aeiou])', 'an \\1', s)
+    s = re.sub('\\bA ([aeiou])', 'An \\1', s)
 
     s += "."
 
@@ -347,19 +347,9 @@ def qrPrint(qrNode):
     #print(nodeCheck.get("type"))
 
 def roomPrint():
-    print("\nRoomContents: ")
 
-    """
     node = get_node_by_name("room")
-
-    iterator = 0
-
-    while iterator < len(roomConts):
-        if node.get_value("has_a") == "True":
-            print(node.get_value("has_a")) #This is always going to return room...
-        iterator += 1
-    #"""
-    print(roomConts)
+    print(node.get_value("in_room"))
 
 def get_from_id(val_id, val_type):
     results = json.dumps( 	

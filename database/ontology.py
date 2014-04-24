@@ -129,13 +129,18 @@ class ontology:
 		self.add_relationship(english, english, "named", "english")
 
 		room = self.new_noun_named("room", english)
-		objects_in_room = []
+                objects_in_room = []
+                #create string for everything in the room (to be stored in "in_room")
+                room_str = "Objects in Room:"
 
 		chair = self.new_noun_named("chair", english) #lots of helper functions for more sprawling graph structures
 		objects_in_room.append(chair)
-
+                #add to string
+                room_str += "\n-- a chair"
+		
 		table = self.new_noun_named("table", english)
 		objects_in_room.append(table)
+		room_str += "\n-- a table"
 
 
 		materials = ["plastic", "wood", "aluminum", "duct tape"] #make an attribute for each material
@@ -145,8 +150,11 @@ class ontology:
 
 		bed = self.new_noun_named("bed", english)
 		objects_in_room.append(bed)
+                room_str += "\n-- a bed"
+		
 		blanket = self.new_noun_named("blanket", english)
 		self.add_relationship(bed, blanket, "has_a", "True")
+		room_str += "\n-- a blanket"
 
 		#Adds a noun for each color
 		#THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
@@ -169,6 +177,7 @@ class ontology:
 		cup = self.new_noun_named("cup", english)
 		self.add_relationship(choice(objects_in_room), cup, "has_a", "True")
 		self.add_relationship(cup, mat, "is_made_of", choice(materials))
+		room_str += "\n-- a cup"
 
 		liquids = ["water", "juice", "wine", "soda", "nothing"]
 		contents = self.new_noun_named("contents", english)
@@ -180,7 +189,7 @@ class ontology:
 		power_state = ["on", "off"]
 		p_state = self.new_noun_named("on/off", english)
 		self.add_relationship(lamp, p_state, "power_state", choice(power_state))
-
+		room_str += "\n-- a lamp"
 
 		book = self.new_noun_named("book", english)
 		self.add_relationship(choice(objects_in_room), book, "has_a", "True")
@@ -188,13 +197,11 @@ class ontology:
 				"Neko-nomicon", "This is Not a Book"]
 		title = self.new_noun_named("title", english)
 		self.add_relationship(book, title, "titled", choice(book_titles))
+                room_str += "\n-- a book"
 
-
-
-                #need to fix this so it works with room contents.
-		for object_in_room in objects_in_room:
-			self.add_relationship(room, object_in_room,"has_a", "True")
-
+                #Does it work with one big string?
+		in_room = self.new_noun_named("in_room", english)
+                self.add_relationship(room, in_room, "in_room", room_str)
 
 
 	def show_locally(self):
