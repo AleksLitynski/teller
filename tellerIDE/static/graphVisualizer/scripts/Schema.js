@@ -45,6 +45,7 @@ state().visualizer_mode(function (tag) {
 	if(tag != VISUALIZER_TAG_GRAPH) return true;
 	console.log("Hi, Graph visualizer is now initiating, please stand by.");
 	var item = visualizerHelper.getBody(VISUALIZER_BODY_GRAPH);
+	item.innerHTML = "";
 	console.log("The tag we are going to put our graph is : ");
 	console.log(item);
 	search(item);
