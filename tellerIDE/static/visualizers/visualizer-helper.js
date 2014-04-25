@@ -1,8 +1,12 @@
 var visualizerHelper = {
 	getTab : function(tag){
-		console.log("hi getTab here");
+		console.log("visualizerHelper::hi getTab");
 		return document.querySelector("[data-vistype='"+tag+"']");
 
+	},
+	getBody:function(name){
+		console.log("visualizerHelper::getBody");
+		return document.querySelector("[class='"+name+"']");
 	}
 
 };

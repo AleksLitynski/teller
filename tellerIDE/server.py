@@ -80,12 +80,8 @@ class StaticHandler(tornado.web.RequestHandler):
             return read
 
     def post(self):
-        #sendSearch
-        print("POST STATIC HANDLER");
-        print("URL  " + self.request.uri );
-        print("PATH  " + self.path );
-        data = self.get_argument ("data", "No");
-        print("data " + data);
+        data = self.get_argument ("data", None );
+        if data is None : return; 
         self.sendSearch(data);
 
 class QueryHandler(tornado.web.RequestHandler):
