@@ -26,6 +26,10 @@ import tornado.web
 
 from tornado.options import define, options
 
+import socket
+import json
+import SearchInterpreter
+
 define("port", default=8000, help="run on the given port", type=int)
 root = os.path.dirname(__file__)
 
@@ -37,12 +41,13 @@ class IndexHandler(tornado.web.RequestHandler):
         self.path = path
     def get(self):
         self.render(self.path + "/index.html")
+    def post(self):
+        print("POST IndexHandler");
 
 class StaticHandler(tornado.web.RequestHandler):
     def initialize(self, path):
         self.path = path
     def get(self):
-
         ext = "."+ self.request.uri.split(".")[-1]
         mimetype = "application/octet-stream"
         if(ext == ".svg"):  mimetype = "image/svg+xml"
@@ -62,9 +67,26 @@ class StaticHandler(tornado.web.RequestHandler):
         with open(self.path + self.request.uri, 'rb') as f:
             self.write(f.read())
         f.closed
-
         self.finish()
 
+    def sendSearch(handler,info):
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect(('127.0.0.1', 5005))
+            s.send(info)
+            raw = s.recv(2000000)
+            read = SearchInterpreter.read(raw);
+            s.close()
+            handler.write(json.dumps(read))
+            return read
+
+    def post(self):
+        #sendSearch
+        print("POST STATIC HANDLER");
+        print("URL  " + self.request.uri );
+        print("PATH  " + self.path );
+        data = self.get_argument ("data", "No");
+        print("data " + data);
+        self.sendSearch(data);
 
 class QueryHandler(tornado.web.RequestHandler):
     def initialize(self):
