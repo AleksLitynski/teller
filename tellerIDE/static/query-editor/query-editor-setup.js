@@ -114,12 +114,13 @@ state().loaded(function(){
 		new_tab.onclick = select_tab_event;
 
 		var new_tab_icon = document.createElement("img");
-		new_tab_icon.src = "query-editor/cross.svg";
+		new_tab_icon.src = "general/icons/cross.svg";
 		new_tab_icon.classList.add("query-editor-tab-icon");
 		new_tab.appendChild(new_tab_icon);
 		new_tab_icon.onclick = close_tab_event;
 
 		document.querySelector(".query-editor-tabs").insertBefore(new_tab, document.querySelector(".add-tab"));
+
 	}
 
 	function set_tab_name(tab, tab_name){
@@ -127,7 +128,6 @@ state().loaded(function(){
 	}
 
 	function set_tab_body(tab, tab_body){
-
 		if(tab.classList.contains("active-tab") || typeof tab_body == "undefined"){
 			CodeArea.getDoc().setValue( tab_body );
 		}

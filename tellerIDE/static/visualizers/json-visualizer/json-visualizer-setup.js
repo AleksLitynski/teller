@@ -1,6 +1,12 @@
 state().loaded(function(){
 
 
+	state().visualizer().json(function(new_json){
+		display_json(new_json);
+		return true;
+	})
+
+
 	function display_json(to_display){
 		if( typeof to_display == "string" ){
 			to_display = JSON.parse(to_display);

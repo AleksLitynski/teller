@@ -2,12 +2,12 @@ state().loaded(function(){
 
 	nodeListIter(".visualizer-option-selection", function(e, i, a){
 		e.onclick = function(){
-			state().visualizer_mode(e.dataset["vistype"]);
+			state().visualizer().mode(e.dataset["vistype"]);
 		}
 	})
 
 	//when someone sets the mode, toggle to the proper mode, visually.
-	state().visualizer_mode(function(current_mode){
+	state().visualizer().mode(function(current_mode){
 		set_active_button(current_mode);
 		return true;
 	});
@@ -33,6 +33,7 @@ state().loaded(function(){
 	}
 
 	//set to json by default
-	state().visualizer_mode("json");
+	state().visualizer().mode("json");
+
 
 })

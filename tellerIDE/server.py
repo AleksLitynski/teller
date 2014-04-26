@@ -27,8 +27,6 @@ import tornado.web
 from tornado.options import define, options
 
 import socket
-import json
-import SearchInterpreter
 
 define("port", default=8000, help="run on the given port", type=int)
 root = os.path.dirname(__file__)
@@ -69,20 +67,7 @@ class StaticHandler(tornado.web.RequestHandler):
         f.closed
         self.finish()
 
-    def sendSearch(handler,info):
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect(('127.0.0.1', 5005))
-            s.send(info)
-            raw = s.recv(2000000)
-            read = SearchInterpreter.read(raw);
-            s.close()
-            handler.write(json.dumps(read))
-            return read
 
-    def post(self):
-        data = self.get_argument ("data", None );
-        if data is None : return; 
-        self.sendSearch(data);
 
 class QueryHandler(tornado.web.RequestHandler):
     def initialize(self):
@@ -91,8 +76,18 @@ class QueryHandler(tornado.web.RequestHandler):
         self.set_header("Content-Type", "application/json")
 
         data = self.get_argument("query")
+
+        reply = '{"a":"b"}'
+        """
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(('127.0.0.1', 5005))
+        s.send(data)
+        reply = s.recv(2000000)
+        s.close()
+        """
+
         #{k:''.join(v) for k,v in req.arguments.iteritems()}
-        self.write('{"reply":"'+str(data)+'"}')
+        self.write(reply)
         self.finish()
 
 

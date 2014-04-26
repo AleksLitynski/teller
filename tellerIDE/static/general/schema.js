@@ -4,7 +4,11 @@ var state = stately(
 	loaded:"boolean",
 
 	database_name: "string",
-	visualizer_mode: "string",
+
+	visualizer:{
+		mode: "string",
+		json: "string"
+	},
 
 	editor: {
 		tabs: [{body:"string", name: "string"}],
@@ -12,8 +16,7 @@ var state = stately(
 	},
 
 	history: {
-		queries: [{query:"string", result: "string"}],
-		current_query: "number"
+		queries: [{query:"string", result: "string"}]
 	},
 
 	mutation: {
