@@ -27,6 +27,8 @@ import tornado.web
 from tornado.options import define, options
 
 import socket
+import subprocess
+import threading
 
 define("port", default=8000, help="run on the given port", type=int)
 root = os.path.dirname(__file__)
@@ -67,8 +69,23 @@ class StaticHandler(tornado.web.RequestHandler):
         f.closed
         self.finish()
 
+def query(message):
+    db_is_up = False
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.connect(('127.0.0.1', 5005))
+    except:
+        t = threading.Thread(target=lambda: subprocess.call(["python", "../database/main.py"]))
+        t.start()        
+        s.connect(('127.0.0.1', 5005))
+        
+    s.send(message)
+    reply = s.recv(2000000)
+    s.close()
+    return reply
 
 
+#{'type':'get', 'params': {'depth':0}, 'search':{}}
 class QueryHandler(tornado.web.RequestHandler):
     def initialize(self):
     	pass
@@ -78,16 +95,10 @@ class QueryHandler(tornado.web.RequestHandler):
         data = self.get_argument("query")
 
         reply = '{"a":"b"}'
-        """
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect(('127.0.0.1', 5005))
-        s.send(data)
-        reply = s.recv(2000000)
-        s.close()
-        """
 
+    
         #{k:''.join(v) for k,v in req.arguments.iteritems()}
-        self.write(reply)
+        self.write(query(data))
         self.finish()
 
 
