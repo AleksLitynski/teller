@@ -26,6 +26,8 @@
 		<!--Code Mirror-->
 		<link rel="stylesheet" 					href="libraries/codemirror-4.0/lib/codemirror.css"></link>
 		<script type="text/javascript"			src="libraries/codemirror-4.0/lib/codemirror.js"></script>
+		<script type="text/javascript"			src="libraries/codemirror-4.0/mode/javascript/javascript.js"></script>
+		<link rel="stylesheet" 					href="libraries/codemirror-4.0/theme/xq-light.css"></link>
 		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-position.css"></link>
 		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-tabs.css"></link>
 		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-controls.css"></link>
@@ -52,6 +54,11 @@
 		<script type="text/javascript" 			src="libraries/pretty-json/build/pretty-json-min.js" ></script>
 		<script type="text/javascript" 			src="visualizers/json-visualizer/json-visualizer-setup.js" ></script>
 		<link rel="stylesheet" type="text/css"	href="visualizers/json-visualizer/json-visualizer.css"></link>
+
+		<!--Graph Visualizer-->
+		<script type="text/javascript" 			src="libraries/d3/d3.js"></script>
+		<script type="text/javascript" 			src="visualizers/graph-visualizer/graph-visualizer-setup.js" ></script>
+		<link rel="stylesheet" type="text/css"	href="visualizers/graph-visualizer/graph-visualizer.css"></link>
 
 
 
@@ -146,6 +153,9 @@
 					JSON
 				</div>
 				<div class="visualizer-body graph-visualizer">
+					<div class="graph-viz">
+
+					</div>
 					GRAPH
 				</div>
 				<div class="visualizer-body dataflow-visualizer">
@@ -168,23 +178,6 @@
 			</div>
 		</div>
 
-		<!--div class="query-menu">
-			Query run/save/load
-		</div>
-		<div class="query-editor">
-			Query editor
-		</div>
-		<div class="query-value-modifier">
-			Query value modifiers
-		</div>
-		<div class="query-template-modifier">
-			Query template modifiers
-		</div>
-		<div class="query-history">
-			Query history
-		</div>
-		<div class="query-visualizer">
-			Query preview (tabs for diff. types)
-		</div-->
+
 	</body>
 </html>

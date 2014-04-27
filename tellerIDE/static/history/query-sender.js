@@ -18,7 +18,6 @@ state().loaded(function(){
 	}
 
 	function receive_query(query, result){
-		console.log(query, result);
 		state().history().queries().insert( state().history().queries().length() );
 		var new_item = state().history().queries().get( state().history().queries().length() - 1 );
 		new_item.query(query);

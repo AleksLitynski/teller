@@ -4,11 +4,13 @@ state().loaded(function(){
 	//++ Setup
 
 	var CodeArea = CodeMirror(document.querySelector(".query-editor-body"), {
+		mode: {name: "javascript", json: true},//{name: "application/json", json: true},
 		value:"\n".repeat(30),
         lineNumbers: true,
-		mode: {name: "javascript", json: true},
-		theme: "default"
+        theme: "xq-light"
     });
+
+
 
 	var ed = state().editor;
 

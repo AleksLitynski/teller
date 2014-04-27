@@ -2,6 +2,7 @@ var state = stately(
 
 {
 	loaded:"boolean",
+	debug: "boolean",
 
 	database_name: "string",
 
