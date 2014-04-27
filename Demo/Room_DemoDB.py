@@ -170,31 +170,13 @@ def fork(self, fork_from, name, time):
 		self.add_edge("is_a", new_noun, fork_from, time, 100)
 		return new_noun
 
-#These are our lists of stuff
-colors = ["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"]
-materials = ["plastic", "wood", "aluminum", "duct tape"]
-bed_sizes = ["twin", "double", "queen-sized", "king-sized"]
-book_titles = ["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force",
-             "The Vengeful Penguin", "Ninja's Guide to Ornamental Horticulture", "Neko-nomicon", "This is Not a Book"]
-power_state = ["on", "off"]
-liquids = ["water", "juice", "wine", "soda", "nothing"]
-
-#Room will hold saved values -- [room_number][object_in_room][attribute_type][attribute_value]
-room_dict = {}
-
 def inspectObject(node, depth=0):
 
-    #This allows us to assume that the code below is always being used for new objects, rather than old ones
-    #rm_obj is a dictionary meant to hold the new object -- Also creates the "named" key.
-    rm_obj = {"named":node.get_value("named") }
-    
     #we'll want to adjust which attributes are told about at different depths
     s = "A"
 
-    resultString = query(describe_noun(node.get_value("named"), 1))
-
+    #lengthy string-addition code has been put in print_node()
     #The length of all of these is always either 1 or 0...
-    #I will use colors for testing things and update other parts accordingly
     if len(node.get_all_type("colored"))>0:
         
         s+= " " + node.get_value("colored")
@@ -212,7 +194,7 @@ def inspectObject(node, depth=0):
         s+= " " + node.get_value("bed_size") + "-sized"
         
     if len(node.get_all_type("named"))>0:
-        s+= " " + node.get_value("named") #the name/type of the item
+        s+= " " + node.print_noun() #the name/type of the item
     
     if len(node.get_all_type("titled"))>0:
 
@@ -246,11 +228,6 @@ def inspectObject(node, depth=0):
 
     s += "."
 
-    #s += " (" +  node.get_value("") + ")"
-    
-    #add rm_obj to room_dict
-    room_dict[rm_obj["named"]] = rm_obj
-    
     return s
 
 #ideal length of method 5-15 
@@ -393,6 +370,7 @@ def get_from_id(val_id, val_type):
 
     return results
 
+
 #function to allow users to create new objects from the console
 def createObject():
     #make sure the user did not come here in error
@@ -401,10 +379,16 @@ def createObject():
 
     if want_new_obj == "yes" or want_new_obj == "y":
 
+        #We will need a way of referring to the database
+        queryResult = json.loads(query(describe_noun("room", 2)))
+        
         #prompt for name of object
         print("What do you want to create?")
         obj_name = raw_input().lower()
 
+        #Not sure if this will even work -- No. No, it doesn't.
+        #ob = new_noun_named(obj_name, "english")
+        
         #add attributes to object, if applicable
         print("Would you like to add an attribute to " + obj_name + "? (Y/N)")
         att_permission = raw_input().lower()
@@ -440,6 +424,10 @@ def testLoop():
         elif action == "room" or action == "look":
             roomPrint()
 
+        #Create new object
+        elif action == "create" or action == "make":
+            createObject()
+
         else:
             for word in shlex.split(action):
                 #User's query is the action
@@ -448,18 +436,7 @@ def testLoop():
 
                 #try to get the node
                 try:
-                    #print (resultString)
-                    #queryResult = json.loads(resultString)
-                    #q_id = queryResult.get("reply")[0].get("id")
-                    #print(q_id)
-
-                    #query2 = query(get_from_id(q_id, "colored"))
-                    #print (query2)
-                    #query2 = query(get_from_id(q_id, "is_made_of"))
-                    #print (query2)
-
                     node = get_node_by_name(word)
-                    
                     
                 except:
                     node = None
@@ -577,34 +554,8 @@ roomPrint()
 
 #rmcts is room contents
 print("\nInside the room, you can see...\n")
-#rmcts = recSearch(queryResult, "noun", "type")
-#print(rmcts)
-
-#print(rm.print_noun)
-#print(rm.get_relationship_types)
-
-#rmcts = str(get_node_by_name("chair"))
-#rmcts += "\n" + str(get_node_by_name("table"))
-#rmcts += "\n" + str(get_node_by_name("bed"))
-
-#print (rmcts)
-
-
-#This is...another way to make a room
-#testRoom = room(get_node_by_name("room"))
-#print("\n")
-#testRoom.rm_print()
-
-#get relationships in room
-#room_rel = rm.get_relationship_types()
-#print results
-#print("\nRoom relations: " + str(room_rel))
 
 rmcts = {"id" : 0, "rel_id" : 1, "value" : 2, "type" : 3, "edges" : 4}
-
-#listRoomConts(qrNode)
-
-#print (rmcts)
 
 #wait for user input
 testLoop()
