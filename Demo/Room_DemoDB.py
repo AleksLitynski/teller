@@ -387,7 +387,7 @@ def createObject():
         obj_name = raw_input().lower()
 
         #Not sure if this will even work -- No. No, it doesn't.
-        ob = new_noun_named(obj_name, "english")
+        #ob = new_noun_named(obj_name, "english")
         
         #add attributes to object, if applicable
         print("Would you like to add an attribute to " + obj_name + "? (Y/N)")
