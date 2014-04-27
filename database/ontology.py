@@ -156,8 +156,7 @@ class ontology:
 		self.add_relationship(bed, blanket, "has_a", "True")
 		room_str += "\n-- blanket"
 
-		#Adds a noun for each color
-		#THESE SHOULD BE VALUES, NOT NOUNS@!!!!@!@!@!
+		#Values for each color
 		colors = ["burgundy", "violet", "goldenrod", "fuchsia", "lavender", "beige", "azure", "chartreuse", "celadon", "sage", "paisley", "plaid", "tartan", "scarlet"]
 		rgb_color = self.new_noun_named("rgb color", english)
 		self.add_relationship(blanket, rgb_color, "colored", choice(colors))
