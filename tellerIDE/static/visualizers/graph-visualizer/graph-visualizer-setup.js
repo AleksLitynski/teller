@@ -1,3 +1,4 @@
+
 state().loaded(function(){
 
 
@@ -67,25 +68,12 @@ window.onresize = resize_update;
 state().visualizer().mode(resize_update);
 var resize_timer = -1;
 function resize_update(){
-	/*if(resize_timer == -1){
-		graph.on("tick", function(){});
-		graph.stop();
-
-		d3 = {};
-		graph = {};
-
-
-		document.querySelector("svg").innerHTML = "";
-	}
-
+	
   	window.clearTimeout(resize_timer);
 	resize_timer = setTimeout(function(e){
 
-		graph.on("tick", tick);
-		resize_timer = -1;
 		update();
-	}, 10000);*/
-	update();
+	}, 50);
 	return true;
 }
 
@@ -167,7 +155,7 @@ function update() {
 	label.call(function(l){
 		l.attr("font-size", function(d){
 			if(d.active == false){
-  				return '6.5px';
+  				return '1.5px';
 			} else {
   				return '14.5px';
 			}
@@ -183,7 +171,10 @@ function update() {
 
 
 
+
+
 	state().visualizer().json(function(new_json){
+
 		nodes = [];
 		labels = [];
 		edges = [];
@@ -205,8 +196,6 @@ function update() {
 
 
 	function vis_get_success(json){
-
-
 
 		json.forEach(function(node){
 			add_node(node);
@@ -275,6 +264,8 @@ function update() {
 
 
 })
+
+
 
 
 /*

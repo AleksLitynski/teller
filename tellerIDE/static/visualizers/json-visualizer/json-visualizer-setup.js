@@ -8,6 +8,7 @@ state().loaded(function(){
 
 
 	function display_json(to_display){
+
 		if( typeof to_display == "string" ){
 			to_display = JSON.parse(to_display);
 		}
@@ -18,10 +19,8 @@ state().loaded(function(){
 		}
 
 
-
-
 		new PrettyJSON.view.Node({ 
-            el: document.querySelector(".json-visualizer"), 
+            el: document.querySelector(".json-visualizer"),
             data: to_display
         });
 	}
