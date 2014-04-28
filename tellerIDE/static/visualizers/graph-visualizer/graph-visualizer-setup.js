@@ -3,20 +3,14 @@ state().loaded(function(){
 
 	document.querySelector(".graph-viz").innerHTML = "";
 
-	var graph = d3.layout.force().nodes([{ding:"red", s:10, name: "onetwo"},
-										 {ding:"green", s:20, name: "three"},
-										 {ding:"grey", s:12, name: "four"},
-										 {ding:"blue", s:5, name: "five is"},
-										 {ding:"green", s:10, name: "just nubmers"}])
+	var graph = d3.layout.force()
 	    .linkDistance(50)
 	    .charge(-100)
 	    .on("tick", tick);
 
 	var svg = d3.select(".graph-viz").append("svg")
 	    .attr("width", "100%")
-	    .attr("height", "100%")
-	    .on("mousemove", mousemove)
-	    .on("mousedown", mousedown);
+	    .attr("height", "100%");
 
 	svg.append("rect")
 	    .attr("width", "100%")
@@ -32,12 +26,75 @@ state().loaded(function(){
 
 update();
 
-function mousemove() {
-  //mouse pos: d3.mouse(this)
+
+function mouseovernode(a){
+
+	nodes.forEach(function(n){
+		n.active = false;
+	})
+
+	a.active = true;
+	neighbors2(a).forEach(function(n){
+		n.active = true;
+	})
+
+	update();
 }
 
-function mousedown(d) {
-	console.log(d);
+function neighbors2(a){
+	var neigh = neighbors(a);
+
+	var neighbors2 = neigh;
+	neigh.forEach(function(e){
+		neighbors2 = neighbors2.concat(neighbors(e));
+	})
+	return neighbors2;
+}
+function neighbors(node){
+	var neighbors = [];
+	edges.forEach(function(e){
+		if(e.source == node){
+			neighbors.push(e.target);
+		}
+	})
+	return neighbors;
+}
+
+
+state().framing().central(resize_update);
+state().framing().right(resize_update);
+window.onresize = resize_update;
+state().visualizer().mode(resize_update);
+var resize_timer = -1;
+function resize_update(){
+	/*if(resize_timer == -1){
+		graph.on("tick", function(){});
+		graph.stop();
+
+		d3 = {};
+		graph = {};
+
+
+		document.querySelector("svg").innerHTML = "";
+	}
+
+  	window.clearTimeout(resize_timer);
+	resize_timer = setTimeout(function(e){
+
+		graph.on("tick", tick);
+		resize_timer = -1;
+		update();
+	}, 10000);*/
+	update();
+	return true;
+}
+
+
+function mouseoutnode(a){
+
+	nodes.forEach(function(e){
+		e.active = true;
+	})
 
 	update();
 }
@@ -53,55 +110,71 @@ function tick() {
 		.attr("cy", function(d) { return d.y; });
 
 	label.attr("transform", function transform(d) {
-
-		if(state().debug() === true){
-
-			console.log(d);
-		}
 		return "translate(" + d.x + "," + d.y + ")";
 	})
 }
 
-state().framing().central(resize_update);
-state().framing().right(resize_update);
-window.onresize = resize_update;
-state().visualizer().mode(resize_update);
-function resize_update(){
-	update();
-	return true;
-}
 
 function update() {
 
+
 	edge = edge.data(edges);
-	edge.enter().insert("line").attr("class", "graph-edge");
+	edge.enter().insert("line").attr("class", "graph-edge")
+	.attr("stroke", function(d){
+			if(d.type == "relationship"){ return "orange";}
+			if(d.type == "noun"){ return "green";}
+			if(d.type == "type"){ return "blue";}
+			if(d.type == "value"){ return "red";}
+	});
 	edge.exit().remove();
 
 	node = node.data(nodes);
 	node.enter().insert("circle")
 		.attr("class", "graph-node")
-		.attr("fill", function(d){
+		.attr("stroke", "transparent")
+		.on("mouseover", mouseovernode)
+		.on("mouseout", mouseoutnode)
+		.call(graph.drag);
+	node.call(function(n){
+		n.attr("fill", function(d){
+			if(d.active == false){return "transparent";}
+
 			if(d.type == "relationship"){ return "orange";}
 			if(d.type == "noun"){ return "green";}
 			if(d.type == "type"){ return "blue";}
 			if(d.type == "value"){ return "red";}
 		})
 		.attr("r", function(d){
-			if(d.type == "relationship"){ return 3;}
+
+			if(d.active == false){return 1;}
+
+			if(d.type == "relationship"){ return 4;}
 			if(d.type == "noun"){ return 7;}
 			if(d.type == "type"){ return 3;}
 			if(d.type == "value"){ return 3;}
-		}).attr("stroke-width", 0)
-		.call(graph.drag);
+		})
+	});
+
 	node.exit().remove();
 
 	label = label.data(nodes);
 	label.enter().insert("text")
 		.attr("class", "graph-label")
+		
 		.text(function(d){return d.value;})
 		.attr("dx", 0)
 		.attr("dy", 0);
+	label.call(function(l){
+		l.attr("font-size", function(d){
+			if(d.active == false){
+  				return '6.5px';
+			} else {
+  				return '14.5px';
+			}
+		})
+	})
 	label.exit().remove();
+
 
 
 
@@ -111,6 +184,9 @@ function update() {
 
 
 	state().visualizer().json(function(new_json){
+		nodes = [];
+		labels = [];
+		edges = [];
 
 		json_obj = JSON.parse(new_json);
 
@@ -120,6 +196,9 @@ function update() {
 		}
 
 
+		update();
+    
+
 
 		return true;
 	})
@@ -128,9 +207,6 @@ function update() {
 	function vis_get_success(json){
 
 
-		nodes = [];
-		labels = [];
-		edges = [];
 
 		json.forEach(function(node){
 			add_node(node);
@@ -138,9 +214,8 @@ function update() {
 
 		function add_node(node){
 			if(node_with_id(node.id) === false){
+				node.active = true;
 				nodes.push(node);
-			} else {
-				console.log("redudant");
 			}
 			node.edges.forEach(function(e){
 				add_node(e.terminal);
@@ -171,7 +246,6 @@ function update() {
 			edge.target = node_with_id(edge.terminal.id);
 
 			if(!is_edge_present(edge)){
-				console.log("real add");
 				edges.push(edge);
 			}
 
@@ -193,9 +267,6 @@ function update() {
 
 
 
-
-		update();
-    
 
 
 
