@@ -234,9 +234,9 @@ function update() {
 			edge.source = node_with_id(node.id);
 			edge.target = node_with_id(edge.terminal.id);
 
-			if(!is_edge_present(edge)){
+			//if(!is_edge_present(edge)){
 				edges.push(edge);
-			}
+			//}
 
 			edge.terminal.edges.forEach(function(edge){
 				add_edge(edge, edge.terminal);
