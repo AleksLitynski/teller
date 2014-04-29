@@ -167,7 +167,7 @@ class ontology:
 
 
                 floor = self.new_noun_named("floor", english)
-		objects_in_room.append(floor)
+		#objects_in_room.append(floor)
 		room_str += "\n-- floor"
 
                 floor_mats = ["hardwood", "linoleum", "concrete", "marble", "carpeted"]

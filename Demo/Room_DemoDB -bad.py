@@ -63,32 +63,13 @@ class noun:
         target = get_edge_named(query.get("edges"), "regarding").get("id")
 
         return relationship(type, value, target)
-        
+		
 class relationship:
     def __init__(self, type, value, reguarding):
         self.type = type
         self.value = value
         self.reguarding = reguarding
 
-
-"""
-#Queries: edges, fork, get, update
-#Queries can be found in database/queries
-Query Structure:
-
-    {
-        "type":"NAME OF A FILE IN QUERIES FOLDER",
-        "params": {
-                      "depth":"INTIGER DEPTH TO EXPLORE EACH SUBEDGE/TERMINAL"
-                  },
-        "search": {
-                      #STRUCTURE WILL BE PASSED TO SPECIFIED QUERY
-                  }
-
-    }
-
-
-"""
 
 #This is how we contact the database
 def query(query_string):
@@ -105,7 +86,7 @@ def query(query_string):
 
 #Give node a name and a depth; 2 is default, but you could do 10 or something, if needed.
 def describe_noun(noun_name, depth=2):
-    #broke up the return into 2 lines to make it more readable
+	#broke up the return into 2 lines to make it more readable
     txt = '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +\
            '"terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
     return txt
@@ -127,7 +108,7 @@ def get_node_by_name(name):
     query_string = describe_noun(name, 2)
 
     noun = get_noun(json.loads(query(query_string)))
-    noun = pipe(query_string, [ 
+    noun = pipe(query_string, [
         query,
         json.loads,
         get_noun
@@ -166,6 +147,28 @@ def nodeInfo(node_id, node_type, value, edges):
         node["edges"]= edges
         addNode(node)
 
+def show_locally(self):
+		for n in self.graph.nodes_iter():
+			print(n.id + " " + n.type + " " + n.value)
+
+		for e in self.graph.edges_iter():
+			print(str(e[0].id) + " -" + str(get_edge_val(e, self.graph).weights) + "-> " + str(e[1].id))
+
+def new_noun_named(self, name, lang):
+		new_node = self.add_node("noun", "")
+		self.add_relationship(new_node, lang, "named", name)
+		return new_node
+
+def new_nouns_named(self, names, lang):
+		nouns = []
+		for noun in map( lambda x: self.new_noun_named(x, lang) , names):
+			nouns.append(noun)
+		return nouns
+
+def fork(self, fork_from, name, time):
+		new_noun = self.add_node(fork_from.type, name)
+		self.add_edge("is_a", new_noun, fork_from, time, 100)
+		return new_noun
 
 def inspectObject(node, depth=0):
 
@@ -227,39 +230,41 @@ def inspectObject(node, depth=0):
 
     return s
 
+#ideal length of method 5-15 
+#http://programmers.stackexchange.com/questions/133404/what-is-the-ideal-length-of-a-method
 def node(action):
-    verb = ""; subject = ""
-    for word in shlex.split(action):#divides the action by spaces
-        if word in roomContents: subject = word; continue;
-        if word in dialogsNode: verb = word; continue;
-    if subject == "": return False
-    if verb == "":
-        print(inspectObject(subject))
-    elif(verb in items[subject][attr["actions"]] ):
-        print(dialogsNode[verb][0].replace("obj",subject))
-    else : 
-        print(dialogsNode[verb][1].replace("obj",subject))
-    return True
+	verb = ""; subject = ""
+	for word in shlex.split(action):#divides the action by spaces
+		if word in roomContents: subject = word; continue;
+		if word in dialogsNode: verb = word; continue;
+	if subject == "": return False
+	if verb == "":
+		print(inspectObject(subject))
+	elif(verb in items[subject][attr["actions"]] ):
+		print(dialogsNode[verb][0].replace("obj",subject))
+	else : 
+		print(dialogsNode[verb][1].replace("obj",subject))
+	return True
 
 
-dialogs = {             "sit"    : "You sit down cross-legged on the floor.",
-            "dance"    : "You dance for a moment, though you are not sure why." 
-                        + "\nIt is almost as if you are a puppet whose strings are being"
-                        + "\npulled by the invisible hands of some unknown God..."
-                        + "\nYou quickly dismiss that thought and return to a standing position.",
+dialogs = {             "sit"	: "You sit down cross-legged on the floor.",
+			"dance"	: "You dance for a moment, though you are not sure why." 
+						+ "\nIt is almost as if you are a puppet whose strings are being"
+						+ "\npulled by the invisible hands of some unknown God..."
+						+ "\nYou quickly dismiss that thought and return to a standing position.",
                         "lie" : "You lie down on the floor.",
                         "talk" : "You talk to yourself. Sadly, doing so provides you with no new information.",
                         "jump" : "You jump up and down. It's good for your buns and thighs."
 }
 def playerNode(action):
-    isActionValid = False
-    for d in dialogs:
-        if d in action:
-            isActionValid = True
-            print(dialogs[d])
-    if(not isActionValid):print("SYSTEM : Action not recognized")
-                
-            
+	isActionValid = False
+	for d in dialogs:
+		if d in action:
+			isActionValid = True
+			print(dialogs[d])
+	if(not isActionValid):print("SYSTEM : Action not recognized")
+				
+    		
 def Get_All_Edges(node):
     li = []
     for edge in node.get("edges"):
@@ -324,83 +329,53 @@ def roomPrint():
     print(node.get_value("in_room"))
 
 def get_from_id(val_id, val_type):
-    results = json.dumps({
-        "type":"get",
-        "params":{"depth":0},
-        "search":
+    results = json.dumps( 	
         {
-            "edges":
-            [{
-                "type":"has_value",
-                "terminal":
+                "type":"get",
+                "params":
                 {
-                    "type":"relationship",
-                    "edges":
-                    [
-                        {"terminal":{"id": val_id}},
-                        {"terminal":{"type": val_type}}
-                    ]
+                        "depth":0
+                },
+                "search":
+                {
+                        "edges":
+                        [
+                                {
+                                        "type":"has_value",
+                                        "terminal":
+                                        {
+                                                "type":"relationship",
+                                                "edges":
+                                                [
+                                                        {
+                                                                "terminal":
+                                                                {
+                                                                        "id": val_id
+                                                                }
+                                                        },
+         
+         
+                                                        {
+                                                                "terminal":
+                                                                {
+                                                                        "type": val_type
+                                                                }
+                                                        }
+                                                ]
+                                        }
+                                }
+                        ]
                 }
-            }]
-        }
-    })
+        })
 
     return results
 
-def get_from_value(val, val_type):
-    results = json.dumps({
-        "type":"get",
-        "params":{"depth":0},
-        "search":
-        {
-            "edges":
-            [{
-                "terminal":
-                {
-                    "type":"relationship",
-                    "edges":
-                    [
-                        {"terminal":{"value": val}},
-                        {"terminal":{"value": val_type}}
-                    ]
-                }
-            }]
-        }
-    })
-
-    return results
-
-def json_from_id(value, val_type):
-    results = {
-    "search":
-        {
-            "edges":
-            [{
-                "type":"has_value",
-                "terminal":
-                {
-                    "type":"relationship",
-                    "edges":
-                    [
-                        {"terminal":{"value": value}},
-                        {"terminal":{"type": val_type}}
-                    ]
-                }
-            }]
-        }
-    }
-    return results
 
 #function to allow users to create new objects from the console
 def createObject():
     #make sure the user did not come here in error
     print("Would you like to make an object? (Y/N)")
     want_new_obj = raw_input().lower()
-
-    #Fork node from another node to create a new node
-    #You can give a new name to the new node
-    #You can fork noun/verb/etc -- we will assume noun for now
-    #To change weight use update and alter the weight (0 to 100)
 
     if want_new_obj == "yes" or want_new_obj == "y":
 
@@ -428,29 +403,7 @@ def createObject():
             print("Value of attribute:")
             att_vals = []
             att_vals.append(raw_input().lower())
-
-    #fork from type of node (noun, verb, etc) user wants -- Assume noun
-    #fork("noun", obj_name, 1)
-            
-    #"""
-            
-    output = query(get_from_value("room", "named"))
-    #print(output)
-    out_id = json.loads(output)["reply"][0]["id"]
-
-            
-    output = query(
-        json.dumps({
-        "type": "fork",
-        "params":{"depth":"0"},
-        "search":{"new-value": obj_name,"time":1,"target-node": {"id":out_id}}}))
-    #"""
-
-    print(output)
     
-    #test new object
-    #nd = get_node_by_name(obj_name)
-    #inspect_object(nd)
 
     
 
@@ -578,7 +531,7 @@ class room:
 
 
 #GAME START
-#This code runs as soon as the game starts...    
+#This code runs as soon as the game starts...	
 #Run the game!
 
 print("Creating Room...")
