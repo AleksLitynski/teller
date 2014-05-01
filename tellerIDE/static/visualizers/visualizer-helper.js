@@ -5,7 +5,7 @@ var visualizerHelper = {
 
 	},
 	getBody:function(name){
-		console.log("visualizerHelper::getBody");
+		console.log("visualizerHelper::getBody");  
 		return document.querySelector("[class='"+name+"']");
 	}
 

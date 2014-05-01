@@ -75,7 +75,7 @@ def query(message):
     try:
         s.connect(('127.0.0.1', 5005))
     except:
-        t = threading.Thread(target=lambda: subprocess.call(["python", "../database/main.py"]))
+        t = threading.Thread(target=lambda: subprocess.call(["pypyg", "../database/main.py"]))
         t.start()        
         s.connect(('127.0.0.1', 5005))
         
