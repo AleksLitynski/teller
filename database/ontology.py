@@ -129,17 +129,19 @@ class ontology:
 		self.add_relationship(english, english, "named", "english")
 
 		room = self.new_noun_named("room", english)
-                objects_in_room = []
                 #create string for everything in the room (to be stored in "in_room")
                 room_str = "Objects in Room:"
 
+                player = self.new_noun_named("player", english)
+
+
 		chair = self.new_noun_named("chair", english) #lots of helper functions for more sprawling graph structures
-		objects_in_room.append(chair)
-                #add to string
+		self.add_relationship(player, chair, "knows_of", "chair")
+		#add to string
                 room_str += "\n-- chair"
 		
 		table = self.new_noun_named("table", english)
-		objects_in_room.append(table)
+		self.add_relationship(player, table, "knows_of", "table")
 		room_str += "\n-- table"
 
 
@@ -149,11 +151,13 @@ class ontology:
 		self.add_relationship(table, mat, "is_made_of", choice(materials))
 
 		bed = self.new_noun_named("bed", english)
-		objects_in_room.append(bed)
-                room_str += "\n-- bed"
+		self.add_relationship(player, bed, "knows_of", "bed")
+		room_str += "\n-- bed"
+                
 		
 		blanket = self.new_noun_named("blanket", english)
-		self.add_relationship(bed, blanket, "has_a", "True")
+		self.add_relationship(bed, blanket, "has_a", "blanket")
+		self.add_relationship(blanket, bed, "had_by", "bed")
 		room_str += "\n-- blanket"
 
 		#Values for each color
@@ -167,6 +171,7 @@ class ontology:
 
 
                 floor = self.new_noun_named("floor", english)
+		self.add_relationship(player, floor, "knows_of", "floor")
 		#objects_in_room.append(floor)
 		room_str += "\n-- floor"
 
@@ -175,9 +180,11 @@ class ontology:
                 self.add_relationship(floor, floor_mat, "floor_mat", choice(floor_mats))
 		
 		cup = self.new_noun_named("cup", english)
-		self.add_relationship(choice(objects_in_room), cup, "has_a", "True")
 		self.add_relationship(cup, mat, "is_made_of", choice(materials))
+		self.add_relationship(table, cup, "has_a", "cup")
+		self.add_relationship(cup, table, "had_by", "table")
 		room_str += "\n-- cup"
+		
 
 		liquids = ["water", "juice", "wine", "soda", "nothing"]
 		contents = self.new_noun_named("contents", english)
@@ -185,14 +192,16 @@ class ontology:
 
 
 		lamp = self.new_noun_named("lamp", english)
-		self.add_relationship(choice(objects_in_room), lamp, "has_a", "True")
+		self.add_relationship(table, lamp, "has_a", "lamp")
+		self.add_relationship(lamp, table, "had_by", "table")
 		power_state = ["on", "off"]
 		p_state = self.new_noun_named("on/off", english)
 		self.add_relationship(lamp, p_state, "power_state", choice(power_state))
 		room_str += "\n-- lamp"
 
 		book = self.new_noun_named("book", english)
-		self.add_relationship(choice(objects_in_room), book, "has_a", "True")
+		self.add_relationship(table, book, "has_a", "book")
+		self.add_relationship(book, table, "had_by", "table")
 		book_titles = ["Dreams of Potatoes", "Tequila Sunrise", "The Kraken", "40 Cakes", "Spectral Robot Task Force", "The Vengeful Penguin", "Ninja's Guide to Ornamental Horticulture",
 				"Neko-nomicon", "This is Not a Book"]
 		title = self.new_noun_named("title", english)

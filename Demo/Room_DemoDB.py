@@ -24,52 +24,6 @@ from RefCode.Query_Explorer import *
 #Query about objects
 #Repeat
 
-class noun:
-
-    def __init__(self, id):
-        self.id = id
-        self.relationships = []
-
-    def get_value(self, relationship_type, default="Something"):
-        value = default
-        for noun_relationship in self.relationships:
-            if noun_relationship.type == relationship_type:
-                value = noun_relationship.value
-        return value
-    
-    def get_all(self, relationship_type):
-        relationships = []
-        for noun_relationship in self.relationships:
-            if noun_relationship.type == relationship_type:
-                relationships.append(noun_relationship)
-        return relationships
-
-    def get_relationship_types(self):
-        relationship_types = set()
-        for relationships in self.relationships:
-            relationship_types.add(relationships.type)
-        return relationship_types
-
-    def print_noun(self):
-        #Testing self.get_value() -- it works
-        #print(self.get_value("named"))
-        return self.get_value("named")
-
-    def get_relationship(query):
-        type = get_edge_named(query.get("edges"), "has_type").get("value")
-
-        value = get_edge_named(query.get("edges"), "has_value").get("value")
-
-        target = get_edge_named(query.get("edges"), "regarding").get("id")
-
-        return relationship(type, value, target)
-        
-class relationship:
-    def __init__(self, type, value, reguarding):
-        self.type = type
-        self.value = value
-        self.reguarding = reguarding
-
 
 """
 #Queries: edges, fork, get, update
@@ -122,19 +76,33 @@ def translate_type(type):
 
 
 def get_node_by_name(name):
-
-    #exp = Query_Explorer()
     query_string = describe_noun(name, 2)
 
     noun = get_noun(json.loads(query(query_string)))
+    '''
     noun = pipe(query_string, [ 
         query,
         json.loads,
         get_noun
     ])
-
+    '''
 
     return noun
+
+def get_known_node(name):
+    noun = get_node_by_name(name)
+    if noun:
+        if len(noun.get_all_type("knows_of"))>0:
+            return noun
+    return None
+
+def print_known():
+    node = get_node_by_name("player")
+
+    print(node.get_values("knows_of"))
+    
+    pass
+
 
 #This will contain all the dictionaries returned from our JSON code
 encyclopedia = []
@@ -206,7 +174,12 @@ def inspectObject(node, depth=0):
         s+= ". It is " + node.get_value("power_state")
 
     if len(node.get_all_type("has_a"))>0:
-        #s+= ". It has a " + node.get_value("has_a")      #true -- this is making things look weird without really adding anything
+        s+= ". It has a " + node.get_value("has_a")
+        #Todo: add to known
+        pass
+    if len(node.get_all_type("had_by"))>0:
+        s+= ". It is had by " + node.get_value("had_by")
+        #Todo: add to known
         pass
     
     #'''
@@ -452,7 +425,37 @@ def createObject():
     #nd = get_node_by_name(obj_name)
     #inspect_object(nd)
 
-    
+#Pick up an object (remove from room add to inventory)
+def pickUp():
+
+    print("Object to pick up?")
+    ob = raw_input().lower()
+
+    try:
+        node = get_node_by_name(ob)
+            
+    except:
+        node = None
+        #see if this is one of the pre-defined player commands
+            
+    if node:
+        #inspect the node to a depth of... (depth doesn't seem to be doing anything right now)
+        #print(inspectObject(node,2))
+
+        had = node.get_value("had_by")
+        output = query(get_from_value(ob, "named"))
+        ob_id = json.loads(output)["reply"][0]["id"]
+
+        output = query(get_from_value(had, "named"))
+        had_id = json.loads(output)["reply"][0]["id"]
+
+        query(
+        json.dumps({
+        "type": "update",
+        "params":{"depth":"0"},
+        "search":{"time":1,"weight": 0,"left-node": {"id":had_id},"right-node": {"id":ob_id}}}))
+        
+        #node.set_value()
 
 #Game Loop
 def testLoop():
@@ -469,7 +472,11 @@ def testLoop():
 
         #Allow the user to call roomPrint() in case they need a reminder.
         elif action == "room" or action == "look":
-            roomPrint()
+            #roomPrint()
+            print_known()
+
+        elif action == "take" or action == "pickup":
+            pickUp()
 
         #Create new object
         elif action == "create" or action == "make":
@@ -483,7 +490,7 @@ def testLoop():
 
                 #try to get the node
                 try:
-                    node = get_node_by_name(word)
+                    node = get_known_node(word)
                     
                 except:
                     node = None
@@ -597,7 +604,9 @@ queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we 
 qrNode = listSearch(queryResult, "room", "value")
 
 #test to see if we are getting things in roomConts, as we are supposed to
-roomPrint()
+#roomPrint()
+
+print_known()
 
 #rmcts is room contents
 print("\nInside the room, you can see...\n")

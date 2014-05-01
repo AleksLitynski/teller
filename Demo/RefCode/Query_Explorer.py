@@ -35,12 +35,13 @@ def get_noun(query):
 
 def get_relationship(query):
     type = get_edge_named(query.get("edges"), "has_type").get("value")
+    describes = query.get("edges")[0]["type"]
 
     value = get_edge_named(query.get("edges"), "has_value").get("value")
 
     target = get_edge_named(query.get("edges"), "regarding").get("id")
 
-    return relationship(type, value, target)
+    return relationship(type, describes, value, target)
 
 
 
@@ -74,6 +75,15 @@ class noun:
             if noun_relationship.type == relationship_type:
                 relationships.append(noun_relationship)
         return relationships
+    
+    def get_values(self, relationship_type):
+        relationships = []
+        for noun_relationship in self.relationships:
+            if noun_relationship.type == relationship_type:
+                relationships.append(noun_relationship.value)
+                print(noun_relationship.describes)
+        return relationships
+    
     def get_all(self):
         relationships = []
         for noun_relationship in self.relationships:
@@ -93,9 +103,10 @@ class noun:
         return self.get_value("named")
 		
 class relationship:
-    def __init__(self, type, value, regarding):
+    def __init__(self, type, describes, value, regarding):
         self.type = type
         self.value = value
+        self.describes = describes
         self.regarding = regarding
 
 
