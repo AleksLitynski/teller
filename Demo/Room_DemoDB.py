@@ -143,20 +143,20 @@ def node(action):
         print(inspectObject(subject))
     elif(verb in items[subject][attr["actions"]] ):
         print(dialogsNode[verb][0].replace("obj",subject))
-    else : 
+    else: 
         print(dialogsNode[verb][1].replace("obj",subject))
     return True
 
 #list of available actions and responses
 #todo rename, change to methods
-dialogs = {             "sit"    : "You sit down cross-legged on the floor.",
+dialogs = { "sit"    : "You sit down cross-legged on the floor.",
             "dance"    : "You dance for a moment, though you are not sure why." 
                         + "\nIt is almost as if you are a puppet whose strings are being"
                         + "\npulled by the invisible hands of some unknown God..."
                         + "\nYou quickly dismiss that thought and return to a standing position.",
-                        "lie" : "You lie down on the floor.",
-                        "talk" : "You talk to yourself. Sadly, doing so provides you with no new information.",
-                        "jump" : "You jump up and down. It's good for your buns and thighs."
+            "lie" : "You lie down on the floor.",
+            "talk" : "You talk to yourself. Sadly, doing so provides you with no new information.",
+            "jump" : "You jump up and down. It's good for your buns and thighs."
 }
 #processes self-targeted actions
 def playerNode(action):
