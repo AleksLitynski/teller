@@ -56,7 +56,7 @@ def get_known_node(name):
 #========database talk end========================
 #========print stuff we wanna know about start====
 #print everything the player knows about 
-def print_known():
+def print_known():n
     s = ""    
     for obj in get_known():
         if s == "":
@@ -270,7 +270,7 @@ def createObject():
     #fork from type of node (noun, verb, etc) user wants -- Assume noun
     #fork("noun", obj_name, 1)
             
-    #"""
+    
             
     output = query(get_from_value("room", "named"))
     #print(output)
@@ -282,7 +282,7 @@ def createObject():
         "type": "fork",
         "params":{"depth":"0"},
         "search":{"new-value": obj_name,"time":1,"target-node": {"id":out_id}}}))
-    #"""
+   
 
     print(output)
     
