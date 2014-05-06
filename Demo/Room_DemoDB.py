@@ -15,16 +15,13 @@ from RefCode.Query_Explorer import *
 def query(query_string):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(('127.0.0.1', 5005))
-    #print (type(s))                 #What is the type of s... -- It's a socket!
-    s.send(query_string)            #It doesn't seem to like this line...
-    query_response = s.recv(10000) #our replies are VERY long. GOTTA fix that. At least, don't recurse into nodes that already exist
+    s.send(query_string)            #This fails on a bad query?
+    query_response = s.recv(10000) #our replies are VERY long. don't recurse into nodes that already exist?
     s.close()
-    #print("query_response: ")
-    #print (query_response)
     return query_response
 
 
-#Give node a name and a depth; 2 is default, but you could do 10 or something, if needed.
+#Give node a name and a depth; 2 is default, and higher is said to cause issues
 def describe_noun(noun_name, depth=2):
     #the only thing that really changes is name, the rest are defaults
     txt = '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +\
@@ -58,59 +55,68 @@ def get_known_node(name):
     return None
 
 #print everything the player knows about 
-#todo clean output, change from print to return?
 def print_known():
-    node = get_node_by_name("player")
-
-    print(node.get_values("knows_of"))
+    s = ""    
+    for obj in get_known():
+        if s == "":
+            s+= "a "+obj
+        else:
+            s+= ", a "+obj
+    return a_an(s)
     
+
+#get everything the player knows about, return string array
+def get_known():
+    node = get_node_by_name("player")
+    return node.get_values("knows_of")
+    
+# does a rudimentary a/an fix
+def a_an(s):
+    s = re.sub('\\bA ([aeiou])', 'An \\1', s)
+    return re.sub('\\ba ([aeiou])', 'an \\1', s)
+
+#move to node class
+def has_attr(node, attr):
+    return len(node.get_all_type(attr))>0
+
 #takes a noun node and converts it to a describing sentence
 def inspectObject(node, depth=0):
 
     #we'll want to adjust which attributes are told about at different depths
     s = "A"
 
-    #lengthy string-addition code has been put in print_node()
-    #The length of all of these is always either 1 or 0...
-    if len(node.get_all_type("colored"))>0:
-        
+    if has_attr(node, "colored"):
         s+= " " + node.get_value("colored")
         
-    if len(node.get_all_type("is_made_of"))>0:
-
+    if has_attr(node, "is_made_of"):
         s+= " " + node.get_value("is_made_of")
 
-    if len(node.get_all_type("floor_mat"))>0:
-
+    if has_attr(node, "floor_mat"):
         s+= " " + node.get_value("floor_mat")
     
-    if len(node.get_all_type("bed_size"))>0:
-        
+    if has_attr(node, "bed_size"):
         s+= " " + node.get_value("bed_size") + "-sized"
         
-    if len(node.get_all_type("named"))>0:
+    if has_attr(node, "named"):
         s+= " " + node.print_noun() #the name/type of the item
     
-    if len(node.get_all_type("titled"))>0:
-
+    if has_attr(node, "titled"):
         s+= ". The title reads: " + node.get_value("titled")
 
-    if len(node.get_all_type("contains"))>0:
-
+    if has_attr(node, "contains"):
         s += ". It contains " + node.get_value("contains")
     
-    if len(node.get_all_type("power_state")) > 0:
-
+    if has_attr(node, "power_state"):
         s+= ". It is " + node.get_value("power_state")
 
-    if len(node.get_all_type("has_a"))>0:
+    if has_attr(node, "has_a"):
         s+= ". It has a " + node.get_value("has_a")
         #Todo: add to known
-        pass
-    if len(node.get_all_type("had_by"))>0:
+        
+    if has_attr(node, "had_by"):
         s+= ". It is had by " + node.get_value("had_by")
         #Todo: add to known
-        pass
+        
     
     #'''
     #Test "has_a" code
@@ -118,13 +124,13 @@ def inspectObject(node, depth=0):
     if len(node.get_all_type("has_a"))>0:       
         for att in node.get_all_type("has_a"):
             if depth==0:#if this is the first layer
-                    s += " with " + inspectObject(att, depth+1) #This could theoretically run forever...
+                    s += " with " + inspectObject(att, depth+1)
             #else: #only one iteration
                     #s += " with " + items[obj][attr["with"]]
     #'''
                     
     #fix a/an issues 
-    s = re.sub('\\bA ([aeiou])', 'An \\1', s)
+    s = a_an(s)
 
     s += "."
 
@@ -166,11 +172,6 @@ def playerNode(action):
             isActionValid = True
             print(dialogs[d])
     if(not isActionValid):print("SYSTEM : Action not recognized")
-
-#prints everything in the room_str -- deprecated (unless we use for debugging)
-def roomPrint():
-    node = get_node_by_name("room")
-    print(node.get_value("in_room"))
 
 #creates a query that asks for a node of a certain id and type
 def get_from_id(val_id, val_type):
@@ -327,7 +328,7 @@ def remove_obj():
         #see if this is one of the pre-defined player commands
             
     if node:
-        #inspect the node to a depth of... (depth doesn't seem to be doing anything right now)
+        #inspect the node to a depth of... (depth doesn't seem to be doing anything right now) todo: talk
         #print(inspectObject(node,2))
 
         had = node.get_value("had_by")
@@ -351,18 +352,18 @@ def testLoop():
     while(True):
         #create some space between this and last input/output
         print("\n"),
-        #input() does not work on my system, don't know why, so if it doesn't work, just try raw_input instead
-        action = raw_input().lower()    #convert to lower case to prevent problems where there are none (i.e. "SIT on Chair" should work just like "sit on chair")
+        #raw_input for 2.7
+        action = raw_input().lower()    
+        #convert to lower case (so "SIT on Chair" should work just like "sit on chair")
 
-        #leave the game if the user wants to -- Moving it here prevents the game from yelling at the user when he/she exits ~Joe
+        #let the user leave the game
         if action == "exit" or action == "quit":
                 print("Okay, bye!")
                 break
 
-        #Allow the user to call roomPrint() in case they need a reminder.
+        #Allow the user to look around again in case they have forgotten
         elif action == "room" or action == "look":
-            #roomPrint()
-            print_known()
+            print("You see "+print_known())
 
         elif action == "take" or action == "pickup":
             remove_obj()
@@ -392,17 +393,14 @@ def testLoop():
                         print("You can't do that.")
                     
                 if node:
-                    #inspect the node to a depth of... (depth doesn't seem to be doing anything right now)
+                    #inspect the node to a depth of... (depth doesn't seem to be doing anything right now) todo: talk
                     print(inspectObject(node,2))
                     
 
 
-#GAME START
+#==============GAME START========================================
 #This code runs as soon as the game starts...    
-#Run the game!
 
-print("Creating Room...")
-#create room
 
 print("You are in a room.")
 
@@ -411,19 +409,14 @@ queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we 
 #this is the room
 #rm = get_node_by_name("room")
 
-#test to see if we are getting things in roomConts, as we are supposed to
-#roomPrint()
-
-print_known()
-
-#rmcts is room contents
 print("\nInside the room, you can see...\n")
+print(print_known())
 
 rmcts = {"id" : 0, "rel_id" : 1, "value" : 2, "type" : 3, "edges" : 4}
 
 #wait for user input
 testLoop()
 
-#GAME END
+#==============GAME END==========================================
 
 

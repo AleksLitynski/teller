@@ -82,7 +82,7 @@ class noun:
         for noun_relationship in self.relationships:
             if noun_relationship.type == relationship_type:
                 relationships.append(noun_relationship.value)
-                print(noun_relationship.describes)
+                #print(noun_relationship.describes)
         return relationships
     
     def get_all(self):
