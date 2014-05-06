@@ -10,7 +10,7 @@ from RefCode.Query_Explorer import *
 #Nodes have: ID, type, value, & List of Edges
 #
 
-
+#====database talk==============
 #This is how we contact the database
 def query(query_string):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,7 +53,8 @@ def get_known_node(name):
         if len(noun.get_all_type("knows_of"))>0:
             return noun
     return None
-
+#========database talk end========================
+#========print stuff we wanna know about start====
 #print everything the player knows about 
 def print_known():
     s = ""    
@@ -75,7 +76,7 @@ def a_an(s):
     s = re.sub('\\bA ([aeiou])', 'An \\1', s)
     return re.sub('\\ba ([aeiou])', 'an \\1', s)
 
-#move to node class
+#todo move to node class
 def has_attr(node, attr):
     return len(node.get_all_type(attr))>0
 
@@ -121,6 +122,7 @@ def inspectObject(node, depth=0):
     #'''
     #Test "has_a" code
     #this is a relationship instance it doesn't have get_all_type
+    #this was working fine, todo: talk
     if len(node.get_all_type("has_a"))>0:       
         for att in node.get_all_type("has_a"):
             if depth==0:#if this is the first layer
@@ -135,7 +137,8 @@ def inspectObject(node, depth=0):
     s += "."
 
     return s
-
+#===============print stuff we wanna know about end=================
+#===============process actions start===============================
 #processes player actions/verbs
 #mysteriously missing non-player-targeted verbs?
 #todo rename
@@ -172,7 +175,8 @@ def playerNode(action):
             isActionValid = True
             print(dialogs[d])
     if(not isActionValid):print("SYSTEM : Action not recognized")
-
+#=======process actions end=================
+#=======Queries start=================================
 #creates a query that asks for a node of a certain id and type
 def get_from_id(val_id, val_type):
     results = json.dumps({
@@ -222,6 +226,8 @@ def get_from_value(val, val_type):
 
     return results
 
+#=============queries end==========================
+"""
 
 #function to allow users to create new objects from the console
 def createObject():
@@ -234,7 +240,7 @@ def createObject():
     #You can fork noun/verb/etc -- we will assume noun for now
     #To change weight use update and alter the weight (0 to 100)
 
-    if want_new_obj == "yes" or want_new_obj == "y":
+    if want_new_obj.startswith('y'):
 
         #We will need a way of referring to the database
         queryResult = json.loads(query(describe_noun("room", 2)))
@@ -250,7 +256,7 @@ def createObject():
         print("Would you like to add an attribute to " + obj_name + "? (Y/N)")
         att_permission = raw_input().lower()
 
-        if att_permission == "yes" or att_permission == "y":
+        if att_permission.startswith('y'):
 
             #give attribute a name
             print("Name of attribute:")
@@ -312,7 +318,8 @@ def add_rel():
             "params":{"depth":"0"},
             "search":{"time":1,"weight": 100,"left-node": {"id":left_id},"right-node": {"id":right_id}}
             }))
-    
+"""    
+
 
 #Pick up an object (remove from room add to inventory)
 def remove_obj():
