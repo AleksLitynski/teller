@@ -1,0 +1,25 @@
+.text{
+	float:left;
+
+	padding:4px;
+	margin:3px;
+	transition: all 0.2s ease;
+
+}
+
+.text:focus{
+
+   box-shadow: 0 0 2px rgba(0,0,150,0.8);
+}
+
+.save-db-button{
+	float:left;
+}
+.load-db-button{
+	float:left;
+}
+
+.load-save-area{
+	float:none;
+	clear:both;
+}

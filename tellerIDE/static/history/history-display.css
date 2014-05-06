@@ -1,0 +1,57 @@
+
+.history{
+	overflow-y: scroll;
+	height: 100%;
+}
+
+
+.history-query{
+	background-color:white;
+	clear:both;
+	width: 94%;
+	margin:auto;
+	margin-top:10px;
+	border:1px solid grey;
+	border-radius:2px;
+	padding:5px;
+	height:50px;
+
+	transition: height 0.3s ease;
+	overflow:hidden;
+}
+
+
+.history-height{
+
+	height:0px;
+
+}
+
+
+
+.history-query-query{
+	float:left;
+	position:block;
+	width:50%;
+	height:100%;
+
+	cursor:pointer;
+}
+.history-query-query:hover{
+	text-decoration:underline;
+}
+.history-query-result{
+	float:right;
+	position:block;
+	width:50%;
+	height:100%;
+
+	cursor:pointer;
+}
+.history-query-result:hover{
+	text-decoration:underline;
+}
+
+.history-selected{
+
+}

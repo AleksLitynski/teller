@@ -1,0 +1,8 @@
+.visualizer-body{
+	height:calc(100% - 62.5px);
+	
+
+	float:left;
+	width:100%;
+}
+

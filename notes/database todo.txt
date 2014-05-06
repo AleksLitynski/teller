@@ -1,0 +1,5 @@
+1. add edge view function
+2. add edge update function (must override parent edge)
+3. change to core nodes/edges, remove explicit edge rules
+4. Query sequencing/write queries to build database in current state
+5. clean up cardinality issues/nodes don't always overlap

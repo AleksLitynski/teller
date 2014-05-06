@@ -1,0 +1,25 @@
+{
+    "mutations": [
+        {
+            "name": "Set Depth",
+            "description": "Sets the depth of the current query",
+            "value": "2",
+            "target": "query.params.depth = value",
+            "makes_new_tab": "No"
+        },
+        {
+            "name": "Get All",
+            "description": "Creates a query that gets every object in the database.",
+            "value": "{'type':'get', 'params': {'depth':0}, 'search':{}}",
+            "target": "query = value",
+            "makes_new_tab": "Yes"
+        },
+        {
+            "name": "Get By Name",
+            "description": "Creates a query to find nodes with a given name",
+            "value": "whale",
+            "target": "query = {'type': 'get', 'params': {'depth':2}, 'search': {'edges': [{'direction': 'inbound','type': 'describes','weight-time': '1','terminal': {'type': 'relationship','edges': [{'terminal': {'type': 'type','value': 'named'}},{'terminal': {'type': 'value','value': value}}]}}]}}",
+            "makes_new_tab": "No"
+        }
+    ]
+}

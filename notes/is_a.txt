@@ -1,0 +1,47 @@
+option = edge + weight
+
+
+list matching options
+<-- assume 0 if it makes it to top of is_a chain. If there are 2 is_as at the same level, well, fuck me.
+
+update an option
+<-- updates on own node (by way of overwriting parent)
+
+
+normalize a list of options
+<-- leave til later
+
+
+
+
+clean up
+(fix cardinality, make sure nodes overlap correctly)
+allow compound/store value queries
+
+
+
+
+
+force node creation?????
+????
+<-- if no edge exists, but one cluster exists, create the node(s) at the other end of the cluster? 
+<-- or, create all nodes as is_a off 
+
+?
+
+
+
+
+
+
+
+present next tuesday
+peer evals next class
+
+
+
+
+
+
+start with one node for each object type, and one edge for each edge type. 
+You can extend any object and give it a new value, and override each edge (for a given pair) with a new value@time

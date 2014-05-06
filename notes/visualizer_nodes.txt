@@ -1,0 +1,55 @@
+def fork_query_by_id(new_name, source_id):
+	return json.dumps({
+		"type":"fork",
+		"params":{ "depth":"2" },
+		"search":{
+			"new-value":new_name,
+			"time":"1",
+			"target-node": { "id":source_id }
+		}
+	})
+
+
+def query_builder(type, params, search):
+	return json.dumps({"type": type, "params":params, "search": search})
+
+query_builder("fork", {"depth": 2}, {
+				"new-value":new_name,
+				"time":"1",
+				"target-node": { "id":source_id } 
+			})
+
+
+/main.py
+/other.py
+/file/other.py
+
+
+
+c++
+
+class thing{
+	
+}
+void thing::add(a, b)
+{
+	return a + b;
+}
+void thing::substract(a, b)
+{
+	return add(a, -b)
+}
+
+
+1. Select one or more nodes. It will show you a query that describes them.
+2. Allow writing in queries from here
+3. Interface to save queries and query sequences.
+4. Good to pair up with text based game. They can both talk to DB at same time, so when you go into a new room, a new cluster of the graph will appear.
+
+Other Views:
+3. Cluster nodes as Nouns + properties table. We get Name + height + etc.
+4. Flow view. Good for scripting via nodes.
+
+
+
+

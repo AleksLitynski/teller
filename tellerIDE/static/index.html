@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+
+		<!--Favicon-->
+		<link rel="icon" type="image/png" 		href="/favicon.png">
+
+
+		<!--Utility libraries-->
+
+		<link rel="stylesheet" type="text/css" 	href="general/reset.css"></link>
+		<link rel="stylesheet" type="text/css" 	href="general/inputs/buttons.css"></link>
+		<link rel="stylesheet" type="text/css" 	href="general/inputs/text-box.css"></link>
+		<script type="text/javascript" 			src="general/HelperFunctions.js"></script>
+
+		<script type="text/javascript" 			src="libraries/stately-min.js"></script>
+		<script type="text/javascript" 			src="general/utilities.js"></script>
+		<script type="text/javascript" 			src="general/schema.js"></script>
+		<script type="text/javascript" 			src="libraries/jquery.js"></script>
+
+		<!--Modular editor layout-->
+		<link rel="stylesheet" type="text/css" 	href="ide-frame/ide-framing.css"></link>
+		<script type="text/javascript" 			src="ide-frame/ide-framing.js"></script>
+
+		<!--Code Mirror-->
+		<link rel="stylesheet" 					href="libraries/codemirror-4.0/lib/codemirror.css"></link>
+		<script type="text/javascript"			src="libraries/codemirror-4.0/lib/codemirror.js"></script>
+		<script type="text/javascript"			src="libraries/codemirror-4.0/mode/javascript/javascript.js"></script>
+		<link rel="stylesheet" 					href="libraries/codemirror-4.0/theme/xq-light.css"></link>
+		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-position.css"></link>
+		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-tabs.css"></link>
+		<link rel="stylesheet" type="text/css" 	href="query-editor/query-editor-controls.css"></link>
+		<script type="text/javascript"			src="query-editor/query-editor-setup.js"></script>
+
+		<!--Mutation Visualizer-->
+		<link rel="stylesheet" type="text/css" 	href="mutations/mutation-list.css"></link>
+		<script type="text/javascript"			src="mutations/mutation-loader.js"></script>
+
+		<!--Visualizer-->
+		<link rel="stylesheet" type="text/css"	href="visualizers/visualizer-controls.css"></link>
+		<link rel="stylesheet" type="text/css"	href="visualizers/visualizer-bodies.css"></link>
+		<script type="text/javascript" 		src="visualizers/visualizer-controls.js" ></script>
+
+		<!--History Manager-->
+		<script type="text/javascript" 			src="history/query-sender.js"></script>
+		<link rel="stylesheet" type="text/css"	href="history/history-display.css"></link>
+
+		<!--JSON Visualizer-->
+		<link type="text/css" rel="stylesheet"  href="http://fonts.googleapis.com/css?family=Quicksand" ></link>
+		<link rel="stylesheet" type="text/css"	href="libraries/pretty-json/css/pretty-json.css"></link>
+		<script type="text/javascript" 			src="libraries/pretty-json/libs/underscore-min.js"></script>
+		<script type="text/javascript" 			src="libraries/pretty-json/libs/backbone-min.js"></script>
+		<script type="text/javascript" 			src="libraries/pretty-json/build/pretty-json-min.js" ></script>
+		<script type="text/javascript" 			src="visualizers/json-visualizer/json-visualizer-setup.js" ></script>
+		<link rel="stylesheet" type="text/css"	href="visualizers/json-visualizer/json-visualizer.css"></link>
+
+		<!--Graph Visualizer-->
+		<script type="text/javascript" 			src="libraries/d3/d3.js"></script>
+		<script type="text/javascript" 			src="visualizers/graph-visualizer/graph-visualizer-setup.js" ></script>
+		<link rel="stylesheet" type="text/css"	href="visualizers/graph-visualizer/graph-visualizer.css"></link>
+
+
+
+
+
+
+
+		<title>Teller IDE</title>
+	</head>
+
+	<body onload="state().loaded(true)">
+
+		<div class="left-column">
+			<div class="frame top-row">
+
+				<div class="query-editor-controls">
+
+					<div class="load-save-area">
+						<input type="text" placeholder="Database Name" class="text">
+						</input>
+						<div class="button load-db-button">
+								<span class="button-text">Load</span>
+								<img class="button-icon" src="general/icons/dot.svg"></img>
+						</div>
+						<div class="button save-db-button">
+								<span class="button-text">Save</span>
+								<img class="button-icon" src="general/icons/dot.svg"></img>
+						</div>
+					</div>
+
+					<div class="button run-query-button">
+							<span class="button-text">Run</span>
+							<img class="button-icon" src="general/icons/arrow.svg"></img>
+					</div>
+				</div>
+
+				<div class="query-editor">
+					<div class="query-editor-tabs">
+						<div class="query-editor-tab add-tab">
+							<img class="query-editor-tab-icon" src="general/icons/plus.svg"></img>
+						</div>
+					</div>
+
+					<div class="query-editor-body">
+
+					</div>
+				</div>
+
+
+			</div>
+			<div class="handle hor-handle"></div>
+			<div class="frame bottom-row">
+
+				<div class="mutation-column">
+					<span class="mutation-header">Name</span>
+					<span class="mutation-header">Value</span>
+					<span class="mutation-header">Pattern</span>
+					<span class="mutation-header">Description</span>
+					<span class="mutation-header">Makes new Tab?</span>
+
+				</div>
+
+				<div class="mutations"></div>
+
+			</div>
+		</div>
+		<div class="handle vert-handle"></div>
+		<div class="right-column">
+			<div class="frame top-row">
+
+				<div class="visualizer-controls">
+					<div class="button visualizer-option-selection" data-vistype="json">
+							<span class="button-text">JSON</span>
+							<img class="button-icon" src="general/icons/json.svg"></img>
+					</div>
+					<div class="button visualizer-option-selection" data-vistype="graph">
+							<span class="button-text">Graph</span>
+							<img class="button-icon" src="general/icons/graph.svg"></img>
+					</div>
+					<div class="button visualizer-option-selection" data-vistype="dataflow">
+							<span class="button-text">Dataflow</span>
+							<img class="button-icon" src="general/icons/flow.svg"></img>
+					</div>
+					<div class="button visualizer-option-selection" data-vistype="threed">
+							<span class="button-text">3D Model</span>
+							<img class="button-icon" src="general/icons/3d.svg"></img>
+					</div>
+				</div>
+
+
+				<div class="visualizer-body json-visualizer">
+					JSON
+				</div>
+				<div class="visualizer-body graph-visualizer">
+					<div class="graph-viz">
+
+					</div>
+					GRAPH
+				</div>
+				<div class="visualizer-body dataflow-visualizer">
+					DATAFLOW
+				</div>
+				<div class="visualizer-body threed-visualizer">
+					3D
+				</div>
+				<!-- do an agragate view eventually. Something that smartly embeds different parts of each view into each other view -->
+				<!-- do a tabular view, so we can look at nouns + their properties -->
+				<!-- do a textual view, much like the actual game -->
+
+
+			</div>
+			<div class="handle hor-handle"></div>
+			<div class="frame bottom-row">
+				<div class="history">
+
+				</div>
+			</div>
+		</div>
+
+
+	</body>
+</html>

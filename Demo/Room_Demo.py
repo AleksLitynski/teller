@@ -3,7 +3,6 @@ import sys
 import random
 import shlex
 import re
-#importing our stuff
 import json
 from RefCode.Query_Explorer import *
 
@@ -54,7 +53,7 @@ def inspectObject(obj, depth=0):
 	#we'll want to adjust which attributes are told about at different depths
 	if obj in items:
 		s = "a"
-		if not items[obj][attr["color"]] == "!=": 
+		if not items[obj][attr["color"]] == "!=":
 			#if there isn't a material, go ahead and say the color
 			if depth==0 or items[obj][attr["material"]] == "!=":
 				s += " "  + items[obj][attr["color"]]
@@ -74,8 +73,8 @@ def inspectObject(obj, depth=0):
 		#fix a/an issues
 		s = re.sub('\\ba ([aeiou])', 'an \\1', s, re.IGNORECASE)
 		return s
-	
-	
+
+
 #fill the room with stuff!
 #Idea for fililng the room: only do this with stuff at a certain depth. Deeper stuff can be found by searching/inspecting objects (hidden panels, cupcakes, etc) ~Joe
 def fillRoom():
@@ -83,18 +82,18 @@ def fillRoom():
 	for thing in roomContents:
 		print("-- a " + thing)
 
-#wherever the name of the object should be, we put 'obj' 
+#wherever the name of the object should be, we put 'obj'
 #(we will search and replace it when we use it)
-verbs = {         "sit" : ["You sit on the obj.","You can't sit on the obj."], 
-			"jump" : ["You jump on the obj.","You can't jump on the obj."], 
+verbs = {         "sit" : ["You sit on the obj.","You can't sit on the obj."],
+			"jump" : ["You jump on the obj.","You can't jump on the obj."],
 			"under" : ["You crawl under the obj.", "You can't crawl under the obj"],
-			"lift" : ["You lift the obj off of the ground.","You can't lift the obj"], 
+			"lift" : ["You lift the obj off of the ground.","You can't lift the obj"],
 			"search" : ["You search the obj, finding nothing of interest.","You can't search the obj."],
 			"lean" : ["You lean on the obj.","You cannot lean on the obj."],
 			"stand" : ["You stand on the obj, taking great care not to fall.","You cannot stand on the obj."],
 			"lie" : ["You lie down on the obj.","You cannot lie down on that obj."],
 			"talk" : ["You try to talk to the obj.","Your only reply is the faint echo of your own voice."]
-                        
+
 }
 response_index = {"can" : 0, "can't" : 1}#removes hard-coding of indexes
 
@@ -106,14 +105,14 @@ def lift(obj, limit):
 	return "The "+obj+" is too heavy to lift." 
 
 def node(action):
-	verb = "" 
+	verb = ""
 	subject = ""
 	for word in shlex.split(action):#divides the action by spaces
-		if word in items: 
-			subject = word 
-		if word in verbs: 
+		if word in items:
+			subject = word
+		if word in verbs:
 			verb = word
-	
+
 	if subject == "": #if there is no subject, get out and check player
 		return False
 	if verb == "":#if there is subject but no action
@@ -130,7 +129,7 @@ def node(action):
 	return True
 
 self_verbs = { "sit"	: "You sit down cross-legged on the floor.",
-			"dance"	: "You dance for a moment, though you are not sure why." 
+			"dance"	: "You dance for a moment, though you are not sure why."
 			+ "\nIt is almost as if you are a puppet whose strings are being"
 			+ "\npulled by the invisible hands of some unknown God..."
 			+ "\nYou quickly dismiss that thought and return to a standing position.",
@@ -145,19 +144,19 @@ def playerNode(action):
 			isActionValid = True
 			print(self_verbs[d]) #get its sentence and print it
 	return isActionValid
-				
+
 #Game Loop
 def testLoop():
 	while(True):
 		#create some space between this and last input/output
 		print("\n"),
-		
+
 		#since we have decided on python 2, just using raw_input
-		#convert to lower case to prevent problems where there are none 
+		#convert to lower case to prevent problems where there are none
 		#(i.e. "SIT on Chair" should work just like "sit on chair")
 		action = raw_input().lower()
 
-		#if exit then quit		
+		#if exit then quit
 		if "exit" in action or "quit" in action or "bye" in action:
 			print("okay, bye")
 			break
@@ -167,10 +166,10 @@ def testLoop():
 			#Only access player node if you don't refer to any of the objects
 			if not playerNode(action):
 				print ("Sorry, please try something else.")
-		
-		
-		
-#This code runs as soon as the game starts...	
+
+
+
+#This code runs as soon as the game starts...
 #Run the game!
 fillRoom()
 testLoop()

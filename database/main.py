@@ -21,5 +21,3 @@ if __name__ == '__main__':
     server = socketserver.TCPServer(("localhost", 5005), TCPHandler)
     server.serve_forever()
 
-
-

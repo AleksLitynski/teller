@@ -35,17 +35,13 @@ def get_noun(query):
 
 def get_relationship(query):
     type = get_edge_named(query.get("edges"), "has_type").get("value")
+    describes = query.get("edges")[0]["type"]
 
     value = get_edge_named(query.get("edges"), "has_value").get("value")
 
     target = get_edge_named(query.get("edges"), "regarding").get("id")
 
-    return relationship(type, value, target)
-
-
-
-
-
+    return relationship(type, describes, value, target)
 
 
 
@@ -55,31 +51,43 @@ def get_edge_named(edges, edge_name):
             return edge.get("terminal")
 
 
-
-
-
-
-
-
-
 class noun:
 
     def __init__(self, id):
         self.id = id
         self.relationships = []
 
-    def get_value(self, relationship_type, default="Something"):
-        value = default
+    def get_value(self, relationship_type):
+        value = None
         for noun_relationship in self.relationships:
             if noun_relationship.type == relationship_type:
                 value = noun_relationship.value
         return value
 
-    def get_all(self, relationship_type):
+    def set_value(self, rel_type, val):
+        for noun_relationship in self.relationships:
+            if noun_relationship.type == rel_type:
+                value = val
+    
+    def get_all_type(self, relationship_type):
         relationships = []
         for noun_relationship in self.relationships:
             if noun_relationship.type == relationship_type:
                 relationships.append(noun_relationship)
+        return relationships
+    
+    def get_values(self, relationship_type):
+        relationships = []
+        for noun_relationship in self.relationships:
+            if noun_relationship.type == relationship_type:
+                relationships.append(noun_relationship.value)
+                print(noun_relationship.describes)
+        return relationships
+    
+    def get_all(self):
+        relationships = []
+        for noun_relationship in self.relationships:
+            relationships.append(noun_relationship)
         return relationships
 
     def get_relationship_types(self):
@@ -90,19 +98,16 @@ class noun:
 
 
     def print_noun(self):
-        #print "There is a " + self.get_value("named") + ". "
-	    pass
+        #Testing self.get_value() -- it works
+        #print(self.get_value("named"))
+        return self.get_value("named")
 		
 class relationship:
-    def __init__(self, type, value, reguarding):
+    def __init__(self, type, describes, value, regarding):
         self.type = type
         self.value = value
-        self.reguarding = reguarding
-
-
-
-
-
+        self.describes = describes
+        self.regarding = regarding
 
 
 """

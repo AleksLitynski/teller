@@ -1,0 +1,91 @@
+<head>
+	<meta charset="utf-8" />
+	<title>Teller Database Visualizer</title>
+	<link rel="stylesheet" type="text/css" href="css/main.css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
+	<script src="scripts/vivaGraph/vivagraph.js"></script>
+	<script src="scripts/vivaGraphManager.js"></script>
+    
+	<style type="text/css" media="screen">
+	html, body, svg { width: 100%; height: 100%;}
+		#mySVG {
+		html, body, svg  { id:"mySVG"width: 100%; height: 100%;}
+		}
+	</style>
+	<style>
+		#graph-container {
+			top: 100;
+			bottom: 0;
+			left: 200px;
+			right: 0;
+			position: Absolute;
+		}
+	</style>
+	<script>
+	function helperXHRPost(xhr,data,f){
+		console.log("Posting");
+		xhr.open('POST', '', true);
+		xhr.send(data);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4)  f(xhr);};
+	}
+	function helperXHRGet(xhr,path,f){
+		var xhr = sigma.utils.xhr();
+		xhr.open('GET', path, true);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4)f(xhr);};
+		xhr.send();
+	}
+	function helperXHR(request,path,data,f){
+		var xhr = sigma.utils.xhr();
+		
+		xhr.open(request, path, true);
+		xhr.send(data);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4)f(xhr);
+		};
+	}
+	function init(){
+		url='data.json';
+		//var xhr = sigma.utils.xhr();
+		
+		
+		helperXHR('GET','search',"",function(xhr){
+			graph = JSON.parse(xhr.responseText);
+			vivaGraphManager.init('graph-container',graph.nodes,graph.edges);
+			});
+		
+	}
+	function search(){
+		var input = document.getElementById("searchKeyword").value;
+		var data = ["keyword",input];
+		$("#graph-container").empty();
+		helperXHR('POST','search',JSON.stringify(data),function(xhr){
+			graph = JSON.parse(xhr.responseText);
+			console.log(graph);
+			vivaGraphManager.init('graph-container',graph.nodes,graph.edges);
+			});
+		//document.write('<h2>Your Text and or HTML here.</h2>');
+	}
+	</script>
+
+<style type="text/css" media="screen">
+        html, body, svg { width: 100%; height: 100%;}
+    </style>
+</head>
+
+<body onLoad = 'init()'>
+	<input id = "searchKeyword"type="text" name="search">
+	<button onClick = "search()" type ="button">Search</button><br>
+	<div id="graph-container"></div>
+	<form>
+		Node selected : <input type = "text" value = "notSelected" disabled ></br>
+		type: <input type = "text" value = "notSelected" disabled ></br> 	
+		valu: <input type = "text" value = "notSelected" disabled ></br>
+		<input type="submit" value="Submit">
+	</form>
+</body>
+
+
+
