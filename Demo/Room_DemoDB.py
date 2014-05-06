@@ -56,6 +56,12 @@ def get_known_node(name):
         if len(noun.get_all_type("knows_of"))>0:
             return noun
     return None
+    
+def get_node(name):
+    noun = get_node_by_name(name)
+    if noun:
+        inspectObject(name, 2)
+    return None
 
 #print everything the player knows about 
 #todo clean output, change from print to return?
@@ -70,8 +76,6 @@ def inspectObject(node, depth=0):
     #we'll want to adjust which attributes are told about at different depths
     s = "A"
 
-    #lengthy string-addition code has been put in print_node()
-    #The length of all of these is always either 1 or 0...
     if len(node.get_all_type("colored"))>0:
         
         s+= " " + node.get_value("colored")
@@ -105,6 +109,7 @@ def inspectObject(node, depth=0):
 
     if len(node.get_all_type("has_a"))>0:
         s+= ". It has a " + node.get_value("has_a")
+        #s+= get_node(node.get_value("has_a"))
         #Todo: add to known
         pass
     if len(node.get_all_type("had_by"))>0:
@@ -118,7 +123,7 @@ def inspectObject(node, depth=0):
     if len(node.get_all_type("has_a"))>0:       
         for att in node.get_all_type("has_a"):
             if depth==0:#if this is the first layer
-                    s += " with " + inspectObject(att, depth+1) #This could theoretically run forever...
+                    s += " with " + inspectObject(att, depth+1)
             #else: #only one iteration
                     #s += " with " + items[obj][attr["with"]]
     #'''
