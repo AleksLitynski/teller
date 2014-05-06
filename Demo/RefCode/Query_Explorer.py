@@ -14,6 +14,7 @@ class Query_Explorer:
 
 
 def get_noun(query):
+    #we're looking for JSON, but if it isn't, we can fix that
     if type(query) is str:
         query = json.loads(query)
 
