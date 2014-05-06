@@ -60,8 +60,8 @@ class StaticHandler(tornado.web.RequestHandler):
         if(ext == ".ttf"):  mimetype = "application/octet-stream"
         if(ext == ".css"):  mimetype = "text/css"
 
-        
-           
+
+
         self.set_header("Content-Type", mimetype)
 
         with open(self.path + self.request.uri, 'rb') as f:
@@ -75,10 +75,10 @@ def query(message):
     try:
         s.connect(('127.0.0.1', 5005))
     except:
-        t = threading.Thread(target=lambda: subprocess.call(["pypyg", "../database/main.py"]))
-        t.start()        
+        t = threading.Thread(target=lambda: subprocess.call(["python", "../database/main.py"]))
+        t.start()
         s.connect(('127.0.0.1', 5005))
-        
+
     s.send(message)
     reply = s.recv(2000000)
     s.close()
@@ -96,7 +96,7 @@ class QueryHandler(tornado.web.RequestHandler):
 
         reply = '{"a":"b"}'
 
-    
+
         #{k:''.join(v) for k,v in req.arguments.iteritems()}
         self.write(query(data))
         self.finish()
@@ -109,7 +109,7 @@ def signal_handler(signum, frame):
     logging.info('exiting...')
     is_closing = True
 
-def try_exit(): 
+def try_exit():
     global is_closing
     if is_closing:
         # clean up here
@@ -125,7 +125,7 @@ def main():
             (r"/", IndexHandler, {'path': os.path.join(root, 'static')}),
             (r"/query", QueryHandler),
             (r"/.*", StaticHandler, {'path': os.path.join(root, 'static')})
-        ], 
+        ],
 
         #(r'/static/(.*)', tornado.web.StaticFileHandler, {'path': static_path}
 
@@ -139,7 +139,7 @@ def main():
 
     #allows interupt via ctrl-c
     signal.signal(signal.SIGINT, signal_handler)
-    tornado.ioloop.PeriodicCallback(try_exit, 100).start() 
+    tornado.ioloop.PeriodicCallback(try_exit, 100).start()
 
     tornado.ioloop.IOLoop.instance().start()
 

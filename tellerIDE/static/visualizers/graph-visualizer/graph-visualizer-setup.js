@@ -68,7 +68,7 @@ window.onresize = resize_update;
 state().visualizer().mode(resize_update);
 var resize_timer = -1;
 function resize_update(){
-	
+
   	window.clearTimeout(resize_timer);
 	resize_timer = setTimeout(function(e){
 
@@ -148,8 +148,10 @@ function update() {
 	label = label.data(nodes);
 	label.enter().insert("text")
 		.attr("class", "graph-label")
-		
-		.text(function(d){return d.value;})
+
+		.text(function(d){
+      console.log(d.type + ": " + d.value);
+      return d.value;})
 		.attr("dx", 0)
 		.attr("dy", 0);
 	label.call(function(l){
@@ -188,7 +190,7 @@ function update() {
 
 
 		update();
-    
+
 
 
 		return true;
@@ -221,8 +223,6 @@ function update() {
 
 
 
-
-
 		json.forEach(function(node){
 			node.edges.forEach(function(edge){
 				add_edge(edge, node);
@@ -234,20 +234,21 @@ function update() {
 			edge.source = node_with_id(node.id);
 			edge.target = node_with_id(edge.terminal.id);
 
-			//if(!is_edge_present(edge)){
+			if(!is_edge_present(edge)){
 				edges.push(edge);
-			//}
+			}
 
-			edge.terminal.edges.forEach(function(edge){
-				add_edge(edge, edge.terminal);
+			edge.terminal.edges.forEach(function(edge2){
+        console.log(edge.terminal.type);
+				add_edge(edge2, edge.terminal);
 			})
 
 		}
-	
+
 		function is_edge_present(edge){
 			return edges.some(function(e){
 				return e["weight-at-times"] == edge["weight-at-times"]
-						&& e.direction == edge.direction 
+						&& e.direction == edge.direction
 						&& e.type == node.type
 						&& nodes_match(e.source, edge.source)
 						&& nodes_match(e.target, edge.target);
@@ -268,7 +269,7 @@ function update() {
 
 
 
-/*
+/*$
 {"type":"get", "params": {"depth":1}, "search":{}}
 
 */
