@@ -122,6 +122,7 @@ class ontology:
 
 
 
+
     def add_core_objects(self):
         #Once everything decends from one of these, I won't need the value-tagging to find the core objects, just find objects with no outbound is-a edges
         noun = self.add_node("noun", "***core-node***")
@@ -151,8 +152,6 @@ class ontology:
         self.add_edge("leads_to", verb, verb, 1, 100)
         self.add_edge("causes", verb, change, 1, 100)
 
-
-
     def override_with_random_room(self):
         self.graph = nx.Graph()
         english = self.add_node("noun", "")
@@ -164,7 +163,6 @@ class ontology:
         #create string for everything in the room (to be stored in "in_room")
         room_str = "Objects in Room:"
         player = self.new_noun_named("player", english)
-
 
         chair = self.new_noun_named("chair", english) #lots of helper functions for more sprawling graph structures
         self.add_relationship(player, chair, "knows_of", "chair")
@@ -184,7 +182,6 @@ class ontology:
         bed = self.new_noun_named("bed", english)
         self.add_relationship(player, bed, "knows_of", "bed")
         room_str += "\n-- bed"
-
 
         blanket = self.new_noun_named("blanket", english)
         self.add_relationship(bed, blanket, "has_a", "blanket")
