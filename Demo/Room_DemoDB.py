@@ -230,10 +230,16 @@ def get_from_value(val, val_type):
     return results
 
 #=============queries end==========================
+
+#=============Ignore Me!! (for now)================
 """
 
 #function to allow users to create new objects from the console
-def createObject():
+def playerCreateObject():
+
+    #spoon = new_noun()
+    #add_property(spoon, "named", "spoon", english())
+
     #make sure the user did not come here in error
     print("Would you like to make an object? (Y/N)")
     want_new_obj = raw_input().lower()
@@ -245,15 +251,15 @@ def createObject():
 
     if want_new_obj.startswith('y'):
 
-        #We will need a way of referring to the database
-        queryResult = json.loads(query(describe_noun("room", 2)))
-
+        #Create a new noun
+        ob = new_noun()
+        
         #prompt for name of object
         print("What do you want to create?")
         obj_name = raw_input().lower()
 
-        #Not sure if this will even work -- No. No, it doesn't.
-        #ob = new_noun_named(obj_name, "english")
+        #add "named" property to the new noun and give it obj_name as a value
+        add_property(ob, "named", obj_name, english())
 
         #add attributes to object, if applicable
         print("Would you like to add an attribute to " + obj_name + "? (Y/N)")
@@ -265,10 +271,10 @@ def createObject():
             print("Name of attribute:")
             att_name = raw_input().lower()
 
-            #give attribute a list of values
+            #add property to the noun and give it a value
             print("Value of attribute:")
-            att_vals = []
-            att_vals.append(raw_input().lower())
+            att_val = raw_input().lower()
+            add_property(ob, att_name, att_val, english())
 
     #fork from type of node (noun, verb, etc) user wants -- Assume noun
     #fork("noun", obj_name, 1)
@@ -323,7 +329,7 @@ def add_rel():
             }))
 
 """
-
+#=============Ignore Me!! end======================
 
 #Pick up an object (remove from room add to inventory)
 def remove_obj():
@@ -366,6 +372,63 @@ def create_a_spoon():
     add_property(spoon, "named", "spoon", english())
     return spoon
 
+#creates a node with set parameters, takes a name, lists of attributes and values, and whether or not you want it to print
+def devCreateSet(name, attList=None, valList=None, displayInfo=None):
+    #set up the name
+    temp_noun = new_noun()
+    add_property(temp_noun, "named", name, english())
+    
+    #only print things if displayInfo is set to something
+    if displayInfo:
+        print(name)
+    
+    #set iterator to 0
+    iterator = 0 
+    #only add attributes if there is one
+    if len(attList) > 0:
+        #add a new attribute and corresponding value
+        for att in attList:
+            add_property(temp_noun, attList[iterator], valList[iterator], english())
+            
+            if displayInfo:
+                print(attList[iterator] + ": " + valList[iterator])     #proves that attList[iterator] and valList[iterator] are working
+            
+            iterator += 1
+            
+    #return the new noun
+    return temp_noun
+    
+#Name of value; dictionary of attributes (keys), each of which contains a list of potential values; and whether or not you want it to print
+def devCreateRandom(name, attDict=None, displayInfo=None):
+    
+    temp_noun = new_noun()
+    add_property(temp_noun, "named", name, english())
+    
+    if displayInfo:
+        print(name)
+    
+    #set iterator to 0
+    iterator = 0 
+    #don't do this if the dictionary is empty
+    if len(attDict) > 0:
+        #add a new attribute and corresponding value
+        for att in attDict:
+            
+            #get random number from 0 to length of list inside dictionary
+            tempRand = random.randrange(0, len(attDict[attDict.keys()[iterator]]))
+            #set temporary value to a random value from each list (all of which are keys), in order
+            tempVal = attDict[attDict.keys()[iterator]][tempRand]
+            
+            add_property(temp_noun, attDict.keys()[iterator], tempVal, english())
+            
+            if displayInfo:
+                print(attDict.keys()[iterator] + ": " + tempVal)     #proves that attList[iterator] and valList[iterator] are working
+            iterator += 1
+            
+    #return the new noun
+    return temp_noun
+
+    
 #returns the ID of the node that connotes the english language
 def english():
     query_result = query(json.dumps({"type":"get",
@@ -415,8 +478,8 @@ def update_edge_between(left_id, right_id, _type, weight=100):
                                               "left-node": { "id":left_id },
                                               "right-node": {"id":right_id}}}))
 
-#fork's one of the "core" nodes. These nodes will (soon) allow me to reove opriori knowledge of the structure of the ontology
-#The type of the node to fork. Should be: "noun", "relationship", "value", "type", "constraint", etc (rest may not be implimented. not really sure...)
+#fork's one of the "core" nodes. These nodes will (soon) allow me to remove apriori knowledge of the structure of the ontology
+#The type of the node to fork. Should be: "noun", "relationship", "value", "type", "constraint", etc (rest may not be implemented. not really sure...)
 #optional value for forked node
 def fork_core_node(_type, value=""):
     # { "new-value":"VALUE OF FORKED NODE", "time":"FLOAT TIME OF CREATION", "target-node": { #GET QUERY THAT RETURNS EXACTLY ONE NOUN TYPE NODE } }
@@ -431,8 +494,6 @@ def fork_core_node(_type, value=""):
                                                               "value":"***core-node***"}}}))
 
     return json.loads(query_result)["reply"][0]["id"]
-
-
 
 
 #Game Loop
@@ -458,9 +519,22 @@ def testLoop():
         elif action == "take" or action == "pickup":
             remove_obj()
 
-        #Create new object
+        #Let the player Create new object -- Not really working currently
         elif action == "create" or action == "make":
-            createObject()
+            #playerCreateObject()
+            pass
+        
+        #Both devCreate methods are working so far. I'm not sure if they are saving the nodes to the database yet, though
+        #Literally just making something to test devCreateSet
+        elif action == "dog":
+            corgi = devCreateSet("corgi", ['personality', 'fur', 'awake?'], ['energetic', 'chocolate', 'sleeping'], True)
+            #print(describe_noun(corgi, 1))
+        #Ditto with devCreateRandom
+        elif action == "cat":
+            feline = devCreateRandom("cat", {'Name on collar':['Khoshekh', 'Heathcliff', 'Mr. Bigglesworth'], 
+                                            'Mood':['disinterested', 'sleepy', 'hyperactive'],
+                                            'Fur':['black', 'orange', 'white', 'tan']}, True)
+            #print(describe_noun(feline, 1))
 
         else:
             for word in shlex.split(action):
@@ -502,6 +576,12 @@ print("\nInside the room, you can see...\n")
 print(print_known())
 
 rmcts = {"id" : 0, "rel_id" : 1, "value" : 2, "type" : 3, "edges" : 4}
+
+#create something so we can test if new nodes are added to database - Well, you don't seem to be able to search for it...
+bird = devCreateRandom("parrot", {'Answers to':['Paulie', 'Iago', 'Chirpy', 'Clarice'], 
+                                            'Mood':['watchful', 'sleepy', 'talkative', 'hungry'],
+                                            'Feathers':['red', 'green', 'blue', 'purple']})
+
 
 #wait for user input
 testLoop()
