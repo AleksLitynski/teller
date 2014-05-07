@@ -41,7 +41,8 @@ def update(search, params, ontology):
 	#LEFT AND RIGHT MUST MATCH ONLY ONE PATTERN EACH
 	{
 		"time":"EDGE TIME",
-		"weight":"NEW EDGE WEIGHT"
+		"weight":"NEW EDGE WEIGHT"$
+        "type":"NEW EDGE TYPE",
 		"left-node": {
 						   #A "GET" QUERY FOR THE PATTERN ON THE LEFT OF THE EDGE
 					 },

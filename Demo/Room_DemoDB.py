@@ -30,7 +30,7 @@ def describe_noun(noun_name, depth=2):
     txt = '{"type": "get", "params": {"depth":'+str(depth)+'}, "search": {"edges": [{"direction": "inbound","type": "describes","weight-time": "1",' +\
            '"terminal": {"type": "relationship","edges": [{"terminal": {"type": "type","value": "named"}},{"terminal": {"type": "value","value": "'+noun_name+'"}}]}}]}}'
     return txt
-    
+
 #searches in the database for a node with a certain id
 #to a certain depth (todo: describe consequences)
 def get_node(node_id, depth=2):
@@ -48,7 +48,7 @@ def get_node_by_name(name):
 
     return noun
 
-#gets the node by its name, and then filters it based 
+#gets the node by its name, and then filters it based
 #on whether the player would know it exists.
 def get_known_node(name):
     noun = get_node_by_name(name)
@@ -57,13 +57,13 @@ def get_known_node(name):
             return noun
     return None
 
-#print everything the player knows about 
+#print everything the player knows about
 #todo clean output, change from print to return?
 def print_known():
     node = get_node_by_name("player")
 
     print(node.get_values("knows_of"))
-    
+
 #takes a noun node and converts it to a describing sentence
 def inspectObject(node, depth=0):
 
@@ -73,9 +73,9 @@ def inspectObject(node, depth=0):
     #lengthy string-addition code has been put in print_node()
     #The length of all of these is always either 1 or 0...
     if len(node.get_all_type("colored"))>0:
-        
+
         s+= " " + node.get_value("colored")
-        
+
     if len(node.get_all_type("is_made_of"))>0:
 
         s+= " " + node.get_value("is_made_of")
@@ -83,14 +83,14 @@ def inspectObject(node, depth=0):
     if len(node.get_all_type("floor_mat"))>0:
 
         s+= " " + node.get_value("floor_mat")
-    
+
     if len(node.get_all_type("bed_size"))>0:
-        
+
         s+= " " + node.get_value("bed_size") + "-sized"
-        
+
     if len(node.get_all_type("named"))>0:
         s+= " " + node.print_noun() #the name/type of the item
-    
+
     if len(node.get_all_type("titled"))>0:
 
         s+= ". The title reads: " + node.get_value("titled")
@@ -98,7 +98,7 @@ def inspectObject(node, depth=0):
     if len(node.get_all_type("contains"))>0:
 
         s += ". It contains " + node.get_value("contains")
-    
+
     if len(node.get_all_type("power_state")) > 0:
 
         s+= ". It is " + node.get_value("power_state")
@@ -111,19 +111,19 @@ def inspectObject(node, depth=0):
         s+= ". It is had by " + node.get_value("had_by")
         #Todo: add to known
         pass
-    
+
     #'''
     #Test "has_a" code
     #this is a relationship instance it doesn't have get_all_type
-    if len(node.get_all_type("has_a"))>0:       
+    if len(node.get_all_type("has_a"))>0:
         for att in node.get_all_type("has_a"):
             if depth==0:#if this is the first layer
                     s += " with " + inspectObject(att, depth+1) #This could theoretically run forever...
             #else: #only one iteration
                     #s += " with " + items[obj][attr["with"]]
     #'''
-                    
-    #fix a/an issues 
+
+    #fix a/an issues
     s = re.sub('\\bA ([aeiou])', 'An \\1', s)
 
     s += "."
@@ -143,14 +143,14 @@ def node(action):
         print(inspectObject(subject))
     elif(verb in items[subject][attr["actions"]] ):
         print(dialogsNode[verb][0].replace("obj",subject))
-    else : 
+    else :
         print(dialogsNode[verb][1].replace("obj",subject))
     return True
 
 #list of available actions and responses
 #todo rename, change to methods
 dialogs = {             "sit"    : "You sit down cross-legged on the floor.",
-            "dance"    : "You dance for a moment, though you are not sure why." 
+            "dance"    : "You dance for a moment, though you are not sure why."
                         + "\nIt is almost as if you are a puppet whose strings are being"
                         + "\npulled by the invisible hands of some unknown God..."
                         + "\nYou quickly dismiss that thought and return to a standing position.",
@@ -237,14 +237,14 @@ def createObject():
 
         #We will need a way of referring to the database
         queryResult = json.loads(query(describe_noun("room", 2)))
-        
+
         #prompt for name of object
         print("What do you want to create?")
         obj_name = raw_input().lower()
 
         #Not sure if this will even work -- No. No, it doesn't.
         #ob = new_noun_named(obj_name, "english")
-        
+
         #add attributes to object, if applicable
         print("Would you like to add an attribute to " + obj_name + "? (Y/N)")
         att_permission = raw_input().lower()
@@ -262,14 +262,14 @@ def createObject():
 
     #fork from type of node (noun, verb, etc) user wants -- Assume noun
     #fork("noun", obj_name, 1)
-            
+
     #"""
-            
+
     output = query(get_from_value("room", "named"))
     #print(output)
     out_id = json.loads(output)["reply"][0]["id"]
 
-            
+
     output = query(
         json.dumps({
         "type": "fork",
@@ -278,7 +278,7 @@ def createObject():
     #"""
 
     print(output)
-    
+
     #test new object
     #nd = get_node_by_name(obj_name)
     #inspect_object(nd)
@@ -296,8 +296,8 @@ def add_rel():
 
     print("Value: ")
     value = raw_input().lower()
-    
-    
+
+
     left = node.get_value("had_by")
     output = query(get_from_value(add_to, "named"))
     left_id = json.loads(output)["reply"][0]["id"]
@@ -311,7 +311,7 @@ def add_rel():
             "params":{"depth":"0"},
             "search":{"time":1,"weight": 100,"left-node": {"id":left_id},"right-node": {"id":right_id}}
             }))
-    
+
 
 #Pick up an object (remove from room add to inventory)
 def remove_obj():
@@ -321,11 +321,11 @@ def remove_obj():
 
     try:
         node = get_node_by_name(ob)
-            
+
     except:
         node = None
         #see if this is one of the pre-defined player commands
-            
+
     if node:
         #inspect the node to a depth of... (depth doesn't seem to be doing anything right now)
         #print(inspectObject(node,2))
@@ -343,11 +343,90 @@ def remove_obj():
                 "params":{"depth":"0"},
                 "search":{"time":1,"weight": 0,"left-node": {"id":had_id},"right-node": {"id":ob_id}}
                 }))
-        
+
         #node.set_value()
+
+
+#creates a node and gives it a "named" "spoon" property
+#returns the ID of the spoon
+def create_a_spoon():
+    spoon = new_noun()
+    add_property(spoon, "named", "spoon", english())
+    return spoon
+
+#returns the ID of the node that connotes the english language
+def english():
+    query_result = query(json.dumps({"type":"get",
+                                     "params": {"depth":-1},
+                                     "search":{"type":"noun",
+                                               "edges":[
+                                                        {"terminal":{"type":"relationship",
+                                                                     "edges":[
+                                                                              {"terminal":{"type":"type", "value":"named"}},
+                                                                              {"terminal":{"type":"value","value":"english"}}
+                                                                              ]}}]}}))
+
+    return json.loads(query_result)["reply"][0]["id"]
+
+#forks a new noun
+def new_noun():
+    return fork_core_node("noun")
+
+#add a property to a noun (property == type+value+target_noun)
+#from_id is your starting noun
+#type is the property's type (ie: named or has_a)
+#value is it's value (ie: frank or true)
+#noun_id is the noun it reguard. For words, it should be a language. See "english()" function
+def add_property(from_id, _type, value, noun_id):
+
+    relationship_id = fork_core_node("relationship")
+    value_id = fork_core_node("value", value)
+    type_id = fork_core_node("type", _type)
+
+
+    update_edge_between(relationship_id, value_id, "has_value")
+    update_edge_between(relationship_id, type_id, "has_type")
+
+    update_edge_between(relationship_id, from_id, "describes")
+    update_edge_between(relationship_id, noun_id, "reguarding")
+
+
+#Two ide's and an optional weight for extending edges. Still debugging this function
+def update_edge_between(left_id, right_id, _type, weight=100):
+    query_result = query(json.dumps({
+                                    "type": "update",
+                                    "params":{"depth":1},
+                                    "search":{
+                                              "weight":weight,
+                                              "time": 1,
+                                              "type":_type,
+                                              "left-node": { "id":left_id },
+                                              "right-node": {"id":right_id}}}))
+
+#fork's one of the "core" nodes. These nodes will (soon) allow me to reove opriori knowledge of the structure of the ontology
+#The type of the node to fork. Should be: "noun", "relationship", "value", "type", "constraint", etc (rest may not be implimented. not really sure...)
+#optional value for forked node
+def fork_core_node(_type, value=""):
+    # { "new-value":"VALUE OF FORKED NODE", "time":"FLOAT TIME OF CREATION", "target-node": { #GET QUERY THAT RETURNS EXACTLY ONE NOUN TYPE NODE } }
+    query_result = query(json.dumps({
+                                    "type": "fork",
+                                    "params":{"depth":1},
+                                    "search":{
+                                              "new-value":value,
+                                              "time": 1,
+                                              "target-node": {
+                                                              "type": _type,
+                                                              "value":"***core-node***"}}}))
+
+    return json.loads(query_result)["reply"][0]["id"]
+
+
+
 
 #Game Loop
 def testLoop():
+
+
     while(True):
         #create some space between this and last input/output
         print("\n"),
@@ -375,12 +454,12 @@ def testLoop():
             for word in shlex.split(action):
                 #User's query is the action
                 resultString = query(describe_noun(word, 1))
-                
+
 
                 #try to get the node
                 try:
                     node = get_known_node(word)
-                    
+
                 except:
                     node = None
                     #see if this is one of the pre-defined player commands
@@ -390,15 +469,15 @@ def testLoop():
                     except:
                         #feedback for bad input
                         print("You can't do that.")
-                    
+
                 if node:
                     #inspect the node to a depth of... (depth doesn't seem to be doing anything right now)
                     print(inspectObject(node,2))
-                    
+
 
 
 #GAME START
-#This code runs as soon as the game starts...    
+#This code runs as soon as the game starts...
 #Run the game!
 
 print("Creating Room...")

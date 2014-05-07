@@ -150,7 +150,6 @@ function update() {
 		.attr("class", "graph-label")
 
 		.text(function(d){
-      console.log(d.type + ": " + d.value);
       return d.value;})
 		.attr("dx", 0)
 		.attr("dy", 0);
@@ -239,7 +238,6 @@ function update() {
 			}
 
 			edge.terminal.edges.forEach(function(edge2){
-        console.log(edge.terminal.type);
 				add_edge(edge2, edge.terminal);
 			})
 
