@@ -39,19 +39,20 @@ class edge_search:
                         properties["weight-value"] = edge_obj.weights.get(properties.get("weight-time"))
                         return properties  #break on first match. We are counting up
 
-
         properties["type"] = "none"
         properties["weight-value"] = 0
         return properties
 
 
     def node_and_parents(self, node, graph, rest=[]):
-        node_and_parents = rest if rest != []  else [node]
+        np_list = [node] if rest == [] else rest
+
         for edge in graph.edges_iter([node]):
             edge_obj = graph[edge[0]][edge[1]]["edge"]
-            if edge_obj.type == "is_a":
-                node_and_parents.append(node_and_parents(edge[1], graph, node_and_parents))
-        return node_and_parents
+            if edge_obj.type == "is_a" and edge[0].value != "***core-node***": #simple way to keep if from flipping over the top.
+                np_list = np_list + (self.node_and_parents(edge[1], graph, np_list))
+
+        return np_list
 
 
     #Check if a value is valid. "Valid" means it matches, or wasn't specified

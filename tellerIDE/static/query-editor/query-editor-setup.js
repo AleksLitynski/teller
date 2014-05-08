@@ -2,10 +2,10 @@ state().loaded(function(){
 
 
 	//++ Setup
-
+  var default_tab = "\n".repeat(5) + '{"type":"get", "params": {"depth":1}, "search":{}}' + "\n".repeat(24);
 	var CodeArea = CodeMirror(document.querySelector(".query-editor-body"), {
 		mode: {name: "javascript", json: true},//{name: "application/json", json: true},
-		value:"\n".repeat(30),
+		value: default_tab,
         lineNumbers: true,
         theme: "xq-light"
     });
@@ -60,17 +60,17 @@ state().loaded(function(){
 				tab_name = window.prompt('Tab Name: ', "Tab " + ed().tabs().length() );
 			}
 			ed().tabs().get(index).name(tab_name);
-			ed().tabs().get(index).body( "\n".repeat(30) );
+			ed().tabs().get(index).body( default_tab );
 			ed().current_tab(index);
 		}
 
 		if(type == "remove"){
-			if( tic( index ).classList.contains("active-tab") 
+			if( tic( index ).classList.contains("active-tab")
 				&& tic( index ).parentNode.querySelectorAll("div").length > 2){
 		 		ed().current_tab(0);
 			}
 			close_tab( tic( index ) );
-			
+
 		}
 
 		return true;
@@ -82,7 +82,7 @@ state().loaded(function(){
 		set_tab_body( tic(current_tab), ed().tabs().get( ed().current_tab() ).body() );
 		return true;
 	})
-	
+
 	add_tab_event();
 
 
@@ -92,7 +92,7 @@ state().loaded(function(){
 		setTimeout(function(){
 			target_tab.parentNode.removeChild(target_tab);
 		},150);
-		
+
 		target_tab.style.animation =  "shrinkTab 0.15s";
 		target_tab.style.overflow = "hidden";
 	}
@@ -112,7 +112,7 @@ state().loaded(function(){
 
 		var new_tab_name = document.createElement("span");
 		new_tab_name.classList.add("query-editor-tab-name");
-		new_tab.appendChild(new_tab_name); 
+		new_tab.appendChild(new_tab_name);
 		new_tab.onclick = select_tab_event;
 
 		var new_tab_icon = document.createElement("img");
@@ -142,13 +142,13 @@ state().loaded(function(){
 	function tic(tab){
 		var tabs = document.querySelectorAll(".query-editor-tabs .query-editor-tab");
 		if(typeof tab == "number"){
-			return tabs[tab]; 
+			return tabs[tab];
 		}
 		for(var i = 0; i < tabs.length; i++){
 			if(tabs[i] == tab){
 				return i;
 			}
-		}	
+		}
 	}
 
 })

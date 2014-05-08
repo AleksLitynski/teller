@@ -17,6 +17,7 @@ if __name__ == '__main__':
     game_ontology = ontology.ontology()
     #game_ontology.override_with_sample()
     game_ontology.override_with_random_room()
+    #game_ontology.add_core_objects()
     print("starting TCP listener")
     server = socketserver.TCPServer(("localhost", 5005), TCPHandler)
     server.serve_forever()
