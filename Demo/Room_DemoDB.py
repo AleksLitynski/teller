@@ -115,7 +115,12 @@ def inspectObject(node, depth=0):
     if has_attr(node, "has_a"):
         s+= ". It has a " + node.get_value("has_a")
         #Todo: add to known
-
+        pl = get_node_by_name("player")
+        update_edge_between(node.get_value("id"), pl.get_value("id"), "knows_of", 100)
+        update_edge_between(pl.get_value("id"), node.get_value("id"), "knows_of", 100)
+        print(pl.get_value("knows_of"))
+        print(node.get_value("knows_of"))
+        
     if has_attr(node, "had_by"):
         s+= ". It is had by " + node.get_value("had_by")
         #Todo: add to known
@@ -231,7 +236,7 @@ def get_from_value(val, val_type):
 
 #=============queries end==========================
 
-#=============Ignore Me!! (for now)================
+#=============Old Object Creation==================
 """
 
 #function to allow users to create new objects from the console
@@ -329,7 +334,7 @@ def add_rel():
             }))
 
 """
-#=============Ignore Me!! end======================
+#=============Old Object Creation End================
 
 #Pick up an object (remove from room add to inventory)
 def remove_obj():
@@ -347,13 +352,15 @@ def remove_obj():
     if node:
         #inspect the node to a depth of... (depth doesn't seem to be doing anything right now) todo: talk
         #print(inspectObject(node,2))
-
-        had = node.get_value("had_by")
-        output = query(get_from_value(ob, "named"))
-        ob_id = json.loads(output)["reply"][0]["id"]
-
-        output = query(get_from_value(had, "named"))
-        had_id = json.loads(output)["reply"][0]["id"]
+        
+        #todo: get information relating to player node so we can get its id
+        rm = get_node_by_name("room")
+        pl = get_node_by_name("player")
+        
+        #set weight of has_value to 0
+        update_edge_between(node.get_value("id"), rm.get_value("id"), "has_value", 0)
+        #set weight of knows_of to 100
+        update_edge_between(node.get_value("id"), pl.get_value("id"), "knows_of", 100)
 
         query(
             json.dumps({
