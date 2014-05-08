@@ -432,14 +432,14 @@ def devCreateRandom(name, attDict=None, displayInfo=None):
 #returns the ID of the node that connotes the english language
 def english():
     query_result = query(json.dumps({"type":"get",
-                                     "params": {"depth":-1},
-                                     "search":{"type":"noun",
-                                               "edges":[
-                                                        {"terminal":{"type":"relationship",
-                                                                     "edges":[
-                                                                              {"terminal":{"type":"type", "value":"named"}},
-                                                                              {"terminal":{"type":"value","value":"english"}}
-                                                                              ]}}]}}))
+        "params": {"depth":-1},
+        "search":{"type":"noun",
+            "edges":[
+                {"terminal":{"type":"relationship",
+                    "edges":[
+                        {"terminal":{"type":"type", "value":"named"}},
+                        {"terminal":{"type":"value","value":"english"}}
+        ]}}]}}))
 
     return json.loads(query_result)["reply"][0]["id"]
 
