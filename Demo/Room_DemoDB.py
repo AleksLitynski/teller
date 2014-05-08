@@ -431,7 +431,8 @@ def devCreateRandom(name, attDict=None, displayInfo=None):
     
 #returns the ID of the node that connotes the english language
 def english():
-    query_result = query(json.dumps({"type":"get",
+    query_result = query(json.dumps({
+        "type":"get",
         "params": {"depth":-1},
         "search":{"type":"noun",
             "edges":[
@@ -469,14 +470,14 @@ def add_property(from_id, _type, value, noun_id):
 #Two ide's and an optional weight for extending edges. Still debugging this function
 def update_edge_between(left_id, right_id, _type, weight=100):
     query_result = query(json.dumps({
-                                    "type": "update",
-                                    "params":{"depth":1},
-                                    "search":{
-                                              "weight":weight,
-                                              "time": 1,
-                                              "type":_type,
-                                              "left-node": { "id":left_id },
-                                              "right-node": {"id":right_id}}}))
+        "type": "update",
+        "params":{"depth":1},
+        "search":{
+            "weight":weight,
+            "time": 1,
+            "type":_type,
+            "left-node": { "id":left_id },
+            "right-node": {"id":right_id}}}))
 
 #fork's one of the "core" nodes. These nodes will (soon) allow me to remove apriori knowledge of the structure of the ontology
 #The type of the node to fork. Should be: "noun", "relationship", "value", "type", "constraint", etc (rest may not be implemented. not really sure...)
@@ -484,14 +485,14 @@ def update_edge_between(left_id, right_id, _type, weight=100):
 def fork_core_node(_type, value=""):
     # { "new-value":"VALUE OF FORKED NODE", "time":"FLOAT TIME OF CREATION", "target-node": { #GET QUERY THAT RETURNS EXACTLY ONE NOUN TYPE NODE } }
     query_result = query(json.dumps({
-                                    "type": "fork",
-                                    "params":{"depth":1},
-                                    "search":{
-                                              "new-value":value,
-                                              "time": 1,
-                                              "target-node": {
-                                                              "type": _type,
-                                                              "value":"***core-node***"}}}))
+        "type": "fork",
+        "params":{"depth":1},
+        "search":{
+            "new-value":value,
+            "time": 1,
+            "target-node": {
+                "type": _type,
+                "value":"***core-node***"}}}))
 
     return json.loads(query_result)["reply"][0]["id"]
 
