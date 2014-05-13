@@ -380,10 +380,20 @@ def create_a_spoon():
     return spoon
 
 #creates a node with set parameters, takes a name, lists of attributes and values, and whether or not you want it to print
-def devCreateSet(name, attList=None, valList=None, displayInfo=None):
+def devCreateSet(name, attList=None, valList=None, displayInfo=None, known=None):
     #set up the name
     temp_noun = new_noun()
     add_property(temp_noun, "named", name, english())
+    
+    #Player knows about this
+    if known:
+         
+        pl = get_node_by_name("player")
+        add_property(pl.get_value("id"), "knows_of", name, english())
+        
+        #AttributeError: 'unicode' object has no attribute 'get_value'
+        update_edge_between(pl.get_value("id"), temp_noun, "knows_of", 100)
+        print(pl.get_value("knows_of"))
     
     #only print things if displayInfo is set to something
     if displayInfo:
@@ -406,14 +416,22 @@ def devCreateSet(name, attList=None, valList=None, displayInfo=None):
     return temp_noun
     
 #Name of value; dictionary of attributes (keys), each of which contains a list of potential values; and whether or not you want it to print
-def devCreateRandom(name, attDict=None, displayInfo=None):
+def devCreateRandom(name, attDict=None, displayInfo=None, known=None):
     
     temp_noun = new_noun()
     add_property(temp_noun, "named", name, english())
     
+    if known:
+        pl = get_node_by_name("player")
+        add_property(pl.get_value("id"), "knows_of", name, english())
+        
+        #AttributeError: 'unicode' object has no attribute 'get_value'
+        update_edge_between(pl.get_value("id"), temp_noun, "knows_of", 100)
+        print(pl.get_value("knows_of"))
+    
     if displayInfo:
         print(name)
-    
+        
     #set iterator to 0
     iterator = 0 
     #don't do this if the dictionary is empty
@@ -474,7 +492,7 @@ def add_property(from_id, _type, value, noun_id):
     update_edge_between(relationship_id, noun_id, "reguarding")
 
 
-#Two ide's and an optional weight for extending edges. Still debugging this function
+#Two ID's and an optional weight for extending edges. Still debugging this function
 def update_edge_between(left_id, right_id, _type, weight=100):
     query_result = query(json.dumps({
         "type": "update",
@@ -534,14 +552,14 @@ def testLoop():
         
         #Both devCreate methods are working so far. I'm not sure if they are saving the nodes to the database yet, though
         #Literally just making something to test devCreateSet
-        elif action == "dog":
-            corgi = devCreateSet("corgi", ['personality', 'fur', 'awake?'], ['energetic', 'chocolate', 'sleeping'], True)
+        elif action == "make dog":
+            corgi = devCreateSet("corgi", ['personality', 'fur', 'awake?'], ['energetic', 'chocolate', 'sleeping'], True, True)
             #print(describe_noun(corgi, 1))
         #Ditto with devCreateRandom
-        elif action == "cat":
+        elif action == "make cat":
             feline = devCreateRandom("cat", {'Name on collar':['Khoshekh', 'Heathcliff', 'Mr. Bigglesworth'], 
                                             'Mood':['disinterested', 'sleepy', 'hyperactive'],
-                                            'Fur':['black', 'orange', 'white', 'tan']}, True)
+                                            'Fur':['black', 'orange', 'white', 'tan']}, True, True)
             #print(describe_noun(feline, 1))
 
         else:

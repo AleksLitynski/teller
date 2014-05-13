@@ -107,12 +107,9 @@ class ontology:
         self.graph = pickle.load(open(file_name))
 
 
-
-
-
     #fills the graph with a simple sampling
     def override_with_sample(self):
-        #createes an ontology and adds some fakie nodes.
+        #creates an ontology and adds some fake nodes.
         self.graph = nx.Graph()
         english = self.add_node("noun", "")
         self.add_relationship(english, english, "named", "english")
@@ -121,10 +118,8 @@ class ontology:
         self.add_edge("knows_of", frank, greg, 1, 100)
 
 
-
-
     def add_core_objects(self):
-        #Once everything decends from one of these, I won't need the value-tagging to find the core objects, just find objects with no outbound is-a edges
+        #Once everything descends from one of these, I won't need the value-tagging to find the core objects, just find objects with no outbound is-a edges
         noun = self.add_node("noun", "***core-node***")
         relationship = self.add_node("relationship", "***core-node***")
         value = self.add_node("value", "***core-node***")
@@ -172,7 +167,6 @@ class ontology:
         table = self.new_noun_named("table", english)
         self.add_relationship(player, table, "knows_of", "table")
         room_str += "\n-- table"
-
 
         materials = ["plastic", "wood", "aluminum", "duct tape"] #make an attribute for each material
         mat = self.new_noun_named("material", english)
