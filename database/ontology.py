@@ -147,6 +147,10 @@ class ontology:
         self.add_edge("leads_to", verb, verb, 1, 100)
         self.add_edge("causes", verb, change, 1, 100)
 
+	english = self.fork(noun, "", 1)
+        self.add_relationship(english, english, "named", "english")
+
+
     def override_with_random_room(self):
         self.graph = nx.Graph()
         english = self.add_node("noun", "")

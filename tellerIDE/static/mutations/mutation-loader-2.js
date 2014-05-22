@@ -1,0 +1,132 @@
+state().loaded(function(){
+	
+	var english_id;
+	 
+
+	document.querySelector(".generate-node-query").onclick = function(e){
+		
+	    if(english_id = "not loaded"){
+		    get_named("english", function(id){
+                english_id = id;
+		        load_rest();
+            });
+	    } else {
+	       load_rest();
+	    }
+
+	    function load_rest(){
+
+		    var _type = document.querySelector(".noun-type-select").value;
+		    var _name = document.querySelector(".node-name").value;
+		
+            
+            make_node("noun", "", function(noun_id){
+                make_node("relationship", "", function(relationship_id){
+                    get_node_named(function(named_id){
+                        make_node("value", _name, function(val_id){
+               
+                            add_connection(relationship_id, noun_id, "describes");
+                            add_connection(relationship_id, english_id, "regarding");
+                            add_connection(relationship_id, val_id, "has_value");
+                            add_connection(relationship_id, named_id, "has_type");
+
+
+                        })
+                    })
+                })
+            })
+            
+	    };
+    };
+
+    function get_node_named(then){
+        query(
+		    {"type": "get",
+		    "params":{"depth":1},
+		    "search":{"value": "named"}},
+       function(res){
+            then(JSON.parse(res).reply[0].id );
+        });
+    };
+
+    function make_node(_type, _value, then){
+        query(
+		    {"type": "fork",
+		    "params":{"depth":1},
+		    "search":{
+		          "new-value":_value,
+		          "time": 1,
+		          "target-node": {
+		                  "type": _type,
+		                  "value":"***core-node***"}}},
+       function(res){
+            then(JSON.parse(res).reply[0].id);
+        });
+    };
+
+    function add_connection(_from, _to, _type){
+        query( 
+		    {"type": "update",
+                "params":{"depth":1},
+                "search":{
+                  "weight":100,
+                  "weight-time": 1,
+                  "type":_type,
+                  "left-node": { "id":_from },
+                  "right-node": {"id":_to   }}}
+		, function(res){
+		    var new_node_id = JSON.parse(res).reply[0].id;
+
+		    
+		});
+    }
+
+    function get_named(name, then){
+        query(  
+			{"type":"get", "params": {"depth":1}, "search":{
+
+			  "type":"noun",
+			  "edges":[
+			    {
+			      "terminal":{
+				"type":"relationship",
+				"edges":[
+		
+			    		{"terminal":{"type":"value", "value":name}},
+			      		{"terminal":{"type":"type",  "value":"named"}}
+				]
+			      }
+			    }
+			    
+			   ]
+			}}
+		, function(res){
+		    
+		    then( JSON.parse(res).reply[0].id );
+
+        })
+    }
+
+    function query(q, then){
+        state().history().queries(function(type, index){
+            if(type == "general"){return true;}
+            state().history().queries().get(index).result(function(res){
+		then(res);
+	    });
+
+        });
+        s_q(JSON.stringify(q));
+    };
+
+	document.querySelector(".generate-relationship-query").onclick = function(e){
+		console.log("oh baby");
+	};
+
+
+	document.querySelector(".reload-relationship-tool").onclick = function(e){
+
+	};
+
+
+
+});

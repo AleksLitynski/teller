@@ -1,3 +1,5 @@
+var s_q;
+
 state().loaded(function(){
 
 
@@ -16,6 +18,7 @@ state().loaded(function(){
 			dataType: "json"
 		})
 	}
+	s_q = send_query;
 
 	function receive_query(query, result){
 		state().history().queries().insert( state().history().queries().length() );

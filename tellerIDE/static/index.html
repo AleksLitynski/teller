@@ -12,7 +12,7 @@
 		<link rel="stylesheet" type="text/css" 	href="general/reset.css"></link>
 		<link rel="stylesheet" type="text/css" 	href="general/inputs/buttons.css"></link>
 		<link rel="stylesheet" type="text/css" 	href="general/inputs/text-box.css"></link>
-		<script type="text/javascript" 			src="general/HelperFunctions.js"></script>
+		<script type="text/javascript" 		    src="general/HelperFunctions.js"></script>
 
 		<script type="text/javascript" 			src="libraries/stately-min.js"></script>
 		<script type="text/javascript" 			src="general/utilities.js"></script>
@@ -35,12 +35,12 @@
 
 		<!--Mutation Visualizer-->
 		<link rel="stylesheet" type="text/css" 	href="mutations/mutation-list.css"></link>
-		<script type="text/javascript"			src="mutations/mutation-loader.js"></script>
+		<script type="text/javascript"			src="mutations/mutation-loader-2.js"></script>
 
 		<!--Visualizer-->
 		<link rel="stylesheet" type="text/css"	href="visualizers/visualizer-controls.css"></link>
 		<link rel="stylesheet" type="text/css"	href="visualizers/visualizer-bodies.css"></link>
-		<script type="text/javascript" 		src="visualizers/visualizer-controls.js" ></script>
+		<script type="text/javascript" 	    	src="visualizers/visualizer-controls.js" ></script>
 
 		<!--History Manager-->
 		<script type="text/javascript" 			src="history/query-sender.js"></script>
@@ -109,16 +109,48 @@
 			<div class="handle hor-handle"></div>
 			<div class="frame bottom-row">
 
-				<div class="mutation-column">
+				<!--div class="mutation-column">
 					<span class="mutation-header">Name</span>
 					<span class="mutation-header">Value</span>
 					<span class="mutation-header">Pattern</span>
 					<span class="mutation-header">Description</span>
 					<span class="mutation-header">Makes new Tab?</span>
 
-				</div>
+				</div-->
 
-				<div class="mutations"></div>
+				<div class="mutations">
+				
+					<div class="mutation">
+						These run a series of queries
+					</div>
+
+					<div class="mutation">
+						Make a node named:
+						<select class="noun-type-select">
+							<option value="noun">Noun</option>
+							<option value="type">Type</option>
+							<option value="value">Value</option>
+							<option value="relationship">Relationship</option>
+						</select>
+						<input type="text" class="node-name" placeholder="English Name"></input>
+                        <button class="generate-node-query">Run Query Seq.</button>
+					</div>
+					
+					<div class="mutation">
+                        <button><img class="reload-relationship-tool" src="general/icons/reload.svg"></img></button>
+						Make a relationship:
+						From: <select class="mutation-from">
+						</select>
+						Type: <select class="mutation-type">
+						</select>
+						Value: <select class="mutation-value">
+						</select>
+						To: <select class="mutation-to">
+						</select>
+                        <button class="generate-relationship-query">Run Query Seq.</button>
+
+					</div>
+				</div>
 
 			</div>
 		</div>
