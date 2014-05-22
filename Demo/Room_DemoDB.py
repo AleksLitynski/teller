@@ -4,21 +4,48 @@ import random
 import shlex
 import socket
 import re
-#importing our stuff
 import json
 from RefCode.Query_Explorer import *
-#Nodes have: ID, type, value, & List of Edges
-#
+
+
+import subprocess
+import threading
+import time
+
 
 #====database talk==============
 #This is how we contact the database
-def query(query_string):
+def query(query_obj):
+    query_string = query_obj
+    if type(query_obj) is not str:
+        query_string = json.dumps(query_obj)
+
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(('127.0.0.1', 5005))
+    try:
+        s.connect(('127.0.0.1', 5005))
+    except:
+        t = threading.Thread(target=lambda: subprocess.call(["python", "../../database/main.py"]))
+        t.start()
+        has_started = False
+        while not has_started:
+            try:
+                s.connect(('127.0.0.1', 5005))
+                time.sleep(1)
+                has_started = True
+            except:
+                pass
+
     s.send(query_string)            #This fails on a bad query?
-    query_response = s.recv(10000) #our replies are VERY long. don't recurse into nodes that already exist?
+    query_response = s.recv(10000000) #our replies are VERY long. don't recurse into nodes that already exist?
     s.close()
-    return query_response
+    #print(query_response)
+
+    with open('resdump.json', 'w') as f:
+        f.write(query_response)
+    f.closed
+
+    return json.loads(query_response)
 
 
 #Give node a name and a depth; 2 is default, and higher is said to cause issues
@@ -39,9 +66,10 @@ def get_node(node_id, depth=2):
 #uses queries to get the node based on its name
 def get_node_by_name(name):
     #get the JSON for the node
-    query_string = describe_noun(name, 2)
+    query_string = describe_noun(name, 1)
     #ask the database using it
-    noun = get_noun(json.loads(query(query_string)))
+    q = query(query_string)
+    noun = get_noun(q)
 
     return noun
 
@@ -49,6 +77,7 @@ def get_node_by_name(name):
 #on whether the player would know it exists.
 def get_known_node(name):
     noun = get_node_by_name(name)
+    return noun
     if noun:
         if len(noun.get_all_type("knows_of"))>0:
             return noun
@@ -333,9 +362,6 @@ def add_rel():
             "search":{"time":1,"weight": 100,"left-node": {"id":left_id},"right-node": {"id":right_id}}
             }))
 
-"""
-#=============Old Object Creation End================
-
 #Pick up an object (remove from room add to inventory)
 def remove_obj():
 
@@ -372,13 +398,108 @@ def remove_obj():
         #node.set_value()
 
 
-#creates a node and gives it a "named" "spoon" property
-#returns the ID of the spoon
-def create_a_spoon():
-    spoon = new_noun()
-    add_property(spoon, "named", "spoon", english())
-    return spoon
+"""
+#=============Old Object Creation End================
 
+
+#returns the ID of the node that connotes the english language
+def english():
+    query_result = query(json.dumps({
+        "type":"get",
+        "params": {"depth":-1},
+        "search":{"type":"noun",
+            "edges":[
+                {"terminal":{"type":"relationship",
+                    "edges":[
+                        {"terminal":{"type":"type", "value":"named"}},
+                        {"terminal":{"type":"value","value":"english"}}
+        ]}}]}}))
+
+    return query_result["reply"][0]["id"]
+
+
+
+class node_named:
+    def __init__(self, named, english):
+        self.name = named
+        self.english = english
+
+    def named(self, name):
+        it = fork_core_node("noun")
+        add_property(it, self.name, name, self.english)
+        return it
+
+    def from_named(self, name, parent):
+        it = fork_node(parent)
+        add_property(it, self.name, name, self.english)
+        return it
+
+def is_string_id(string):
+    return len(string) == 36
+
+def new_noun():
+	return fork_core_node("noun")
+
+def fork_core_node(_type, value=""):
+    query_result = query({
+                                    "type": "fork",
+                                    "params":{"depth":1},
+                                    "search":{
+                                              "new-value":value,
+                                              "time": 1,
+                                              "target-node": {
+                                                              "type": _type,
+                                                              "value":"***core-node***"}}})
+
+    return query_result["reply"][0]["id"]
+
+def fork_node(_id, value=""):
+    query_result = query({
+                                    "type": "fork",
+                                    "params":{"depth":1},
+                                    "search":{
+                                              "new-value":value,
+                                              "time": 1,
+                                              "target-node": {"id":_id}}})
+
+    return query_result["reply"][0]["id"]
+
+def add_property(from_id, _type, value, noun_id):
+
+    relationship_id = fork_core_node("relationship")
+
+    type_id = _type
+    if not is_string_id(_type):
+        type_id = fork_core_node("type", _type)
+    value_id = value
+    if not is_string_id(value):
+        value_id = fork_core_node("value", value)
+
+
+    update_edge_between(relationship_id, value_id, "has_value")
+    update_edge_between(relationship_id, type_id, "has_type")
+
+    update_edge_between(relationship_id, from_id, "describes")
+    update_edge_between(relationship_id, noun_id, "reguarding")
+
+
+
+#Two ide's and an optional weight for extending edges. Still debugging this function
+def update_edge_between(left_id, right_id, _type, weight=100):
+    query_result = query({
+                                    "type": "update",
+                                    "params":{"depth":1},
+                                    "search":{
+                                              "weight":weight,
+                                              "weight-time": 1,
+                                              "type":_type,
+                                              "left-node": { "id":left_id },
+                                              "right-node": {"id":right_id}}} )
+    print query_result
+
+
+
+#-==================================================================================================================
 #creates a node with set parameters, takes a name, lists of attributes and values, and whether or not you want it to print
 def devCreateSet(name, attList=None, valList=None, displayInfo=None):
     #set up the name
@@ -410,6 +531,7 @@ def devCreateRandom(name, attDict=None, displayInfo=None):
     
     temp_noun = new_noun()
     add_property(temp_noun, "named", name, english())
+    print(temp_noun)
     
     if displayInfo:
         print(name)
@@ -436,73 +558,6 @@ def devCreateRandom(name, attDict=None, displayInfo=None):
     return temp_noun
 
     
-#returns the ID of the node that connotes the english language
-def english():
-    query_result = query(json.dumps({
-        "type":"get",
-        "params": {"depth":-1},
-        "search":{"type":"noun",
-            "edges":[
-                {"terminal":{"type":"relationship",
-                    "edges":[
-                        {"terminal":{"type":"type", "value":"named"}},
-                        {"terminal":{"type":"value","value":"english"}}
-        ]}}]}}))
-
-    return json.loads(query_result)["reply"][0]["id"]
-
-#forks a new noun
-def new_noun():
-    return fork_core_node("noun")
-
-#add a property to a noun (property == type+value+target_noun)
-#from_id is your starting noun
-#type is the property's type (ie: named or has_a)
-#value is it's value (ie: frank or true)
-#noun_id is the noun it reguard. For words, it should be a language. See "english()" function
-def add_property(from_id, _type, value, noun_id):
-
-    relationship_id = fork_core_node("relationship")
-    value_id = fork_core_node("value", value)
-    type_id = fork_core_node("type", _type)
-
-
-    update_edge_between(relationship_id, value_id, "has_value")
-    update_edge_between(relationship_id, type_id, "has_type")
-
-    update_edge_between(relationship_id, from_id, "describes")
-    update_edge_between(relationship_id, noun_id, "reguarding")
-
-
-#Two ide's and an optional weight for extending edges. Still debugging this function
-def update_edge_between(left_id, right_id, _type, weight=100):
-    query_result = query(json.dumps({
-        "type": "update",
-        "params":{"depth":1},
-        "search":{
-            "weight":weight,
-            "time": 1,
-            "type":_type,
-            "left-node": { "id":left_id },
-            "right-node": {"id":right_id}}}))
-
-#fork's one of the "core" nodes. These nodes will (soon) allow me to remove apriori knowledge of the structure of the ontology
-#The type of the node to fork. Should be: "noun", "relationship", "value", "type", "constraint", etc (rest may not be implemented. not really sure...)
-#optional value for forked node
-def fork_core_node(_type, value=""):
-    # { "new-value":"VALUE OF FORKED NODE", "time":"FLOAT TIME OF CREATION", "target-node": { #GET QUERY THAT RETURNS EXACTLY ONE NOUN TYPE NODE } }
-    query_result = query(json.dumps({
-        "type": "fork",
-        "params":{"depth":1},
-        "search":{
-            "new-value":value,
-            "time": 1,
-            "target-node": {
-                "type": _type,
-                "value":"***core-node***"}}}))
-
-    return json.loads(query_result)["reply"][0]["id"]
-
 
 #Game Loop
 def testLoop():
@@ -551,9 +606,9 @@ def testLoop():
 
 
                 #try to get the node
-                try:
-                    node = get_known_node(word)
-
+                #try:
+                node = get_known_node(word)
+                '''
                 except:
                     node = None
                     #see if this is one of the pre-defined player commands
@@ -563,7 +618,7 @@ def testLoop():
                     except:
                         #feedback for bad input
                         print("You can't do that.")
-
+                '''
                 if node:
                     #inspect the node to a depth of... (depth doesn't seem to be doing anything right now) todo: talk
                     print(inspectObject(node,2))
@@ -575,7 +630,7 @@ def testLoop():
 
 print("You are in a room.")
 
-queryResult = json.loads(query(describe_noun("room", 2)))   #the 2 indicates we go down to a depth of 2
+queryResult = query(describe_noun("room", 2))   #the 2 indicates we go down to a depth of 2
 
 #this is the room
 #rm = get_node_by_name("room")
@@ -589,7 +644,6 @@ rmcts = {"id" : 0, "rel_id" : 1, "value" : 2, "type" : 3, "edges" : 4}
 bird = devCreateRandom("parrot", {'Answers to':['Paulie', 'Iago', 'Chirpy', 'Clarice'], 
                                             'Mood':['watchful', 'sleepy', 'talkative', 'hungry'],
                                             'Feathers':['red', 'green', 'blue', 'purple']})
-
 
 #wait for user input
 testLoop()

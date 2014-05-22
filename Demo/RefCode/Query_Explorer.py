@@ -1,6 +1,7 @@
 __author__ = 'Aleksander'
 import json
 from helpers import *
+from database_queries import query
 
 
 #Explores queries about nouns
@@ -13,36 +14,58 @@ class Query_Explorer:
 
 
 
-def get_noun(query):
+def get_noun(query_):
+    print (query_)
     #we're looking for JSON, but if it isn't, we can fix that
-    if type(query) is str:
-        query = json.loads(query)
+    if type(query_) is str:
+        query_ = json.loads(query_)
 
-    first_result = query.get("reply")[0]
+	#just assume and take the first object
+    first_result = query_.get("reply")[0]
 
+	#turn it into a noun object
     new_noun = noun(first_result.get("id"))
 
+	#add a relationship to the object for each of its edges
+    rel_ids = []
     for edge in first_result.get("edges"):
-        pipe("terminal",
-             [edge.get,
-              get_relationship,
-              new_noun.relationships.append
-            ])
+        if edge.get("terminal").get("type") == "relationship":
+            rel_ids = rel_ids + [edge.get("terminal").get("id")]
+    for rel in rel_ids:
+        rel_props = query({
+                "type":"get",
+                "params":{"depth":1},
+                "search":{"id":rel}
+                })
+        _type = ""
+        value = ""
+        describes = ""
+        regarding = ""
+        for edge in rel_props.get("reply")[0].get("edges"):
+            if edge.get("type") == "has_type": _type = edge.get("terminal").get("value")
+            if edge.get("type") == "has_value": value = edge.get("terminal").get("value")
+            if edge.get("type") == "describes": describes = edge.get("terminal").get("id")
+            if edge.get("type") == "reguarding": regarding = edge.get("terminal").get("id")
+        
+        new_noun.relationships.append(
+                 relationship(_type, describes, value, regarding) )
+
 
 
     return new_noun
 
-
-
+#todo deprecated?
 def get_relationship(query):
-    type = get_edge_named(query.get("edges"), "has_type").get("value")
+    qe = query.get("edges")
+    gen = get_edge_named(qe, "has_type")
+    type_ = gen.get("value")
     describes = query.get("edges")[0]["type"]
 
     value = get_edge_named(query.get("edges"), "has_value").get("value")
 
     target = get_edge_named(query.get("edges"), "regarding").get("id")
 
-    return relationship(type, describes, value, target)
+    return relationship(type_, describes, value, target)
 
 
 

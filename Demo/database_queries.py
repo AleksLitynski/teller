@@ -6,8 +6,6 @@ import time
 
 import json
 
-def is_string_id(string):
-    return len(string) == 36
 
 
 class node_named:
@@ -25,17 +23,39 @@ class node_named:
         add_property(it, self.name, name, self.english)
         return it
 
+#returns the ID of the node that connotes the english language
+def english():
+    query_result = query(json.dumps({
+        "type":"get",
+        "params": {"depth":-1},
+        "search":{"type":"noun",
+            "edges":[
+                {"terminal":{"type":"relationship",
+                    "edges":[
+                        {"terminal":{"type":"type", "value":"named"}},
+                        {"terminal":{"type":"value","value":"english"}}
+        ]}}]}}))
+
+    return json.loads(query_result)["reply"][0]["id"]
+
+
+
+def is_string_id(string):
+    return len(string) == 36
+
+def new_noun():
+	return fork_core_node("noun")
 
 def fork_core_node(_type, value=""):
     query_result = query({
-                                    "type": "fork",
-                                    "params":{"depth":1},
-                                    "search":{
-                                              "new-value":value,
-                                              "time": 1,
-                                              "target-node": {
-                                                              "type": _type,
-                                                              "value":"***core-node***"}}})
+		"type": "fork",
+		"params":{"depth":1},
+		"search":{
+			"new-value":value,
+			"time": 1,
+			"target-node": {
+				"type": _type,
+				"value":"***core-node***"}}})
 
     return query_result["reply"][0]["id"]
 
@@ -81,7 +101,7 @@ def update_edge_between(left_id, right_id, _type, weight=100):
                                               "type":_type,
                                               "left-node": { "id":left_id },
                                               "right-node": {"id":right_id}}} )
-    print query_result
+    #print query_result
 
 def query(query_obj):
     query_string = query_obj
@@ -105,7 +125,7 @@ def query(query_obj):
                 pass
 
     s.send(query_string)            #This fails on a bad query?
-    query_response = s.recv(10000) #our replies are VERY long. don't recurse into nodes that already exist?
+    query_response = s.recv(10000000) #our replies are VERY long. don't recurse into nodes that already exist?
     s.close()
 
 
