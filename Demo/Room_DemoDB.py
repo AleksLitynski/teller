@@ -501,10 +501,20 @@ def update_edge_between(left_id, right_id, _type, weight=100):
 
 #-==================================================================================================================
 #creates a node with set parameters, takes a name, lists of attributes and values, and whether or not you want it to print
-def devCreateSet(name, attList=None, valList=None, displayInfo=None):
+def devCreateSet(name, attList=None, valList=None, displayInfo=None, known=None):
     #set up the name
     temp_noun = new_noun()
     add_property(temp_noun, "named", name, english())
+    
+    #Player knows about this
+    if known:
+         
+        pl = get_node_by_name("player")
+        add_property(pl.get_value("id"), "knows_of", name, english())
+        
+        #AttributeError: 'unicode' object has no attribute 'get_value'
+        update_edge_between(pl.get_value("id"), temp_noun, "knows_of", 100)
+        print(pl.get_value("knows_of"))
     
     #only print things if displayInfo is set to something
     if displayInfo:
@@ -527,15 +537,23 @@ def devCreateSet(name, attList=None, valList=None, displayInfo=None):
     return temp_noun
     
 #Name of value; dictionary of attributes (keys), each of which contains a list of potential values; and whether or not you want it to print
-def devCreateRandom(name, attDict=None, displayInfo=None):
+def devCreateRandom(name, attDict=None, displayInfo=None, known=None):
     
     temp_noun = new_noun()
     add_property(temp_noun, "named", name, english())
     print(temp_noun)
     
+    if known:
+        pl = get_node_by_name("player")
+        add_property(pl.get_value("id"), "knows_of", name, english())
+        
+        #AttributeError: 'unicode' object has no attribute 'get_value'
+        update_edge_between(pl.get_value("id"), temp_noun, "knows_of", 100)
+        print(pl.get_value("knows_of"))
+    
     if displayInfo:
         print(name)
-    
+        
     #set iterator to 0
     iterator = 0 
     #don't do this if the dictionary is empty
@@ -558,6 +576,73 @@ def devCreateRandom(name, attDict=None, displayInfo=None):
     return temp_noun
 
     
+#returns the ID of the node that connotes the english language
+def english():
+    query_result = query(json.dumps({
+        "type":"get",
+        "params": {"depth":-1},
+        "search":{"type":"noun",
+            "edges":[
+                {"terminal":{"type":"relationship",
+                    "edges":[
+                        {"terminal":{"type":"type", "value":"named"}},
+                        {"terminal":{"type":"value","value":"english"}}
+        ]}}]}}))
+
+    return json.loads(query_result)["reply"][0]["id"]
+
+#forks a new noun
+def new_noun():
+    return fork_core_node("noun")
+
+#add a property to a noun (property == type+value+target_noun)
+#from_id is your starting noun
+#type is the property's type (ie: named or has_a)
+#value is it's value (ie: frank or true)
+#noun_id is the noun it reguard. For words, it should be a language. See "english()" function
+def add_property(from_id, _type, value, noun_id):
+
+    relationship_id = fork_core_node("relationship")
+    value_id = fork_core_node("value", value)
+    type_id = fork_core_node("type", _type)
+
+
+    update_edge_between(relationship_id, value_id, "has_value")
+    update_edge_between(relationship_id, type_id, "has_type")
+
+    update_edge_between(relationship_id, from_id, "describes")
+    update_edge_between(relationship_id, noun_id, "reguarding")
+
+
+#Two ID's and an optional weight for extending edges. Still debugging this function
+def update_edge_between(left_id, right_id, _type, weight=100):
+    query_result = query(json.dumps({
+        "type": "update",
+        "params":{"depth":1},
+        "search":{
+            "weight":weight,
+            "time": 1,
+            "type":_type,
+            "left-node": { "id":left_id },
+            "right-node": {"id":right_id}}}))
+
+#fork's one of the "core" nodes. These nodes will (soon) allow me to remove apriori knowledge of the structure of the ontology
+#The type of the node to fork. Should be: "noun", "relationship", "value", "type", "constraint", etc (rest may not be implemented. not really sure...)
+#optional value for forked node
+def fork_core_node(_type, value=""):
+    # { "new-value":"VALUE OF FORKED NODE", "time":"FLOAT TIME OF CREATION", "target-node": { #GET QUERY THAT RETURNS EXACTLY ONE NOUN TYPE NODE } }
+    query_result = query(json.dumps({
+        "type": "fork",
+        "params":{"depth":1},
+        "search":{
+            "new-value":value,
+            "time": 1,
+            "target-node": {
+                "type": _type,
+                "value":"***core-node***"}}}))
+
+    return json.loads(query_result)["reply"][0]["id"]
+
 
 #Game Loop
 def testLoop():
@@ -589,14 +674,14 @@ def testLoop():
         
         #Both devCreate methods are working so far. I'm not sure if they are saving the nodes to the database yet, though
         #Literally just making something to test devCreateSet
-        elif action == "dog":
-            corgi = devCreateSet("corgi", ['personality', 'fur', 'awake?'], ['energetic', 'chocolate', 'sleeping'], True)
+        elif action == "make dog":
+            corgi = devCreateSet("corgi", ['personality', 'fur', 'awake?'], ['energetic', 'chocolate', 'sleeping'], True, True)
             #print(describe_noun(corgi, 1))
         #Ditto with devCreateRandom
-        elif action == "cat":
+        elif action == "make cat":
             feline = devCreateRandom("cat", {'Name on collar':['Khoshekh', 'Heathcliff', 'Mr. Bigglesworth'], 
                                             'Mood':['disinterested', 'sleepy', 'hyperactive'],
-                                            'Fur':['black', 'orange', 'white', 'tan']}, True)
+                                            'Fur':['black', 'orange', 'white', 'tan']}, True, True)
             #print(describe_noun(feline, 1))
 
         else:

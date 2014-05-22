@@ -35,7 +35,7 @@ function mouseovernode(a){
 	})
 
 	a.active = true;
-	neighbors2(a).forEach(function(n){
+	neighbors(a).forEach(function(n){
 		n.active = true;
 	})
 
@@ -125,7 +125,9 @@ function update() {
 		.call(graph.drag);
 	node.call(function(n){
 		n.attr("fill", function(d){
+
 			if(d.active == false){return "transparent";}
+      if(d.value == "***core-node***"){return "black";}
 
 			if(d.type == "relationship"){ return "orange";}
 			if(d.type == "noun"){ return "green";}
@@ -135,6 +137,7 @@ function update() {
 		.attr("r", function(d){
 
 			if(d.active == false){return 1;}
+      if(d.value == "***core-node***"){return 3;}
 
 			if(d.type == "relationship"){ return 4;}
 			if(d.type == "noun"){ return 7;}
@@ -150,7 +153,8 @@ function update() {
 		.attr("class", "graph-label")
 
 		.text(function(d){
-      return d.value;})
+      if(d.value != "***core-node***"){
+        return d.value;}})
 		.attr("dx", 0)
 		.attr("dy", 0);
 	label.call(function(l){

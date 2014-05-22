@@ -2,7 +2,7 @@ state().loaded(function(){
 
 
 	//++ Setup
-  var default_tab = "\n".repeat(5) + '{"type":"get", "params": {"depth":1}, "search":{}}' + "\n".repeat(24);
+  var default_tab = "\n".repeat(5) + 'https://github.com/tavoe/teller/wiki/4-core-queries' + "\n".repeat(5) + '{"type":"get", "params": {"depth":1}, "search":{}}' + "\n".repeat(10);
 	var CodeArea = CodeMirror(document.querySelector(".query-editor-body"), {
 		mode: {name: "javascript", json: true},//{name: "application/json", json: true},
 		value: default_tab,

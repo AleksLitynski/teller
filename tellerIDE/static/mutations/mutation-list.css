@@ -1,7 +1,7 @@
 .mutations{
 	width:100%;
 	overflow-y:scroll;
-	height: calc(100% - 35px);
+	height: calc(100%);
 
 	display:block;
 
@@ -9,13 +9,14 @@
 
 .mutation{
 	width:calc(100% - 25px);
-	height:100px;
+	height:auto;
 
 	margin:10px;
 
 	border:1px solid grey;
 	padding-bottom:10px;
 	padding-top:10px;
+	padding-left:10px;
 	background-color:white;
 	border-radius:2px;
 }
@@ -85,4 +86,9 @@
 
 	font-family: "SourceCodePro Light";
 	font-size: 16.5px;
+}
+
+.reload-relationship-tool{
+	width:10px;
+	height:20px;
 }

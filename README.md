@@ -3,7 +3,7 @@ teller
 
 A game engine dedicated to making generative content easier to make.
 
-
+[![Gitter chat](https://badges.gitter.im/tavoe/teller.png)](https://gitter.im/tavoe/teller) <~~ Chat channel
 
 How to run
 ----------
