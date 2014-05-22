@@ -6,7 +6,7 @@ import socket
 import re
 import json
 from RefCode.Query_Explorer import *
-
+from roombuilder.helper import *
 
 import subprocess
 import threading
@@ -14,38 +14,7 @@ import time
 
 
 #====database talk==============
-#This is how we contact the database
-def query(query_obj):
-    query_string = query_obj
-    if type(query_obj) is not str:
-        query_string = json.dumps(query_obj)
-
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        s.connect(('127.0.0.1', 5005))
-    except:
-        t = threading.Thread(target=lambda: subprocess.call(["python", "../../database/main.py"]))
-        t.start()
-        has_started = False
-        while not has_started:
-            try:
-                s.connect(('127.0.0.1', 5005))
-                time.sleep(1)
-                has_started = True
-            except:
-                pass
-
-    s.send(query_string)            #This fails on a bad query?
-    query_response = s.recv(10000000) #our replies are VERY long. don't recurse into nodes that already exist?
-    s.close()
-    #print(query_response)
-
-    with open('resdump.json', 'w') as f:
-        f.write(query_response)
-    f.closed
-
-    return json.loads(query_response)
+#query() moved to helper
 
 
 #Give node a name and a depth; 2 is default, and higher is said to cause issues
@@ -419,84 +388,8 @@ def english():
 
 
 
-class node_named:
-    def __init__(self, named, english):
-        self.name = named
-        self.english = english
-
-    def named(self, name):
-        it = fork_core_node("noun")
-        add_property(it, self.name, name, self.english)
-        return it
-
-    def from_named(self, name, parent):
-        it = fork_node(parent)
-        add_property(it, self.name, name, self.english)
-        return it
-
-def is_string_id(string):
-    return len(string) == 36
-
 def new_noun():
 	return fork_core_node("noun")
-
-def fork_core_node(_type, value=""):
-    query_result = query({
-                                    "type": "fork",
-                                    "params":{"depth":1},
-                                    "search":{
-                                              "new-value":value,
-                                              "time": 1,
-                                              "target-node": {
-                                                              "type": _type,
-                                                              "value":"***core-node***"}}})
-
-    return query_result["reply"][0]["id"]
-
-def fork_node(_id, value=""):
-    query_result = query({
-                                    "type": "fork",
-                                    "params":{"depth":1},
-                                    "search":{
-                                              "new-value":value,
-                                              "time": 1,
-                                              "target-node": {"id":_id}}})
-
-    return query_result["reply"][0]["id"]
-
-def add_property(from_id, _type, value, noun_id):
-
-    relationship_id = fork_core_node("relationship")
-
-    type_id = _type
-    if not is_string_id(_type):
-        type_id = fork_core_node("type", _type)
-    value_id = value
-    if not is_string_id(value):
-        value_id = fork_core_node("value", value)
-
-
-    update_edge_between(relationship_id, value_id, "has_value")
-    update_edge_between(relationship_id, type_id, "has_type")
-
-    update_edge_between(relationship_id, from_id, "describes")
-    update_edge_between(relationship_id, noun_id, "reguarding")
-
-
-
-#Two ide's and an optional weight for extending edges. Still debugging this function
-def update_edge_between(left_id, right_id, _type, weight=100):
-    query_result = query({
-                                    "type": "update",
-                                    "params":{"depth":1},
-                                    "search":{
-                                              "weight":weight,
-                                              "weight-time": 1,
-                                              "type":_type,
-                                              "left-node": { "id":left_id },
-                                              "right-node": {"id":right_id}}} )
-    print query_result
-
 
 
 #-==================================================================================================================
@@ -578,7 +471,7 @@ def devCreateRandom(name, attDict=None, displayInfo=None, known=None):
     
 #returns the ID of the node that connotes the english language
 def english():
-    query_result = query(json.dumps({
+    query_result = query({
         "type":"get",
         "params": {"depth":-1},
         "search":{"type":"noun",
@@ -587,9 +480,9 @@ def english():
                     "edges":[
                         {"terminal":{"type":"type", "value":"named"}},
                         {"terminal":{"type":"value","value":"english"}}
-        ]}}]}}))
+        ]}}]}})
 
-    return json.loads(query_result)["reply"][0]["id"]
+    return query_result["reply"][0]["id"]
 
 #forks a new noun
 def new_noun():
@@ -625,23 +518,6 @@ def update_edge_between(left_id, right_id, _type, weight=100):
             "type":_type,
             "left-node": { "id":left_id },
             "right-node": {"id":right_id}}}))
-
-#fork's one of the "core" nodes. These nodes will (soon) allow me to remove apriori knowledge of the structure of the ontology
-#The type of the node to fork. Should be: "noun", "relationship", "value", "type", "constraint", etc (rest may not be implemented. not really sure...)
-#optional value for forked node
-def fork_core_node(_type, value=""):
-    # { "new-value":"VALUE OF FORKED NODE", "time":"FLOAT TIME OF CREATION", "target-node": { #GET QUERY THAT RETURNS EXACTLY ONE NOUN TYPE NODE } }
-    query_result = query(json.dumps({
-        "type": "fork",
-        "params":{"depth":1},
-        "search":{
-            "new-value":value,
-            "time": 1,
-            "target-node": {
-                "type": _type,
-                "value":"***core-node***"}}}))
-
-    return json.loads(query_result)["reply"][0]["id"]
 
 
 #Game Loop
