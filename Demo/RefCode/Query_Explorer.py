@@ -1,7 +1,7 @@
 __author__ = 'Aleksander'
 import json
 from helpers import *
-from database_queries import query
+from roombuilder.helper import query
 
 
 #Explores queries about nouns
@@ -15,7 +15,7 @@ class Query_Explorer:
 
 
 def get_noun(query_):
-    print (query_)
+    #print (query_)
     #we're looking for JSON, but if it isn't, we can fix that
     if type(query_) is str:
         query_ = json.loads(query_)
